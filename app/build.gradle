@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        community {
+            keyAlias 'community'
+            keyPassword '123456'
+            storeFile file('D:/app/keystore/community.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
+    defaultConfig {
+        applicationId "com.joinsmile.community"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 30
+        versionName "1.5"
+        signingConfig signingConfigs.community
+    }
+    compileOptions {
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.community
+        }
+        debug {
+            signingConfig signingConfigs.community
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    productFlavors {
+    }
+    lintOptions {
+        abortOnError false
+        disable 'InconsistentArrays','DefaultLocale','OldTargetApi','GradleOverrides','MissingTranslation','UnusedResources','GoogleAppIndexingWarning'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.android.support:design:23.1.0'
+    //网络包rest
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    //注解
+    compile 'com.jakewharton:butterknife:5.1.1'
+    compile 'com.bigkoo:pickerview:2.1.0'
+    //动画库
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile files('libs/alipaySdk-20151112.jar')
+    compile files('libs/libammsdk.jar')
+    compile 'com.githang:clipimageview:0.1'
+
+    // Apache Http
+    android {
+        useLibrary 'org.apache.http.legacy'
+    }
+    // Header
+    dependencies {
+        compile "org.apache.httpcomponents:httpcore:4.3.2"
+    }
+    compile 'com.squareup:android-times-square:1.6.4@aar'
+    compile files('libs/universal-image-loader-1.9.2.jar')
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/MobCommons-2016.0301.1053.jar')
+    compile files('libs/MobTools-2016.0301.1053.jar')
+    compile files('libs/ShareSDK-Core-2.7.0.jar')
+    compile files('libs/ShareSDK-QQ-2.7.0.jar')
+    compile files('libs/ShareSDK-QZone-2.7.0.jar')
+    compile files('libs/ShareSDK-TencentWeibo-2.7.0.jar')
+    compile files('libs/ShareSDK-Wechat-2.7.0.jar')
+    compile files('libs/ShareSDK-Wechat-Core-2.7.0.jar')
+    compile files('libs/ShareSDK-Wechat-Favorite-2.7.0.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-2.7.0.jar')
+}

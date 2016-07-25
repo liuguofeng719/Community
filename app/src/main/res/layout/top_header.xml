@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/common_color_61ca8b"
+    android:paddingLeft="@dimen/common_padding"
+    android:paddingRight="@dimen/common_padding"
+    android:layout_gravity="center_vertical"
+    tools:showIn="@layout/tenement_repairs_activity">
+
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/header_back"
+        android:clickable="true"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/tv_header_title"
+        style="@style/header_title" />
+
+    <ImageView
+        android:id="@+id/iv_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:background="@drawable/history"
+        android:clickable="true"
+        android:scaleType="fitXY" />
+</FrameLayout>

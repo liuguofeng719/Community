@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/list_selector_color"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_head_face"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/common_color_61ca8b"
+                android:descendantFocusability="blocksDescendants"
+                android:gravity="center_vertical"
+                android:paddingLeft="30dp">
+
+                <com.joinsmile.community.widgets.CircleImageView
+                    android:id="@+id/iv_face"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/zuozhu"
+                    app:civ_border_color="#b5e0db"
+                    app:civ_border_width="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_login_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_toRightOf="@+id/iv_face"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/sex_woman"
+                    android:gravity="center_vertical"
+                    android:padding="4dp"
+                    android:text="15882035337"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                />
+
+                <TextView
+                    android:id="@+id/tv_not_login_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_toRightOf="@+id/iv_face"
+                    android:gravity="center_vertical"
+                    android:padding="4dp"
+                    android:text="请登录"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
+                    android:src="@drawable/normal_arrow" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_my_community"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_community"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的小区" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:id="@+id/tv_my_vote"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_vote"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的投票" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:id="@+id/tv_my_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_order"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的订单" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_order"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的报修" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_order"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的投诉" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:id="@+id/tv_my_payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_payment"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的缴费" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:id="@+id/tv_my_favorites"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_favorites"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="我的收藏" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/tv_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_help"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="帮助" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_line_color" />
+
+                <TextView
+                    android:id="@+id/tv_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="@dimen/common_padding"
+                    android:layout_marginRight="@dimen/common_padding"
+                    android:drawableLeft="@drawable/my_about"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/normal_arrow"
+                    android:gravity="center_vertical"
+                    android:paddingRight="@dimen/common_padding"
+                    android:text="关于我们" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

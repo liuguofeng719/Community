@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/normal_bg_color"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/top_header"
+        layout="@layout/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/top_image"
+        android:layout_width="wrap_content"
+        android:layout_height="140dp"
+        android:layout_below="@+id/top_header"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="18dp"
+        android:src="@drawable/happy_bbs" />
+
+    <LinearLayout
+        android:id="@+id/fl_login_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_image"
+        android:background="@color/normal_bg_color"
+        android:orientation="vertical"
+        >
+
+        <EditText
+            android:id="@+id/ed_user_phone"
+            android:layout_width="match_parent"
+            android:paddingLeft="@dimen/common_padding"
+            android:paddingRight="@dimen/common_padding"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:hint="请输入手机号"
+            android:inputType="phone"
+            android:singleLine="true"
+            android:textColorHint="@color/text_color_hint"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/ed_user_pwd"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/common_padding"
+            android:paddingLeft="@dimen/common_padding"
+            android:paddingRight="@dimen/common_padding"
+            android:layout_height="55dp"
+            android:background="@color/white"
+            android:hint="@string/login_pwd_hint"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/text_color_hint"
+            android:inputType="textPassword"
+        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/ed_verifyCode"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/common_padding"
+                android:background="@null"
+                android:hint="@string/login_reg_code_hint"
+                android:inputType="number"
+                android:maxLength="6"
+                android:singleLine="true"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/text_color_hint" />
+
+            <TextView
+                android:id="@+id/btn_verify_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:padding="10dp"
+                android:background="@color/common_color_61ca8b"
+                android:text="@string/login_reg_code"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:layout_below="@+id/fl_login_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/common_padding"
+        android:layout_marginRight="@dimen/common_padding"
+        android:background="@color/common_color_f8914c"
+        android:text="@string/login_button_reg"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</RelativeLayout>

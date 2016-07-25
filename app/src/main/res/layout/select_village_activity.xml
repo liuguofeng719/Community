@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/normal_bg_color"
+    android:orientation="vertical">
+
+    <include layout="@layout/header" />
+
+    <TextView
+        android:id="@+id/tv_select_city"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/common_padding"
+        android:paddingTop="8dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color_hint_1"
+        android:textSize="14dp"
+        android:text="成都市"
+        android:textStyle="bold"
+    />
+
+    <EditText
+        android:id="@+id/edit_query"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/search"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        android:hint="请输入小区名称"
+        android:inputType="phone"
+        android:paddingLeft="@dimen/common_padding"
+        android:paddingRight="@dimen/common_padding"
+        android:singleLine="true"
+        android:textColorHint="@color/text_color_hint"
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
+
+    <ListView
+        android:id="@+id/lv_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/common_padding"
+        android:background="@color/white"
+        android:cacheColorHint="@color/transparent"
+        android:divider="@color/bg_line_color"
+        android:dividerHeight="1dp"
+        android:listSelector="@color/transparent"/>
+</LinearLayout>

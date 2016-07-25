@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_house_property"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/common_padding"
+        android:paddingTop="8dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color"
+        android:textSize="14dp"
+        android:text="成都市"
+        android:textStyle="bold"
+    />
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_header" />
+
+    <ListView
+        android:id="@+id/lv_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:cacheColorHint="@color/transparent"
+        android:divider="@null"
+        android:listSelector="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_phone_repairs"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="36dp"
+            android:background="@color/common_color_61ca8b"
+            android:gravity="center"
+            android:text="@string/phone_repairs"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_online_repairs"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@color/common_color_f8914c"
+            android:gravity="center"
+            android:text="@string/online_repairs"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>

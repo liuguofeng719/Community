@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <com.joinsmile.community.widgets.XViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </com.joinsmile.community.widgets.XViewPager>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/text_color_hint"
+        />
+        <RadioGroup
+            android:id="@+id/rdo_menu_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rdo_ticket"
+                style="@style/rdo_home" />
+
+            <RadioButton
+                android:id="@+id/rdo_order"
+                style="@style/rdo_market" />
+
+            <RadioButton
+                android:id="@+id/rdo_my"
+                style="@style/rdo_my" />
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

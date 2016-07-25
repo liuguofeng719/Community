@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- menu -->
+    <string name="main_rdo_market">商城</string>
+    <string name="main_rdo_my">我的</string>
+    <string name="main_rdo_home">首页</string>
+
+    <string name="tenement_repairs">物业报修</string>
+    <string name="complaint_suggest">投诉建议</string>
+    <string name="tenement_pay">物业缴费</string>
+    <string name="phone_recharge">话费充值</string>
+    <string name="house_keeper">小区管家</string>
+    <string name="intelligence">智能管理</string>
+    <string name="integral">积分商城</string>
+    <string name="vote">调查投票</string>
+    <string name="phone_advice">电话投诉</string>
+    <string name="online_advice">在线投诉</string>
+    <string name="phone_repairs">电话报修</string>
+    <string name="online_repairs">在线报修</string>
+    <string name="up_repairs">上报</string>
+    <string name="house_not_empty">房屋不能为空</string>
+    <string name="phone_not_empty">电话不能为空</string>
+    <string name="title_not_empty">问题标题不能为空</string>
+    <string name="content_not_empty">问题内容不能为空</string>
+    <string name="login_quit">退出登录</string>
+    <string name="user_info_title">个人信息</string>
+    <string name="modify_pwd_text">修改密码</string>
+
+    <string name="login_reg">注册</string>
+    <string name="login_fogot_pwd">重置密码</string>
+    <string name="login_reg_fogot">忘记密码?</string>
+    <string name="login_button_reg">注册并登录</string>
+    <string name="login_button_rest">找回密码</string>
+    <string name="login_reg_code">获取验证码</string>
+    <string name="login_reg_code_hint">输入验证码</string>
+    <string name="login_reg_code_empty">验证码为空</string>
+    <string name="login_reg_code_isequals">验证码错误</string>
+    <string name="login_phone_hint">输入手机号码</string>
+    <string name="login_pwd_hint">输入密码</string>
+    <string name="login_nick_name">请输入昵称</string>
+
+    <string name="login_in">登录</string>
+    <string name="forgot_pwd">忘记密码</string>
+    <string name="register_user">新用户注册</string>
+    <string name="login_phone_empty">手机号码不能为空</string>
+    <string name="phone_end_empty">手机号码最后四位不能为空</string>
+    <string name="phone_last_four">手机最后四位不正确</string>
+    <string name="login_phone_ok">输入正确的手机号码</string>
+    <string name="login_pwd_empty">密码不能为空</string>
+    <string name="login_pwd_length">密码长度不能小于6位</string>
+    <string name="login_nick_name_not_empty">昵称不能为空</string>
+
+    <string name="select_city">选择城市</string>
+    <string name="location_city">定位城市</string>
+    <string name="select_village">选择小区</string>
+    <string name="select_house">选择单元</string>
+    <string name="select_house_number">选择门牌号</string>
+    <string name="empty_village">该城市暂无小区</string>
+    <string name="done_text">完成</string>
+    <string name="join_house">加入房屋</string>
+    <string name="my_village">我的小区</string>
+    <string name="invite_member">邀请成员</string>
+    <string name="bind_house_msg">绑定房屋成功</string>
+    <string name="invite_member_msg">邀请成员成功</string>
+
+    <string name="action_take_photo">拍照</string>
+    <string name="action_clip">裁剪</string>
+    <string name="msg_camera_invalid_permission_denied">无法打开相机，可能是权限被拒绝</string>
+    <string name="msg_camera_invalid_initial_failed">相机初始化失败，无法打开相机</string>
+    <string name="msg_camera_invalid_unknown_error">无法打开相机，未知错误</string>
+    <string name="msg_could_not_save_photo">无法保存图片</string>
+    <string name="msg_clipping_image">正在裁剪图片</string>
+
+    <string name="investigation_msg">调查问卷</string>
+
+</resources>

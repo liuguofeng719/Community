@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/normal_bg_color">
+
+    <include
+        android:id="@+id/top_header"
+        layout="@layout/header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_header"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/top_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_location_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_line_color"
+                android:padding="10dp"
+                android:text="A"
+                android:textColor="@color/common_color_61ca8b"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_location_city_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <com.joinsmile.community.widgets.PinnedHeaderListView
+            android:id="@+id/lv_city"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/top_location"
+            android:cacheColorHint="@color/transparent"
+            android:divider="@color/bg_line_color"
+            android:dividerHeight="1dp"
+            android:listSelector="@color/bg_line_color"></com.joinsmile.community.widgets.PinnedHeaderListView>
+
+        <com.joinsmile.community.widgets.SiderBar
+            android:id="@+id/siderBar"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="18dp" />
+    </RelativeLayout>
+</RelativeLayout>

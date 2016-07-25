@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/common_padding"
+    android:orientation="vertical">
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/tv_take_photo"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/common_color_f8914c"
+            android:button="@null"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginBottom="@dimen/common_padding"
+            android:text="拍照" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/bg_line_color" />
+
+        <RadioButton
+            android:id="@+id/tv_location_photo"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:background="@color/common_color_f8504c"
+            android:button="@null"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:text="本地照片" />
+    </RadioGroup>
+</LinearLayout>
