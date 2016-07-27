@@ -3,6 +3,7 @@ package com.joinsmile.community.bean;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by liuguofeng719 on 2016/7/25.
@@ -19,10 +20,40 @@ public class InvestigationQuestionVo implements Serializable {
     private int isMustFill;// 是否必须填写 0:否 1:是
     @SerializedName("QuestionIndex")
     private int questionIndex;// 问题序号
-    @SerializedName("AnswerID")
-    private String answerID;// 选项ID
-    @SerializedName("AnswerContent")
-    private String answerContent;// 选项内容
+    @SerializedName("AnswerList")
+    private ArrayList<AnswerList> answerLists;
+
+    public ArrayList<AnswerList> getAnswerLists() {
+        return answerLists;
+    }
+
+    public void setAnswerLists(ArrayList<AnswerList> answerLists) {
+        this.answerLists = answerLists;
+    }
+
+    public static class AnswerList {
+
+        @SerializedName("AnswerID")
+        private String answerID;// 选项ID
+        @SerializedName("AnswerContent")
+        private String answerContent;// 选项内容
+
+        public String getAnswerID() {
+            return answerID;
+        }
+
+        public void setAnswerID(String answerID) {
+            this.answerID = answerID;
+        }
+
+        public String getAnswerContent() {
+            return answerContent;
+        }
+
+        public void setAnswerContent(String answerContent) {
+            this.answerContent = answerContent;
+        }
+    }
 
     public String getQuestionID() {
         return questionID;
@@ -64,19 +95,5 @@ public class InvestigationQuestionVo implements Serializable {
         this.questionIndex = questionIndex;
     }
 
-    public String getAnswerID() {
-        return answerID;
-    }
 
-    public void setAnswerID(String answerID) {
-        this.answerID = answerID;
-    }
-
-    public String getAnswerContent() {
-        return answerContent;
-    }
-
-    public void setAnswerContent(String answerContent) {
-        this.answerContent = answerContent;
-    }
 }

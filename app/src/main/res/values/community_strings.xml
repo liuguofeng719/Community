@@ -71,6 +71,9 @@
     <string name="msg_could_not_save_photo">无法保存图片</string>
     <string name="msg_clipping_image">正在裁剪图片</string>
 
-    <string name="investigation_msg">调查问卷</string>
+    <string name="investigation_msg">调查问卷列表</string>
+    <string name="investigation_app_msg">APP调查问卷</string>
+    <string name="text_prev">上一个问题</string>
+    <string name="text_next">下一个问题</string>
 
 </resources>

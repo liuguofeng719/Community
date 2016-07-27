@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
+import com.joinsmile.community.ui.activity.InvestigationActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.OnlineRepairsActivity;
 import com.joinsmile.community.ui.activity.WebViewActivity;
@@ -30,7 +32,6 @@ import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.widgets.CircleImageView;
-import com.joinsmile.community.widgets.FullyLinearLayoutManager;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -105,6 +106,26 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         });
     }
 
+    //调查问卷
+    @OnClick(R.id.tv_vote)
+    public void tvVote() {
+        Bundle bundle = new Bundle();
+        if (tvLocationContent.getTag() != null) {
+            bundle.putString("buildingID", tvLocationContent.getTag().toString());
+        } else {
+            bundle.putString("buildingID", "");
+        }
+        readyGo(InvestigationActivity.class, bundle);
+    }
+
+    //检查登录
+    public boolean checkLogin() {
+        if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+            return false;
+        }
+        return true;
+    }
+
     //选择小区
     @OnClick(R.id.tv_location_content)
     public void tvLocationContent() {
@@ -117,7 +138,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 10) {
             String location = data.getStringExtra("location");
+            String buildingID = data.getStringExtra("buildingID");
             tvLocationContent.setText(location);
+            tvLocationContent.setTag(buildingID);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -193,28 +216,33 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            RecommendProductVo recommendProductVo = data.get(position);
-            DisplayImageOptions.Builder b = new DisplayImageOptions.Builder();
-            b.showImageForEmptyUri(R.drawable.screen_portrait);
-            b.showImageOnFail(R.drawable.screen_portrait);
-            b.showImageOnLoading(R.drawable.screen_portrait);
-            ImageLoader.getInstance().displayImage(recommendProductVo.getPicture(), holder.iv_product_img, b.build());//
-            holder.tv_product_desc.setText(recommendProductVo.getProductName());//
-            ArrayList<String> headPicture = recommendProductVo.getHeadPicture();
-            for (String spic : headPicture) {
-                CircleImageView circleImageView = new CircleImageView(getActivity());
-                circleImageView.setBorderColor(Color.parseColor("#b5e0db"));
-                circleImageView.setBorderWidth(4);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(DensityUtils.dip2px(getActivity(), 48),
-                        DensityUtils.dip2px(getActivity(), 48));
-                lp.setMargins(0, 0, 10, 0);
-                circleImageView.setLayoutParams(lp);
-                DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                builder.showImageForEmptyUri(R.drawable.zuozhu);
-                builder.showImageOnFail(R.drawable.zuozhu);
-                builder.showImageOnLoading(R.drawable.zuozhu);
-                ImageLoader.getInstance().displayImage(spic, circleImageView, builder.build());
-                holder.ly_face.addView(circleImageView);
+            try {
+                RecommendProductVo recommendProductVo = data.get(position);
+                DisplayImageOptions.Builder b = new DisplayImageOptions.Builder();
+                b.showImageForEmptyUri(R.drawable.screen_portrait);
+                b.showImageOnFail(R.drawable.screen_portrait);
+                b.showImageOnLoading(R.drawable.screen_portrait);
+                ImageLoader.getInstance().displayImage(recommendProductVo.getPicture(), holder.iv_product_img, b.build());//
+                holder.tv_product_desc.setText(recommendProductVo.getProductName());//
+                ArrayList<String> headPicture = recommendProductVo.getHeadPicture();
+                holder.ly_face.removeAllViews();
+                for (String spic : headPicture) {
+                    CircleImageView circleImageView = new CircleImageView(getActivity());
+                    circleImageView.setBorderColor(Color.parseColor("#b5e0db"));
+                    circleImageView.setBorderWidth(4);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(DensityUtils.dip2px(getActivity(), 48),
+                            DensityUtils.dip2px(getActivity(), 48));
+                    lp.setMargins(0, 0, 10, 0);
+                    circleImageView.setLayoutParams(lp);
+                    DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
+                    builder.showImageForEmptyUri(R.drawable.zuozhu);
+                    builder.showImageOnFail(R.drawable.zuozhu);
+                    builder.showImageOnLoading(R.drawable.zuozhu);
+                    ImageLoader.getInstance().displayImage(spic, circleImageView, builder.build());
+                    holder.ly_face.addView(circleImageView);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -254,7 +282,10 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                     for (int i = 0; i < apartmentNumberList.size(); i++) {
                         if (apartmentNumberList.get(i).isDefault() == 1) {
                             numbersVo = apartmentNumberList.get(i);
-                            tvLocationContent.setText(numbersVo.getBuilding());
+                            String building = numbersVo.getBuilding();
+                            String numberId = numbersVo.getNumberID();
+                            tvLocationContent.setText(building);
+                            tvLocationContent.setTag(numberId);
                             break;
                         }
                     }
@@ -277,10 +308,16 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             @Override
             public void onResponse(Call<AnnouncementResp> call, Response<AnnouncementResp> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
-                    AnnouncementResp resp = response.body();
-                    String title = resp.getAnnouncement().getTitle();
-                    tvTipsContent.setText(title);
-                    tvTipsContent.setTag(resp);
+                    final AnnouncementResp resp = response.body();
+                    final String title = resp.getAnnouncement().getTitle();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvTipsContent.setText(title);
+                            tvTipsContent.setTag(resp);
+                        }
+                    });
+
                 }
             }
 
@@ -302,7 +339,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 hideLoading();
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     List<RecommendProductVo> productList = response.body().getProductList();
-                    FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                     layoutManager.setSmoothScrollbarEnabled(true);
                     recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setAdapter(new HomeAdapter(productList));

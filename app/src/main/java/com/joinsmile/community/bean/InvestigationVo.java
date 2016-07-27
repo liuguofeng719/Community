@@ -18,6 +18,16 @@ public class InvestigationVo implements Serializable {
     private String createDate; //创建时间
     @SerializedName("QuestionAmount")
     private String questionAmount; //问题数量
+    @SerializedName("IsFinished")
+    private int isFinished; //是否完成 0未完成，1已完成
+
+    public int getIsFinished() {
+        return isFinished;
+    }
+
+    public void setIsFinished(int isFinished) {
+        this.isFinished = isFinished;
+    }
 
     public String getInvestigationID() {
         return investigationID;
