@@ -461,7 +461,7 @@ public interface ApisNew {
      * @return
      */
     @GET("Investigations/UploadUserAnaswer.ashx")
-    Call<BaseInfoVo> uploadUserAnaswer(
+    Call<BaseInfoVo> uploadUserAnswer(
             @Query("userID") String userID,
             @Query("questionID") String questionID,
             @Query("answerIDString") String answerIDString,

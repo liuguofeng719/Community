@@ -75,5 +75,6 @@
     <string name="investigation_app_msg">APP调查问卷</string>
     <string name="text_prev">上一个问题</string>
     <string name="text_next">下一个问题</string>
+    <string name="text_submit">提交</string>
 
 </resources>

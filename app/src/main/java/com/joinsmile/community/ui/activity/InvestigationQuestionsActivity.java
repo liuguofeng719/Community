@@ -3,26 +3,35 @@ package com.joinsmile.community.ui.activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.joinsmile.community.R;
+import com.joinsmile.community.bean.AnswerVo;
 import com.joinsmile.community.bean.InvestigationQuestionListResp;
 import com.joinsmile.community.bean.InvestigationQuestionVo;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.ui.base.BaseCallBack;
 import com.joinsmile.community.utils.DensityUtils;
+import com.joinsmile.community.utils.TLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -38,6 +47,8 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     TextView tvHeaderTitle;
     @InjectView(R.id.tv_question_title)
     TextView tvQuestionTitle;
+    @InjectView(R.id.tv_done)
+    TextView tvDone;
     @InjectView(R.id.ly_questions_content)
     LinearLayout lyQuestionsContent;
     @InjectView(R.id.ly_bottom)
@@ -74,9 +85,12 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     }
 
     //以做的题答案
-    private Map<String, String> selected = new HashMap<>();
+    private Map<String, AnswerVo> answerVoMap = new LinkedHashMap<>();
+
     //记录当前题索引
     private int currentIndex = 0;
+    //当前题什么类型
+    private AnswerVo.AnswerType currAnswerType;
 
     //获取调查的问题和选项
     private void getInvestigationQuestions(final String investigationID) {
@@ -95,7 +109,7 @@ public class InvestigationQuestionsActivity extends BaseActivity {
                         lyBottom.setVisibility(View.VISIBLE);
                     }
                     //默认加载第一条数据
-                    InvestigationQuestionVo iqv = questionAswerList.get(0);
+                    InvestigationQuestionVo iqv = questionAswerList.get(currentIndex);
                     getQuestionType(iqv);
                 }
             }
@@ -110,19 +124,23 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     //文本类型
     private void getQuestionType(InvestigationQuestionVo iqv) {
         if (iqv.getQuestionType() == 1) {//单选
+            currAnswerType = AnswerVo.AnswerType.RADIO_TYPE;
             singleChoice(iqv);
         } else if (iqv.getQuestionType() == 2) {//多选
+            currAnswerType = AnswerVo.AnswerType.CHECKBOX_TYPE;
             multilChoice(iqv);
         } else if (iqv.getQuestionType() == 3) {//文本
+            currAnswerType = AnswerVo.AnswerType.OTHER_TYPE;
             textAction(iqv);
         }
+        //初始题目类型
+        setAnswerCode(iqv);
     }
 
     //单选
     private void singleChoice(final InvestigationQuestionVo iqv) {
         setQuestionTitle(iqv.getQuestionIndex(), iqv.getQuestion());
         lyQuestionsContent.removeAllViews();
-
         RadioGroup rdg = new RadioGroup(this);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -141,6 +159,7 @@ public class InvestigationQuestionsActivity extends BaseActivity {
             radioButton.setButtonDrawable(getResources().getDrawable(android.R.color.transparent));
             radioButton.setCompoundDrawablesWithIntrinsicBounds(null, null, myImage, null);
             radioButton.setText(answerList.getAnswerContent());
+            radioButton.setTag(iqv.getQuestionID() + "," + answerList.getAnswerID());
             rdg.addView(radioButton);
             //添加下划线
             View view = new View(this);
@@ -148,13 +167,45 @@ public class InvestigationQuestionsActivity extends BaseActivity {
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(this, 1)));
             rdg.addView(view);
         }
+
+        rdg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rdoButton = (RadioButton) findViewById(group.getCheckedRadioButtonId());
+                String answerId = rdoButton.getTag().toString();
+                String[] split = answerId.split(",");
+                if (answerVoMap.get(split[0]) != null) {
+                    AnswerVo answerVo = answerVoMap.get(split[0]);
+                    answerVo.setAnswer(split[1]);
+                }
+            }
+        });
         lyQuestionsContent.addView(rdg);
+
+    }
+
+    //设置题库编码
+    private void setAnswerCode(InvestigationQuestionVo iqv) {
+        if (answerVoMap.get(iqv.getQuestionID()) == null) {
+            AnswerVo answerVo = new AnswerVo();
+            if (iqv.getQuestionType() == AnswerVo.AnswerType.RADIO_TYPE.getType()) {
+                answerVo.setAnswerType(AnswerVo.AnswerType.RADIO_TYPE);
+            } else if (iqv.getQuestionType() == AnswerVo.AnswerType.CHECKBOX_TYPE.getType()) {
+                answerVo.setAnswerType(AnswerVo.AnswerType.CHECKBOX_TYPE);
+            } else if (iqv.getQuestionType() == AnswerVo.AnswerType.OTHER_TYPE.getType()) {
+                answerVo.setAnswerType(AnswerVo.AnswerType.OTHER_TYPE);
+            }
+            answerVoMap.put(iqv.getQuestionID(), answerVo);
+        }
     }
 
     //设置标题
     private void setQuestionTitle(int index, String title) {
         tvQuestionTitle.setText(index + "、" + title);
     }
+
+    final Map<String, String> multipleMap = new HashMap<>();
 
     //多选
     private void multilChoice(final InvestigationQuestionVo iqv) {
@@ -171,8 +222,24 @@ public class InvestigationQuestionsActivity extends BaseActivity {
             checkBox.setButtonDrawable(getResources().getDrawable(android.R.color.transparent));
             checkBox.setCompoundDrawablesWithIntrinsicBounds(null, null, myImage, null);
             checkBox.setText(answerList.getAnswerContent());
+            checkBox.setTag(iqv.getQuestionID() + "," + answerList.getAnswerID());
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    String answerId = buttonView.getTag().toString();
+                    String[] split = answerId.split(",");
+                    if (isChecked) {
+                        if (!multipleMap.containsKey(split[1])) {
+                            multipleMap.put(split[1], split[0]);
+                        }
+                    } else {
+                        if (multipleMap.containsKey(split[1])) {
+                            multipleMap.remove(split[1]);
+                        }
+                    }
+                }
+            });
             lyQuestionsContent.addView(checkBox);
-
             //添加下划线
             View view = new View(this);
             view.setBackgroundColor(Color.parseColor("#e5e5e5"));
@@ -184,6 +251,46 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     //文本处理
     private void textAction(final InvestigationQuestionVo iqv) {
         setQuestionTitle(iqv.getQuestionIndex(), iqv.getQuestion());
+        lyQuestionsContent.removeAllViews();
+        EditText editText = new EditText(this);
+        editText.setTag(iqv.getQuestionID());
+        editText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                DensityUtils.dip2px(this, 200)));
+        editText.setHint("谈谈你的看法");
+        editText.setPadding(
+                DensityUtils.dip2px(this, 15),
+                DensityUtils.dip2px(this, 15),
+                DensityUtils.dip2px(this, 15), 0);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                AnswerVo answerVo = answerVoMap.get(iqv.getQuestionID());
+                if (answerVo != null) {
+                    if (s.length() > 0) {
+                        answerVo.setAnswer(s.toString());
+                    } else {
+                        answerVo.setAnswer("");
+                    }
+                }
+            }
+        });
+        editText.setHintTextColor(Color.parseColor("#999999"));
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        editText.setTextColor(Color.parseColor("#333333"));
+        editText.setSingleLine(true);
+        editText.setMaxLines(8);
+        editText.setGravity(Gravity.LEFT | Gravity.TOP);
+        lyQuestionsContent.addView(editText);
     }
 
     //上一个问题
@@ -194,13 +301,94 @@ public class InvestigationQuestionsActivity extends BaseActivity {
         } else {
             currentIndex = 0;
         }
-        getQuestionType(questionAswerList.get(currentIndex));
+        drawAndInitData();
+    }
+
+    //初始化和渲染布局
+    private void drawAndInitData() {
+        InvestigationQuestionVo questionVo = questionAswerList.get(currentIndex);
+        //重新渲染布局
+        getQuestionType(questionVo);
+        //重新初始化控件已选择的值
+        initControlValue(questionVo);
+    }
+
+    //重新初始化控件已选择的值
+    private void initControlValue(InvestigationQuestionVo questionVo) {
+        AnswerVo answerVo = answerVoMap.get(questionVo.getQuestionID());
+        if (!"".equals(answerVo.getAnswer()) && answerVo.getAnswer() != null) {
+            if (currAnswerType.getType() == 1) {// 单选
+                RadioGroup childAt = (RadioGroup) lyQuestionsContent.getChildAt(0);
+                int childCount = childAt.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    if (childAt.getChildAt(i) instanceof RadioButton) {
+                        RadioButton radioButton = (RadioButton) childAt.getChildAt(i);
+                        String answerId = radioButton.getTag().toString().split(",")[1];
+                        if (answerId.equals(answerVo.getAnswer())) {
+                            radioButton.setChecked(true);
+                            break;
+                        }
+                    }
+                }
+            } else if (currAnswerType.getType() == 2) { //多选
+                int childCount = lyQuestionsContent.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    if (lyQuestionsContent.getChildAt(i) instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) lyQuestionsContent.getChildAt(i);
+                        String answerId = checkBox.getTag().toString().split(",")[1];
+                        String[] answer = answerVo.getAnswer().split(",");
+                        for (int j = 0; j < answer.length; j++) {
+                            if (answerId.equals(answer[j])) {
+                                checkBox.setChecked(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else if (currAnswerType.getType() == 3) {
+                TextView childAt = (TextView) lyQuestionsContent.getChildAt(0);
+                if (questionVo.getQuestionID().equals(childAt.getTag().toString())) {
+                    childAt.setText(answerVo.getAnswer());
+                }
+            }
+        }
     }
 
     //下一个问题
     @OnClick(R.id.tv_next)
     public void tvNext() {
+        if (currAnswerType.getType() == 2) {//多选
+            Set<String> keySet = multipleMap.keySet();
+            StringBuilder stringBuilder = new StringBuilder();
+            String value = "";
+            for (String s : keySet) {
+                stringBuilder.append(s).append(",");
+                value = multipleMap.get(s);
+            }
+            if (stringBuilder.length() > 0) {
+                AnswerVo answerVo = answerVoMap.get(value);
+                answerVo.setAnswer(stringBuilder.substring(0, stringBuilder.lastIndexOf(",")));
+            }
+            multipleMap.clear();
+        }
         currentIndex++;
-        getQuestionType(questionAswerList.get(currentIndex));
+        if (questionAswerList.size() - 1 == currentIndex) {
+            lyBottom.setVisibility(View.INVISIBLE);
+            tvDone.setVisibility(View.VISIBLE);
+        }
+        if (questionAswerList.size() > currentIndex) {
+            drawAndInitData();
+        } else {
+            currentIndex = questionAswerList.size() - 1;
+            for (String s : answerVoMap.keySet()) {
+                TLog.d(TAG_LOG, "key====" + s + " value=" + answerVoMap.get(s).toString());
+            }
+        }
+    }
+
+    //提交调查信息
+    @OnClick(R.id.tv_done)
+    public void tvDone(){
+
     }
 }

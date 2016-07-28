@@ -31,7 +31,22 @@
         android:background="@color/white"
         android:orientation="vertical">
     </LinearLayout>
-
+    <TextView
+        android:id="@+id/tv_done"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="@dimen/common_padding"
+        android:layout_marginRight="@dimen/common_padding"
+        android:background="@color/common_color_f8914c"
+        android:gravity="center"
+        android:text="@string/text_submit"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+    />
     <LinearLayout
         android:id="@+id/ly_bottom"
         android:layout_width="match_parent"
