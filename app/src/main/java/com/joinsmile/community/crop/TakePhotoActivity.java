@@ -1,4 +1,4 @@
-package com.joinsmile.community.ui.activity;
+package com.joinsmile.community.crop;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.joinsmile.community.R;
+import com.joinsmile.community.crop.PhotoActionHelper;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.Const;
 import com.joinsmile.community.utils.IOUtils;

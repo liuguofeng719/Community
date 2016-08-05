@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="wrap_content"
-    android:padding="@dimen/common_padding"
-    android:gravity="center_vertical"
-    android:id="@+id/rl_pay_type"
-    android:descendantFocusability="blocksDescendants"
-    >
-    <ImageView
-        android:id="@+id/iv_pay_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/common_padding"
-        android:src="@drawable/paybao"
-    />
-    <TextView
-        android:id="@+id/tv_pay_text"
-        android:layout_toRightOf="@+id/iv_pay_icon"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_pay_type"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:textColor="@color/text_color"
-        android:textSize="16sp"
-        android:text="支付宝"
-    />
-    <CheckBox
-        android:id="@+id/cbo_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:clickable="false"
-        android:focusable="false"
-        style="@style/CustomCheckboxTheme"
-        android:layout_alignParentRight="true"
-    />
-</RelativeLayout>
+        android:descendantFocusability="blocksDescendants"
+        android:gravity="center_vertical"
+        android:padding="@dimen/common_padding">
+
+        <ImageView
+            android:id="@+id/iv_pay_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/common_padding"
+            android:src="@drawable/paybao" />
+
+        <TextView
+            android:id="@+id/tv_pay_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_toRightOf="@+id/iv_pay_icon"
+            android:text="支付宝"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/cbo_box"
+            style="@style/CustomCheckboxTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:focusable="false" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_line_color" />
+</LinearLayout>

@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 /**
  * Created by liuguofeng719 on 2016/7/16.
@@ -29,9 +30,44 @@ public class ProductVo implements Serializable {
     @SerializedName("IsOnMainPage")
     private String isOnMainPage;//是否出现在首页的推荐产品中
     @SerializedName("Pictures")
-    private String pictures;//产品详情图片
+    private ArrayList<String> pictures;//产品详情图片
     @SerializedName("IsOnShelves")
     private String isOnShelves;//是否已上架
+    @SerializedName("SalesVolume")
+    private int salesVolume;//销售量
+
+    public int getSalesVolume() {
+        return salesVolume;
+    }
+
+    public void setSalesVolume(int salesVolume) {
+        this.salesVolume = salesVolume;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductVo{" +
+                "productID='" + productID + '\'' +
+                ", productName='" + productName + '\'' +
+                ", supplierID='" + supplierID + '\'' +
+                ", supplierName='" + supplierName + '\'' +
+                ", categoryID='" + categoryID + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", defaultPicture='" + defaultPicture + '\'' +
+                ", isOnMainPage='" + isOnMainPage + '\'' +
+                ", pictures=" + pictures +
+                ", isOnShelves='" + isOnShelves + '\'' +
+                '}';
+    }
+
+    public ArrayList<String> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(ArrayList<String> pictures) {
+        this.pictures = pictures;
+    }
 
     public String getProductID() {
         return productID;
@@ -103,14 +139,6 @@ public class ProductVo implements Serializable {
 
     public void setIsOnMainPage(String isOnMainPage) {
         this.isOnMainPage = isOnMainPage;
-    }
-
-    public String getPictures() {
-        return pictures;
-    }
-
-    public void setPictures(String pictures) {
-        this.pictures = pictures;
     }
 
     public String getIsOnShelves() {

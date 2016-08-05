@@ -7,8 +7,18 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ProductListResp<T> extends BaseInfoVo {
 
+    @SerializedName("PageCount")
+    private int pageCount;
     @SerializedName("ProductList")
     private T productList;
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
 
     public T getProductList() {
         return productList;

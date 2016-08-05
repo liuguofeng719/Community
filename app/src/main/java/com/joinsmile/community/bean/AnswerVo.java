@@ -7,9 +7,9 @@ public class AnswerVo {
 
     //答案
     private String answer;
+
     //题类型
     private AnswerType answerType;
-
 
     public String getAnswer() {
         return answer;

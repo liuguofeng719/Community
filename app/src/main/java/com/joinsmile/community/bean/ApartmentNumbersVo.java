@@ -19,10 +19,20 @@ public class ApartmentNumbersVo implements Serializable {
     private String city ;//城市名称
     @SerializedName("Building")
     private String building ;//小区名称
+    @SerializedName("BuildingID")
+    private String buildingID ;//小区编码
     @SerializedName("Unit")
     private String unit ;//单元名称
     @SerializedName("Apartment")
     private String apartment; //门牌号名称
+
+    public String getBuildingID() {
+        return buildingID;
+    }
+
+    public void setBuildingID(String buildingID) {
+        this.buildingID = buildingID;
+    }
 
     public int getIsDefault() {
         return isDefault;

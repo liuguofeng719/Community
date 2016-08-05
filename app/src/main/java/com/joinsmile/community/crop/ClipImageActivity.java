@@ -1,4 +1,4 @@
-package com.joinsmile.community.ui.activity;
+package com.joinsmile.community.crop;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

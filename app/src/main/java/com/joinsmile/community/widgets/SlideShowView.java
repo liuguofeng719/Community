@@ -19,11 +19,8 @@ import android.widget.LinearLayout;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.PicturesVo;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +129,7 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
         super(context, attrs, defStyle);
         this.context = context;
 
-        initImageLoader(context);
+//        initImageLoader(context);
 
         initData();
         if (isAutoPlay) {
@@ -224,9 +221,6 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
 
             DisplayImageOptions options = new DisplayImageOptions
                     .Builder()
-                    .showImageForEmptyUri(R.drawable.no_banner)
-                    .showImageOnFail(R.drawable.no_banner)
-                    .showImageOnLoading(R.drawable.no_banner)
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
@@ -349,29 +343,29 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
         initUI(context);
     }
 
-    /**
-     * ImageLoader 图片组件初始化
-     *
-     * @param context
-     */
-    public static void initImageLoader(Context context) {
-        // This configuration tuning is custom. You can tune every option, you
-        // may tune some of them,
-        // or you can create default configuration by
-        // ImageLoaderConfiguration.createDefault(this);
-        // method.
-        if (!ImageLoader.getInstance().isInited()) {
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                    .threadPriority(Thread.NORM_PRIORITY - 2)
-                    .denyCacheImageMultipleSizesInMemory()
-                    .discCacheFileNameGenerator(new Md5FileNameGenerator())
-                    .tasksProcessingOrder(QueueProcessingType.LIFO)
-//                    .writeDebugLogs() // Remove for release app
-                    .build();
-            // Initialize ImageLoader with configuration.
-            ImageLoader.getInstance().init(config);
-        }
-    }
+//    /**
+//     * ImageLoader 图片组件初始化
+//     *
+//     * @param context
+//     */
+//    public static void initImageLoader(Context context) {
+//        // This configuration tuning is custom. You can tune every option, you
+//        // may tune some of them,
+//        // or you can create default configuration by
+//        // ImageLoaderConfiguration.createDefault(this);
+//        // method.
+//        if (!ImageLoader.getInstance().isInited()) {
+//            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+//                    .threadPriority(Thread.NORM_PRIORITY - 2)
+//                    .denyCacheImageMultipleSizesInMemory()
+//                    .discCacheFileNameGenerator(new Md5FileNameGenerator())
+//                    .tasksProcessingOrder(QueueProcessingType.LIFO)
+////                    .writeDebugLogs() // Remove for release app
+//                    .build();
+//            // Initialize ImageLoader with configuration.
+//            ImageLoader.getInstance().init(config);
+//        }
+//    }
 
     public void onDestroy() {
         stopPlay();

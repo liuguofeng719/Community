@@ -1,36 +1,52 @@
 package com.joinsmile.community.ui.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
+import com.joinsmile.community.crop.CropFileUtils;
+import com.joinsmile.community.crop.PhotoActionHelper;
 import com.joinsmile.community.netstatus.NetUtils;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
+import com.joinsmile.community.utils.Const;
 import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.utils.TLog;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import okhttp3.MediaType;
@@ -63,9 +79,20 @@ public class OnlineRepairsActivity extends BaseActivity {
     LinearLayout lycontainer;
     @InjectView(R.id.iv_plus)
     FrameLayout iv_plus;
-    Bundle extras;
-    private List<byte[]> imageBytes = new CopyOnWriteArrayList<>();
+
+//    @InjectView(R.id.recyclerView)
+//    RecyclerView recyclerView;
+
+    private Bundle extras;
+    private List<Bitmap> imageBytes = new CopyOnWriteArrayList<>();
     private Call<RepairAndComplaintsResp<RepairAndComplaintsVo>> repairAndComplaintsVoCall;
+    private HomeAdapter homeAdapter;
+    private Dialog dialog;
+    private String mOutputPath;
+
+    /* 请求识别码 */
+    private static final int CODE_GALLERY_REQUEST = 0xa0;
+    private static final int CODE_CAMERA_REQUEST = 0xa1;
 
     @OnClick(R.id.btn_back)
     public void btnBack() {
@@ -75,9 +102,35 @@ public class OnlineRepairsActivity extends BaseActivity {
     //拍照和选择本地照片
     @OnClick(R.id.iv_plus)
     public void ivplus() {
-        //使用startActivityForResult启动SelectPicPopupWindow当返回到此Activity的时候就会调用onActivityResult函数
-        Intent intent = new Intent(OnlineRepairsActivity.this, SelectPicPopupWindowActivity.class);
-        startActivityForResult(intent, 1);
+        dialog = CommonUtils.createDialog(this);
+        dialog.setContentView(R.layout.select_pic_activity);
+        RadioGroup radio_group = (RadioGroup) dialog.findViewById(R.id.radio_group);
+        radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                CommonUtils.dismiss(dialog);
+                switch (checkedId) {
+                    case R.id.tv_take_photo:
+                        PhotoActionHelper.takePhoto(OnlineRepairsActivity.this).output(mOutputPath).maxOutputWidth(800).requestCode(Const.REQUEST_TAKE_PHOTO).start();
+                        break;
+                    case R.id.tv_location_photo:
+                        try {
+                            //选择照片的时候也一样，我们用Action为Intent.ACTION_GET_CONTENT，
+                            //有些人使用其他的Action但我发现在有些机子中会出问题，所以优先选择这个
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(intent, CODE_GALLERY_REQUEST);
+                        } catch (ActivityNotFoundException e) {
+                        }
+                        break;
+
+                }
+            }
+        });
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
     }
 
     //选择报修的房子
@@ -100,8 +153,8 @@ public class OnlineRepairsActivity extends BaseActivity {
                 final Dialog dialog = CommonUtils.showDialog(this);
                 dialog.show();
                 Map<String, RequestBody> map = new HashMap<>();
-                for (byte[] imageByte : imageBytes) {
-                    final RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), imageByte);
+                for (Bitmap imageByte : imageBytes) {
+                    final RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), CommonUtils.Bitmap2Bytes(imageByte));
                     map.put("image\"; filename=\"icon.png", requestBody);
                 }
                 map.put("userID", CommonUtils.toRequestBody(AppPreferences.getString("userId")));
@@ -178,6 +231,78 @@ public class OnlineRepairsActivity extends BaseActivity {
     protected void initViewsAndEvents() {
         tvHeaderTitle.setText(extras.getString("title"));
         tv_phone.setHint(extras.getString("hintPhone"));
+        mOutputPath = new File(getExternalCacheDir(), "face.jpg").getPath();
+    }
+
+    class HomeAdapter extends RecyclerView.Adapter<MyViewHolder> {
+
+        private List<Bitmap> data = new ArrayList<>();
+
+        public HomeAdapter() {
+        }
+
+        public List<Bitmap> getData() {
+            return data;
+        }
+
+        public void setData(List<Bitmap> data) {
+            this.data = data;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            TLog.d("onCreateViewHolder", "BusinessAdapter -> onCreateViewHolder()");
+            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false));
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position) {
+            TLog.d("onBindViewHolder", "BusinessAdapter -> onBindViewHolder()");
+            Bitmap imageVo = data.get(position);
+            holder.iv_photo.setImageBitmap(imageVo);
+            holder.iv_del.setTag(position);
+            holder.iv_del.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int index = Integer.parseInt(v.getTag().toString());
+                    imageBytes.remove(index);
+                    homeAdapter.getData().remove(index);
+                    homeAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return data != null ? data.size() : 0;
+        }
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView iv_photo;
+        ImageView iv_del;
+
+        public MyViewHolder(View view) {
+            super(view);
+            iv_photo = ButterKnife.findById(view, R.id.iv_photo);
+            iv_del = ButterKnife.findById(view, R.id.iv_del);
+        }
+    }
+
+    class ImageVo {
+
+        private Bitmap bitmap;
+
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        public void setBitmap(Bitmap bitmap) {
+            this.bitmap = bitmap;
+        }
     }
 
     @Override
@@ -198,17 +323,45 @@ public class OnlineRepairsActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (resultCode) {
-            case 1:
-                showImage(data);
-                break;
-            case 4:
-                String numberName = data.getStringExtra("numberName");
-                String numberId = data.getStringExtra("numberId");
-                tvHouseNumber.setText(numberName);
-                tvHouseNumber.setTag(numberId);
-            default:
-                break;
+        if (resultCode == Activity.RESULT_OK
+                && data != null
+                && (requestCode == Const.REQUEST_CLIP_IMAGE || requestCode == Const.REQUEST_TAKE_PHOTO)) {
+            String path = PhotoActionHelper.getOutputPath(data);
+            if (path != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                setImage(bitmap);
+            }
+            return;
+        } else if (requestCode == CODE_GALLERY_REQUEST) {//选择本地图片
+            Uri uri = data.getData();
+            if (uri == null) {
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
+                    saveImage(photo, mOutputPath);
+                    PhotoActionHelper.clipImage(this).input(mOutputPath).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
+                }
+            } else {
+                PhotoActionHelper.clipImage(this).input(CropFileUtils.getPath(this, uri)).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
+            }
+        } else if (resultCode == 4) {
+            String numberName = data.getStringExtra("numberName");
+            String numberId = data.getStringExtra("numberId");
+            tvHouseNumber.setText(numberName);
+            tvHouseNumber.setTag(numberId);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static void saveImage(Bitmap photo, String spath) {
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(
+                    new FileOutputStream(spath, false));
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -243,22 +396,51 @@ public class OnlineRepairsActivity extends BaseActivity {
         });
     }
 
+
     private void setImage(Bitmap image) {
         if (imageBytes.size() == 4) {
-            imageBytes.add(CommonUtils.Bitmap2Bytes(image));
+            imageBytes.add(image);
             iv_plus.setVisibility(View.GONE);
         } else {
-            imageBytes.add(CommonUtils.Bitmap2Bytes(image));
+            imageBytes.add(image);
         }
+        addImage(image);
+    }
+
+    private void addImage(Bitmap image) {
         if (image != null) {
             Bitmap compressImage = CommonUtils.compressImage(image);
-            ImageView imageView = new ImageView(OnlineRepairsActivity.this);
+            FrameLayout frameLayout = new FrameLayout(this);
+            frameLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            ImageView imageView = new ImageView(this);
             imageView.setImageBitmap(compressImage);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(DensityUtils.dip2px(OnlineRepairsActivity.this, 52), DensityUtils.dip2px(OnlineRepairsActivity.this, 52));
-            lp.setMargins(0, 0, 10, 0);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(DensityUtils.dip2px(this, 60), DensityUtils.dip2px(this, 60));
+            lp.setMargins(0, 0, DensityUtils.dip2px(this, 8), 0);
             imageView.setLayoutParams(lp);
-            lycontainer.addView(imageView);
+
+            ImageView delImage = new ImageView(this);
+            delImage.setImageResource(R.drawable.icon_del);
+            delImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            FrameLayout.LayoutParams delImagelp = new FrameLayout.LayoutParams(DensityUtils.dip2px(this, 20), DensityUtils.dip2px(this, 20));
+            delImagelp.setMargins(0, 5, 30, 0);
+            delImagelp.gravity = Gravity.RIGHT;//此处相当于布局文件中的android:layout_gravity属性
+            delImage.setLayoutParams(delImagelp);
+            delImage.setTag(imageBytes.size() - 1);
+            delImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imageBytes.remove(Integer.parseInt(v.getTag().toString()));
+                    lycontainer.removeAllViews();
+                    for (Bitmap image : imageBytes) {
+                        addImage(image);
+                    }
+                }
+            });
+            frameLayout.addView(imageView);
+            frameLayout.addView(delImage);
+            lycontainer.addView(frameLayout);
         }
     }
 }

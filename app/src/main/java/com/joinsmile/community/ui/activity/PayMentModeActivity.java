@@ -196,7 +196,7 @@ public class PayMentModeActivity extends BaseActivity {
         api = WXAPIFactory.createWXAPI(PayMentModeActivity.this, Constants.wxpay.APPID);
         api.registerApp(Constants.wxpay.APPID);
 
-        Call<WXPayVo> callWX = getApisNew().payOrderByWeiChat(extras.getString("orderId")).clone();
+        Call<WXPayVo> callWX = getApisNew().payPropertyCostsOrderByWeixin(extras.getString("orderId")).clone();
         callWX.enqueue(new Callback<WXPayVo>() {
             @Override
             public void onResponse(Call<WXPayVo> call, Response<WXPayVo> response) {
@@ -290,7 +290,7 @@ public class PayMentModeActivity extends BaseActivity {
      * 获取支付宝签名
      */
     private void signAlipay() {
-        Call<AlipayVo> siginCall = getApisNew().signAlipay(extras.getString("orderId")).clone();
+        Call<AlipayVo> siginCall = getApisNew().payPropertyCostsOrderByAlipay(extras.getString("orderId")).clone();
         siginCall.enqueue(new Callback<AlipayVo>() {
             @Override
             public void onResponse(Call<AlipayVo> call, Response<AlipayVo> response) {

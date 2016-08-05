@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.BaseInfoVo;
 import com.joinsmile.community.bean.UserVoResp;
+import com.joinsmile.community.crop.CropFileUtils;
+import com.joinsmile.community.crop.PhotoActionHelper;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
@@ -28,7 +30,9 @@ import com.joinsmile.community.widgets.CircleImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import butterknife.InjectView;
@@ -55,6 +59,7 @@ public class UserInfoActivity extends BaseActivity {
     TextView tvSex;
     private Call<UserVoResp> userVoRespCall;
     private String mOutputPath;
+    private Dialog dialog;
 
     @OnClick(R.id.btn_back)
     public void btnBack() {
@@ -124,16 +129,17 @@ public class UserInfoActivity extends BaseActivity {
     //修改头像
     @OnClick(R.id.tv_modify_head)
     public void modifyFace() {
-        Dialog dialog = CommonUtils.createDialog(this);
+        dialog = CommonUtils.createDialog(this);
         dialog.setContentView(R.layout.select_pic_activity);
         RadioGroup radio_group = (RadioGroup) dialog.findViewById(R.id.radio_group);
         radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId)
-                {
+                CommonUtils.dismiss(dialog);
+                switch (checkedId) {
                     case R.id.tv_take_photo:
-                        choseHeadImageFromCameraCapture();
+//                        choseHeadImageFromCameraCapture();
+                        PhotoActionHelper.takePhoto(UserInfoActivity.this).output(mOutputPath).maxOutputWidth(800).requestCode(Const.REQUEST_TAKE_PHOTO).start();
                         break;
                     case R.id.tv_location_photo:
                         try {
@@ -157,12 +163,9 @@ public class UserInfoActivity extends BaseActivity {
 
     // 启动手机相机拍摄照片作为头像
     private void choseHeadImageFromCameraCapture() {
-
         Intent intentFromCapture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 判断存储卡是否可用，存储照片文件
-        intentFromCapture.putExtra(MediaStore.EXTRA_OUTPUT, Uri
-                .fromFile(new File(Environment
-                        .getExternalStorageDirectory(), IMAGE_FILE_NAME)));
+        intentFromCapture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME)));
         startActivityForResult(intentFromCapture, CODE_CAMERA_REQUEST);
     }
 
@@ -171,11 +174,7 @@ public class UserInfoActivity extends BaseActivity {
     /* 请求识别码 */
     private static final int CODE_GALLERY_REQUEST = 0xa0;
     private static final int CODE_CAMERA_REQUEST = 0xa1;
-    private static final int CODE_RESULT_REQUEST = 0xa2;
 
-    // 裁剪后图片的宽(X)和高(Y),480 X 480的正方形。
-    private static int output_X = 480;
-    private static int output_Y = 480;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -194,50 +193,33 @@ public class UserInfoActivity extends BaseActivity {
             }
             return;
         } else if (requestCode == CODE_GALLERY_REQUEST) {
-            cropRawPhoto(data.getData());
-        } else if (requestCode == CODE_RESULT_REQUEST) {
-            if (data != null) {
-                setImageToHeadView(data);
+            Uri uri = data.getData();
+            if (uri == null) {
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
+                    saveImage(photo, mOutputPath);
+                    PhotoActionHelper.clipImage(this).input(mOutputPath).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
+                }
+            } else {
+                PhotoActionHelper.clipImage(this).input(CropFileUtils.getPath(this, uri)).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
             }
-        } else if (requestCode == CODE_CAMERA_REQUEST) {
-            File tempFile = new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME);
-            cropRawPhoto(Uri.fromFile(tempFile));
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void setImageToHeadView(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Bitmap photo = extras.getParcelable("data");
-            circleFace.setImageBitmap(photo);
+    public static void saveImage(Bitmap photo, String spath) {
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(
+                    new FileOutputStream(spath, false));
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * 裁剪原始的图片
-     */
-    public void cropRawPhoto(Uri uri) {
-
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-
-        // 设置裁剪
-        intent.putExtra("crop", "true");
-        intent.putExtra("scale", true);// 去黑边
-        intent.putExtra("scaleUpIfNeeded", true);// 去黑边
-
-        // aspectX , aspectY :宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-
-        // outputX , outputY : 裁剪图片宽高
-        intent.putExtra("outputX", output_X);
-        intent.putExtra("outputY", output_Y);
-        intent.putExtra("return-data", true);
-
-        startActivityForResult(intent, CODE_RESULT_REQUEST);
-    }
 
     @OnTextChanged(value = R.id.tv_nickname, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void modifyNickName(Editable s) {
@@ -285,11 +267,11 @@ public class UserInfoActivity extends BaseActivity {
                     UserVoResp userVoResp = response.body();
                     UserVoResp.UserInfo userInfo = userVoResp.getUserInfo();
                     DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                    builder.showImageForEmptyUri(R.drawable.zuozhu);
-                    builder.showImageOnFail(R.drawable.zuozhu);
-                    builder.showImageOnLoading(R.drawable.zuozhu);
+                    builder.showImageForEmptyUri(R.mipmap.logo);
+                    builder.showImageOnFail(R.mipmap.logo);
+                    builder.showImageOnLoading(R.mipmap.logo);
                     ImageLoader.getInstance().displayImage(userInfo.getHeadPicture(), circleFace, builder.build());
-                    tvNickname.setText(userInfo.getNickName());
+                    tvNickname.setText("" + userInfo.getNickName().trim());
                     tvSex.setText(userInfo.getSex());
                 }
             }
@@ -303,9 +285,13 @@ public class UserInfoActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (userVoRespCall != null) {
             userVoRespCall.cancel();
         }
+        if (dialog != null) {
+            CommonUtils.dismiss(dialog);
+        }
+        super.onDestroy();
+
     }
 }

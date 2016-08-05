@@ -2,7 +2,6 @@ package com.joinsmile.community.ui.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioButton;
@@ -14,7 +13,6 @@ import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.ui.fragment.HomeFragment;
 import com.joinsmile.community.ui.fragment.MyFragment;
 import com.joinsmile.community.ui.fragment.ShoppingMallFragment;
-import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.ExitDoubleClick;
 import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.XViewPager;
@@ -74,12 +72,7 @@ public class IndexActivity extends BaseActivity {
                         viewPager.setCurrentItem(0, false);
                         break;
                     case R.id.rdo_order:
-                        if (!TextUtils.isEmpty(AppPreferences.getString("userId"))) {
-                            viewPager.setCurrentItem(1, false);
-                        } else {
-                            viewPager.setCurrentItem(0);
-                            readyGo(LoginActivity.class);
-                        }
+                        viewPager.setCurrentItem(1, false);
                         break;
                     case R.id.rdo_my:
                         viewPager.setCurrentItem(2, false);

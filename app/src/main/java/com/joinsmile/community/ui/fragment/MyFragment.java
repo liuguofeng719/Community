@@ -5,12 +5,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.joinsmile.community.R;
+import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
 import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.widgets.CircleImageView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -88,9 +91,16 @@ public class MyFragment extends BaseFragment {
             tv_not_login_title.setVisibility(View.VISIBLE);
             return false;
         } else {
+            AuthticationVo authticationVo = AppPreferences.getObject(AuthticationVo.class);
             tv_login_title.setVisibility(View.VISIBLE);
-            tv_login_title.setText(AppPreferences.getString("phoneNumber"));
+            tv_login_title.setText(authticationVo.getPhoneNumber());
+            DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
+            builder.showImageForEmptyUri(R.mipmap.logo);
+            builder.showImageOnFail(R.mipmap.logo);
+            builder.showImageOnLoading(R.mipmap.logo);
+            ImageLoader.getInstance().displayImage(authticationVo.getHeadPicture(), iv_face, builder.build());
             tv_not_login_title.setVisibility(View.GONE);
+
             return true;
         }
     }

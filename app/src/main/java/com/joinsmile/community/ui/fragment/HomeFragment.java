@@ -2,6 +2,7 @@ package com.joinsmile.community.ui.fragment;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,8 +25,12 @@ import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
 import com.joinsmile.community.ui.activity.InvestigationActivity;
+import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.OnlineRepairsActivity;
+import com.joinsmile.community.ui.activity.ProductDetailtActivity;
+import com.joinsmile.community.ui.activity.ProductListActivity;
+import com.joinsmile.community.ui.activity.PropertyMngPaymentActivity;
 import com.joinsmile.community.ui.activity.WebViewActivity;
 import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
@@ -65,10 +70,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     TextView tvIntegral;
     @InjectView(R.id.tv_vote)
     TextView tvVote;
-
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
+
     private Dialog mDialog;
+    private Dialog showDialog;
+    private Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall;
+    private Call<AnnouncementResp> respCall;
+
 
     @OnClick(R.id.tv_house_keeper)
     public void tvHouseKeeper() {
@@ -77,11 +86,15 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         manageService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("title", getString(R.string.online_repairs));
-                bundle.putInt("isRepair", 1);
-                bundle.putString("hintPhone", "备案人或报修人电话号码");
-                readyGo(OnlineRepairsActivity.class, bundle);
+                if (checkLogin()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", getString(R.string.online_repairs));
+                    bundle.putInt("isRepair", 1);
+                    bundle.putString("hintPhone", "备案人或报修人电话号码");
+                    readyGo(OnlineRepairsActivity.class, bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
 
@@ -89,11 +102,15 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         complaintSuggest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("title", getString(R.string.online_advice));
-                bundle.putInt("isRepair", 0);
-                bundle.putString("hintPhone", "投诉人电话号码");
-                readyGo(OnlineRepairsActivity.class, bundle);
+                if (checkLogin()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", getString(R.string.online_advice));
+                    bundle.putInt("isRepair", 0);
+                    bundle.putString("hintPhone", "投诉人电话号码");
+                    readyGo(OnlineRepairsActivity.class, bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
 
@@ -101,7 +118,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         tenementPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (checkLogin()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
+                    bundle.putString("location", tvLocationContent.getTag().toString().split(",")[1]);
+                    readyGo(PropertyMngPaymentActivity.class, bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
     }
@@ -111,7 +135,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     public void tvVote() {
         Bundle bundle = new Bundle();
         if (tvLocationContent.getTag() != null) {
-            bundle.putString("buildingID", tvLocationContent.getTag().toString());
+            bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[0]);
         } else {
             bundle.putString("buildingID", "");
         }
@@ -129,9 +153,13 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     //选择小区
     @OnClick(R.id.tv_location_content)
     public void tvLocationContent() {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("home", true);
-        readyGoForResult(MyVillageActivity.class, 1, bundle);
+        if (checkLogin()) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("home", true);
+            readyGoForResult(MyVillageActivity.class, 1, bundle);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     @Override
@@ -139,19 +167,21 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         if (resultCode == 10) {
             String location = data.getStringExtra("location");
             String buildingID = data.getStringExtra("buildingID");
+            String locationDone = data.getStringExtra("locationDone");
             tvLocationContent.setText(location);
-            tvLocationContent.setTag(buildingID);
+            tvLocationContent.setTag(buildingID + "," + locationDone);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onFirstUserVisible() {
+        getUserApartments();
         getPics();
         getOnMainPageProducts();
-        getUserApartments();
     }
 
+    //获取轮播图
     private void getPics() {
         Call<PicturesVoResp<List<PicturesVo>>> callPics = getApisNew().getAdvertisementPictures().clone();
         callPics.enqueue(new Callback<PicturesVoResp<List<PicturesVo>>>() {
@@ -198,19 +228,25 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         mDialog.setCancelable(true);
         mDialog.setCanceledOnTouchOutside(true);
         this.mSlideShowView.setOnImageClickedListener(this);
-
     }
 
     class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> {
+
         private List<RecommendProductVo> data;
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
 
         public HomeAdapter(List<RecommendProductVo> data) {
             this.data = data;
+            builder.bitmapConfig(Bitmap.Config.RGB_565);
+            builder.cacheInMemory(true);
+            builder.cacheOnDisk(true);
+            builder.considerExifParams(true);
         }
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(getActivity()).inflate(R.layout.home_recommend_product, parent, false));
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.home_recommend_product, parent, false);
+            MyViewHolder holder = new MyViewHolder(view);
             return holder;
         }
 
@@ -218,13 +254,36 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         public void onBindViewHolder(MyViewHolder holder, int position) {
             try {
                 RecommendProductVo recommendProductVo = data.get(position);
-                DisplayImageOptions.Builder b = new DisplayImageOptions.Builder();
-                b.showImageForEmptyUri(R.drawable.screen_portrait);
-                b.showImageOnFail(R.drawable.screen_portrait);
-                b.showImageOnLoading(R.drawable.screen_portrait);
-                ImageLoader.getInstance().displayImage(recommendProductVo.getPicture(), holder.iv_product_img, b.build());//
-                holder.tv_product_desc.setText(recommendProductVo.getProductName());//
+                ImageLoader.getInstance().displayImage(recommendProductVo.getPicture(), holder.iv_product_img, builder.build());
+                holder.iv_product_img.setTag(recommendProductVo.getProductId());
+                holder.iv_product_img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("productId", v.getTag().toString());
+                        readyGo(ProductDetailtActivity.class, bundle);
+                    }
+                });
+                holder.tv_product_desc.setTag(recommendProductVo.getProductId());
+                holder.tv_product_desc.setText(recommendProductVo.getProductName());
+                holder.tv_product_desc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("productId", v.getTag().toString());
+                        readyGo(ProductDetailtActivity.class, bundle);
+                    }
+                });
                 ArrayList<String> headPicture = recommendProductVo.getHeadPicture();
+                holder.ly_face.setTag(recommendProductVo.getProductId());
+                holder.ly_face.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("productId", v.getTag().toString());
+                        readyGo(ProductDetailtActivity.class, bundle);
+                    }
+                });
                 holder.ly_face.removeAllViews();
                 for (String spic : headPicture) {
                     CircleImageView circleImageView = new CircleImageView(getActivity());
@@ -234,10 +293,6 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             DensityUtils.dip2px(getActivity(), 48));
                     lp.setMargins(0, 0, 10, 0);
                     circleImageView.setLayoutParams(lp);
-                    DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                    builder.showImageForEmptyUri(R.drawable.zuozhu);
-                    builder.showImageOnFail(R.drawable.zuozhu);
-                    builder.showImageOnLoading(R.drawable.zuozhu);
                     ImageLoader.getInstance().displayImage(spic, circleImageView, builder.build());
                     holder.ly_face.addView(circleImageView);
                 }
@@ -270,40 +325,48 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
      * 我的小区
      */
     private void getUserApartments() {
-        Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall = getApisNew().getUserApartments(AppPreferences.getString("userId")).clone();
-        numbersRespCall.enqueue(new Callback<ApartmentNumbersResp<List<ApartmentNumbersVo>>>() {
-            @Override
-            public void onResponse(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call,
-                                   Response<ApartmentNumbersResp<List<ApartmentNumbersVo>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApartmentNumbersResp<List<ApartmentNumbersVo>> body = response.body();
-                    List<ApartmentNumbersVo> apartmentNumberList = body.getApartmentNumberList();
-                    ApartmentNumbersVo numbersVo = null;
-                    for (int i = 0; i < apartmentNumberList.size(); i++) {
-                        if (apartmentNumberList.get(i).isDefault() == 1) {
-                            numbersVo = apartmentNumberList.get(i);
-                            String building = numbersVo.getBuilding();
-                            String numberId = numbersVo.getNumberID();
-                            tvLocationContent.setText(building);
-                            tvLocationContent.setTag(numberId);
-                            break;
+        if (!TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+            showDialog = CommonUtils.showDialog(getActivity(), getString(R.string.common_loading_message));
+            showDialog.show();
+            Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall = getApisNew().getUserApartments(AppPreferences.getString("userId")).clone();
+            numbersRespCall.enqueue(new Callback<ApartmentNumbersResp<List<ApartmentNumbersVo>>>() {
+                @Override
+                public void onResponse(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call,
+                                       Response<ApartmentNumbersResp<List<ApartmentNumbersVo>>> response) {
+                    CommonUtils.dismiss(showDialog);
+                    if (response.isSuccessful() && response.body() != null) {
+                        ApartmentNumbersResp<List<ApartmentNumbersVo>> body = response.body();
+                        List<ApartmentNumbersVo> apartmentNumberList = body.getApartmentNumberList();
+                        ApartmentNumbersVo numbersVo = null;
+                        for (int i = 0; i < apartmentNumberList.size(); i++) {
+                            if (apartmentNumberList.get(i).isDefault() == 1) {
+                                numbersVo = apartmentNumberList.get(i);
+                                String building = numbersVo.getBuilding();
+                                String numberId = numbersVo.getBuildingID();
+                                tvLocationContent.setText(building);
+                                tvLocationContent.setTag(numberId + "," + building + numbersVo.getUnit() + numbersVo.getApartment());
+                                break;
+                            }
+                        }
+                        if (numbersVo != null) {
+                            getNewAnnouncement(numbersVo.getNumberID());
                         }
                     }
-                    if (numbersVo != null) {
-                        getNewAnnouncement(numbersVo.getNumberID());
-                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call, Throwable t) {
+                    CommonUtils.dismiss(showDialog);
+                }
+            });
+        } else {
+            getNewAnnouncement("");
+        }
     }
 
     //获取公告
     private void getNewAnnouncement(String buildId) {
-        Call<AnnouncementResp> respCall = getApisNew().getNewAnnouncement(buildId).clone();
+        respCall = getApisNew().getNewAnnouncement(buildId).clone();
         respCall.enqueue(new Callback<AnnouncementResp>() {
             @Override
             public void onResponse(Call<AnnouncementResp> call, Response<AnnouncementResp> response) {
@@ -317,7 +380,6 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             tvTipsContent.setTag(resp);
                         }
                     });
-
                 }
             }
 
@@ -330,8 +392,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     //获取推荐商品
     private void getOnMainPageProducts() {
-        showLoading(getString(R.string.common_load_message));
-        Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall = getApisNew().getOnMainPageProducts().clone();
+        showLoading(getString(R.string.common_loading_message));
+        listRespCall = getApisNew().getOnMainPageProducts().clone();
         listRespCall.enqueue(new Callback<RecommendProductListResp<List<RecommendProductVo>>>() {
             @Override
             public void onResponse(Call<RecommendProductListResp<List<RecommendProductVo>>> call,
@@ -353,6 +415,12 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         });
     }
 
+    //积分，现在测试推荐商品
+    @OnClick(R.id.tv_query_all)
+    public void tv_query_all() {
+        readyGo(ProductListActivity.class);
+    }
+
     @Override
     protected int getContentViewLayoutID() {
         return R.layout.index_main;
@@ -368,8 +436,15 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     @Override
     public void onStop() {
         super.onStop();
+        closeDialog();
+    }
+
+    private void closeDialog() {
         if (mDialog != null) {
             CommonUtils.dismiss(mDialog);
+        }
+        if (showDialog != null) {
+            CommonUtils.dismiss(showDialog);
         }
     }
 
@@ -379,8 +454,12 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         if (mSlideShowView != null) {
             mSlideShowView.onDestroy();
         }
-        if (mDialog != null) {
-            CommonUtils.dismiss(mDialog);
+        if (listRespCall != null) {
+            listRespCall.cancel();
         }
+        if (respCall != null) {
+            respCall.cancel();
+        }
+        closeDialog();
     }
 }

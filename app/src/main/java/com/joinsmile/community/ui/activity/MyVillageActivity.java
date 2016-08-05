@@ -140,6 +140,7 @@ public class MyVillageActivity extends BaseActivity {
                     if (extras.getBoolean("home")) {
                         Intent intent = new Intent();
                         intent.putExtra("location", numbersVo.getBuilding());
+                        intent.putExtra("locationDone", numbersVo.getBuilding() + numbersVo.getUnit() + numbersVo.getApartment());
                         intent.putExtra("buildingID", numbersVo.getNumberID());
                         setResult(10, intent);
                         finish();

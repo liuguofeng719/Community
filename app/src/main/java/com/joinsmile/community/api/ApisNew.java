@@ -7,6 +7,7 @@ import com.joinsmile.community.bean.AnnouncementsResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
 import com.joinsmile.community.bean.ApartmentOwnerPhoneNumberVo;
+import com.joinsmile.community.bean.ApartmentPropertyCostResp;
 import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.bean.BaseInfoVo;
 import com.joinsmile.community.bean.BuildingUnitsResp;
@@ -14,15 +15,18 @@ import com.joinsmile.community.bean.BuildingUnitsVo;
 import com.joinsmile.community.bean.CityInfoResp;
 import com.joinsmile.community.bean.CityListResp;
 import com.joinsmile.community.bean.CityVo;
+import com.joinsmile.community.bean.InvestigationAnswerVo;
 import com.joinsmile.community.bean.InvestigationListResp;
 import com.joinsmile.community.bean.InvestigationQuestionListResp;
 import com.joinsmile.community.bean.InvestigationQuestionVo;
 import com.joinsmile.community.bean.InvestigationVo;
 import com.joinsmile.community.bean.MessageVo;
+import com.joinsmile.community.bean.OnTopProductListResp;
 import com.joinsmile.community.bean.OrderInfoResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.ProductListResp;
+import com.joinsmile.community.bean.ProductOrderVo;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.bean.ReceiverAddressVo;
@@ -32,6 +36,8 @@ import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
 import com.joinsmile.community.bean.ResidentialBuildingVo;
 import com.joinsmile.community.bean.ResidentialListResp;
+import com.joinsmile.community.bean.UserApartmentPropertyOrdersResp;
+import com.joinsmile.community.bean.UserApartmentPropertyOrdersVo;
 import com.joinsmile.community.bean.UserVoResp;
 import com.joinsmile.community.bean.VersionVo;
 import com.joinsmile.community.bean.WXPayVo;
@@ -66,28 +72,6 @@ public interface ApisNew {
      */
     @GET("common/checkversion.ashx?platform=android")
     Call<VersionVo> getVersion();
-
-    /**
-     * 获取支付宝签名信息
-     *
-     * @param orderID
-     * @return
-     */
-    @GET("Orders/SignAlipay.ashx")
-    Call<AlipayVo> signAlipay(
-            @Query("orderID") String orderID
-    );
-
-    /**
-     * 获取微信支付签名信息
-     *
-     * @param orderID
-     * @return
-     */
-    @GET("Orders/PayOrderByWeiChat.ashx")
-    Call<WXPayVo> payOrderByWeiChat(
-            @Query("orderID") String orderID
-    );
 
     /**
      * 获取轮播图接口
@@ -313,7 +297,7 @@ public interface ApisNew {
      * Map<String, RequestBody> map = new HashMap<>();
      * map.put("Id", AZUtils.toRequestBody(eventId));
      * map.put("Name", AZUtils.toRequestBody(titleView.getValue()));
-     * <p/>
+     * <p>
      * if (imageUri != null) {
      * File file = new File(imageUri.getPath());
      * image/*
@@ -375,6 +359,12 @@ public interface ApisNew {
     );
 
     /**
+     * 获取商轮播图接口
+     */
+    @GET("Products/GetOnProductPageProducts.ashx")
+    Call<OnTopProductListResp<List<PicturesVo>>> getOnProductPageProducts();
+
+    /**
      * 获取首页所有推荐的商品
      *
      * @return RecommendProductListResp<RecommendProductVo>
@@ -382,14 +372,21 @@ public interface ApisNew {
     @GET("Products/GetOnMainPageProducts.ashx")
     Call<RecommendProductListResp<List<RecommendProductVo>>> getOnMainPageProducts();
 
+
     /**
-     * 获取上架商品
+     * 获取所有商品信息
      *
-     * @param isOnShelves 是否只显示上架商品
+     * @param sortType  排序类型 1:销量 2:价格 3:上架时间
+     * @param isDesc    是否是降序   0:升序 1:降序
+     * @param pageIndex 显示的页数
      * @return
      */
     @GET("Products/GetProducts.ashx")
-    Call<ProductListResp<ProductVo>> getProducts(@Query("isOnShelves") boolean isOnShelves);
+    Call<ProductListResp<List<ProductVo>>> getAllProductByType(
+            @Query("sortType") int sortType,
+            @Query("isDesc") int isDesc,
+            @Query("pageIndex") int pageIndex
+    );
 
     /**
      * 获取单个商品信息
@@ -415,6 +412,33 @@ public interface ApisNew {
             @Query("userID") String userID,
             @Query("products") String products
     );
+
+    /**
+     * 商品订单微信签名
+     *
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/PayProductOrderByWeiChat.ashx")
+    Call<WXPayVo> payProductOrderByWeiChat(@Query("orderID") String orderID);
+
+    /**
+     * 商品支付宝签名
+     *
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/PayProductOrderByAlipay.ashx")
+    Call<AlipayVo> payProductOrderByAlipay(@Query("orderID") String orderID);
+
+    /**
+     * 用户购买商品订单列表
+     *
+     * @param userID
+     * @return
+     */
+    @GET("Orders/GetUserOrders.ashx")
+    Call<ProductListResp<List<ProductOrderVo>>> getUserOrders(@Query("userID") String userID);
 
     /**
      * 获取收货地址
@@ -456,15 +480,69 @@ public interface ApisNew {
      * @param questionID     问题ID
      * @param answerIDString 答案ID字符串 (如果遇到多选题，则用逗号隔开)
      * @param answerContent  文本答案
-     * 备注：当回答问题类型为文本时，不需要传递answerID，但需要传递answerContent。
-     *      当问题类型为单选或多选时，需要传递answerID，不需要传递answerContent
+     *                       备注：当回答问题类型为文本时，不需要传递answerID，但需要传递answerContent。
+     *                       当问题类型为单选或多选时，需要传递answerID，不需要传递answerContent
      * @return
      */
-    @GET("Investigations/UploadUserAnaswer.ashx")
+    @POST("Investigations/UploadUserAnaswer.ashx")
     Call<BaseInfoVo> uploadUserAnswer(
+            @Body InvestigationAnswerVo investigationAnswerVo
+    );
+
+    /**
+     * 物业费收费标准/月
+     *
+     * @param apartmentNumberID
+     * @return
+     */
+    @GET("PropertyCosts/GetApartmentPropertyCost.ashx")
+    Call<ApartmentPropertyCostResp> getApartmentPropertyCost(@Query("apartmentNumberID") String apartmentNumberID);
+
+    /**
+     * 创建缴纳物业费订单
+     *
+     * @param userID
+     * @return
+     */
+    @GET("PropertyCosts/CreatePropertyCostsOrder.ashx")
+    Call<OrderInfoResp> createPropertyCostsOrder(
             @Query("userID") String userID,
-            @Query("questionID") String questionID,
-            @Query("answerIDString") String answerIDString,
-            @Query("answerContent") String answerContent
+            @Query("apartmentNumberID") String apartmentNumberID,
+            @Query("monthly") String monthly,
+            @Query("beginYearMonth") String beginYearMonth,
+            @Query("endYearMonth") String endYearMonth
+    );
+
+    /**
+     * 支付宝缴纳物业费订单
+     *
+     * @param orderID
+     * @return
+     */
+    @GET("PropertyCosts/PayPropertyCostsOrderByAlipay.ashx")
+    Call<AlipayVo> payPropertyCostsOrderByAlipay(
+            @Query("orderID") String orderID
+    );
+
+    /**
+     * 支付宝缴纳物业费订单
+     *
+     * @param orderID
+     * @return
+     */
+    @GET("PropertyCosts/PayPropertyCostsOrderByWeixin.ashx")
+    Call<WXPayVo> payPropertyCostsOrderByWeixin(
+            @Query("orderID") String orderID
+    );
+
+    /**
+     * 用户支付物业费订单列表
+     *
+     * @param userID
+     * @return
+     */
+    @GET("PropertyCosts/GetUserApartmentPropertyOrders.ashx")
+    Call<UserApartmentPropertyOrdersResp<List<UserApartmentPropertyOrdersVo>>> getUserApartmentPropertyOrders(
+            @Query("userID") String userID
     );
 }

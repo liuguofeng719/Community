@@ -19,6 +19,7 @@ public class OrderInfoResp extends BaseInfoVo {
     }
 
     public static class OrderInfo {
+
         @SerializedName("OrderID")
         private String orderId;//订单ID
         @SerializedName("OrderNumber")

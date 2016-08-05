@@ -28,7 +28,7 @@ public class StorageUtil {
      */
     public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().toString();
 
-    public static final String DILI_DIR = EXTERNAL_STORAGE + "/ticket/mobsite";
+    public static final String DILI_DIR = EXTERNAL_STORAGE + "/community/mobsite";
 
     /**
      * 缓存图片文件夹.

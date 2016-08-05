@@ -58,7 +58,7 @@
             android:layout_marginTop="@dimen/common_padding"
             android:background="@color/white"
             android:paddingLeft="@dimen/common_padding"
-            android:paddingRight="@dimen/common_padding">
+           >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,6 +74,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="right"
                 android:background="@color/white"
+                android:paddingRight="@dimen/common_padding"
                 android:gravity="center|right"
                 android:text="15882035337"
                 android:textColor="@color/common_text_color_666666"

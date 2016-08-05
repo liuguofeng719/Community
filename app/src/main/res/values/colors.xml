@@ -184,6 +184,7 @@
     <color name="common_text_color_333333">#333333</color>
     <color name="common_text_color_666666">#666666</color>
     <color name="common_text_color_999999">#999999</color>
+    <color name="common_text_color_aaaaaa">#aaaaaa</color>
 
     <color name="viewfinder_mask">#B2000000</color>
     <dimen name="fab_margin">16dp</dimen>

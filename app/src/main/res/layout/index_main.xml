@@ -11,7 +11,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +49,6 @@
                     android:id="@+id/slideShowView"
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
-                    android:background="@drawable/no_banner"
                     android:padding="0dp" />
 
                 <LinearLayout
@@ -119,21 +117,6 @@
                         android:text="@string/intelligence"
                         android:textColor="@color/text_color"
                         android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tv_integral"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:drawablePadding="5dp"
-                        android:drawableTop="@drawable/integral"
-                        android:gravity="center"
-                        android:scaleX="0.9"
-                        android:scaleY="0.9"
-                        android:text="@string/integral"
-                        android:textColor="@color/text_color"
-                        android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/tv_vote"
                         android:layout_width="0dp"
@@ -147,6 +130,21 @@
                         android:text="@string/vote"
                         android:textColor="@color/text_color"
                         android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_integral"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="5dp"
+                        android:drawableTop="@drawable/integral"
+                        android:gravity="center"
+                        android:scaleX="0.9"
+                        android:scaleY="0.9"
+                        android:text="@string/integral"
+                        android:textColor="@color/text_color"
+                        android:visibility="gone"
+                        android:textSize="14sp" />
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -161,16 +159,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/common_padding"
                     android:padding="6dp"
                     android:text="推荐商品"
                     android:textColor="@color/text_color"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tv_query_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:background="@drawable/corner_bg_white"
+                    android:layout_marginRight="@dimen/common_padding"
                     android:padding="6dp"
                     android:text="查看全部"
                     android:textColor="@color/text_color"
@@ -182,7 +183,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@color/transparent"
-                />
+            />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

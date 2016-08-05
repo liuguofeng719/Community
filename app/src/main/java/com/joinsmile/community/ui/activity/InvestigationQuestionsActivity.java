@@ -1,5 +1,6 @@
 package com.joinsmile.community.ui.activity;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,10 +20,14 @@ import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnswerVo;
+import com.joinsmile.community.bean.BaseInfoVo;
+import com.joinsmile.community.bean.InvestigationAnswerVo;
 import com.joinsmile.community.bean.InvestigationQuestionListResp;
 import com.joinsmile.community.bean.InvestigationQuestionVo;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.ui.base.BaseCallBack;
+import com.joinsmile.community.utils.AppPreferences;
+import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.utils.TLog;
 
@@ -36,6 +41,7 @@ import java.util.Set;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -55,6 +61,8 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     LinearLayout lyBottom;
 
     private List<InvestigationQuestionVo> questionAswerList;
+    private String investigationID;
+    private Dialog dialog;
 
     @OnClick(R.id.btn_back)
     public void btnBack() {
@@ -81,7 +89,8 @@ public class InvestigationQuestionsActivity extends BaseActivity {
     @Override
     protected void initViewsAndEvents() {
         tvHeaderTitle.setText(getString(R.string.investigation_app_msg));
-        getInvestigationQuestions(extras.getString("investigationID"));
+        investigationID = extras.getString("investigationID");
+        getInvestigationQuestions(investigationID);
     }
 
     //以做的题答案
@@ -386,9 +395,55 @@ public class InvestigationQuestionsActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog != null) {
+            CommonUtils.dismiss(dialog);
+        }
+    }
+
     //提交调查信息
     @OnClick(R.id.tv_done)
-    public void tvDone(){
+    public void tvDone() {
 
+        dialog = CommonUtils.showDialog(this);
+        dialog.show();
+
+        InvestigationAnswerVo answerVo = new InvestigationAnswerVo();
+        answerVo.setInvestigationID(investigationID);
+        answerVo.setUserID(AppPreferences.getString("userId"));
+
+        List<InvestigationAnswerVo.InvestigationAnswer> listAnswer = new ArrayList<>();
+        Set<Map.Entry<String, AnswerVo>> entrySet = answerVoMap.entrySet();
+        for (Map.Entry<String, AnswerVo> answerVoEntry : entrySet) {
+            InvestigationAnswerVo.InvestigationAnswer answer = new InvestigationAnswerVo.InvestigationAnswer();
+            String questionID = answerVoEntry.getKey();
+            AnswerVo value = answerVoEntry.getValue();
+            answer.setQuestionID(questionID);
+            answer.setAnswerID(value.getAnswer());
+            if (value.getAnswerType() == AnswerVo.AnswerType.OTHER_TYPE) {
+                answer.setAnswerContent(value.getAnswer());
+            }
+            listAnswer.add(answer);
+        }
+
+        answerVo.setInvestigationAnswer(listAnswer);
+        Call<BaseInfoVo> infoVoCall = getApisNew().uploadUserAnswer(answerVo).clone();
+        infoVoCall.enqueue(new Callback<BaseInfoVo>() {
+            @Override
+            public void onResponse(Call<BaseInfoVo> call, Response<BaseInfoVo> response) {
+                CommonUtils.dismiss(dialog);
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
+                    CommonUtils.make(InvestigationQuestionsActivity.this, getString(R.string.investigation_done));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseInfoVo> call, Throwable t) {
+                CommonUtils.dismiss(dialog);
+            }
+        });
     }
 }
