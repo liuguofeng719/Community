@@ -5,6 +5,9 @@ import com.joinsmile.community.utils.MD5Util;
 import org.junit.Test;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by liuguofeng719 on 2016/7/6.
@@ -43,6 +46,16 @@ public class Md5 {
                 System.out.println("false2");
                 return;
             }
+        }
+
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        try {
+            Date parse = simpleDateFormat.parse("2016-08-05 00:16:00");
+            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy年MM月dd hh:mm");
+            System.out.println(simpleDateFormat1.format(parse));
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 

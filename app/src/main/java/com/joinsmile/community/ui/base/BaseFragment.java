@@ -1,6 +1,9 @@
 package com.joinsmile.community.ui.base;
 
+import android.text.TextUtils;
+
 import com.joinsmile.community.api.ApisNew;
+import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.RetrofitUtils;
 import com.joinsmile.community.view.base.BaseView;
 
@@ -46,5 +49,13 @@ public abstract class BaseFragment extends BaseLazyFragment implements BaseView 
     @Override
     public void hideLoading() {
         toggleShowLoading(false, null);
+    }
+
+    //检查登录
+    public boolean checkLogin() {
+        if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+            return true;
+        }
+        return false;
     }
 }

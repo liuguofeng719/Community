@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fl_village"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_delivery_address"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:layout_marginTop="@dimen/common_padding"
-        >
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/white">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:drawableLeft="@drawable/home"
+            android:drawableLeft="@drawable/green_location"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/common_padding"
-            android:paddingRight="@dimen/common_padding"
             android:textSize="16sp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="60dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_area_name"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="成都市会所花园"
-                android:textSize="16sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_link_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_street"
+                android:id="@+id/tv_address_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="成都市会所花园"
                 android:textColor="@color/common_text_color_999999"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -58,5 +67,11 @@
             android:focusable="false"
             android:paddingRight="@dimen/common_padding"
             android:visibility="invisible" />
-    </FrameLayout>
-</FrameLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/common_padding"
+            android:src="@drawable/normal_arrow"
+        />
+    </LinearLayout>
+</LinearLayout>

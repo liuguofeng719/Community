@@ -21,6 +21,8 @@ public class RepairAndComplaintsVo implements Serializable {
     private String apartmentNumber; //门牌号
     @SerializedName("LinkmanPhoneNumber")
     private String linkmanPhoneNumber; //联系人电话
+    @SerializedName("UploadDate")
+    private String uploadDate; //上报时间
     @SerializedName("Picture1")
     private String picture1;
     @SerializedName("Picture2")
@@ -31,6 +33,14 @@ public class RepairAndComplaintsVo implements Serializable {
     private String picture4;
     @SerializedName("Picture5")
     private String picture5;
+
+    public String getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
+    }
 
     public String getTitle() {
         return title;

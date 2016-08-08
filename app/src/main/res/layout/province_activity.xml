@@ -14,30 +14,6 @@
         android:layout_below="@+id/top_header"
         android:background="@color/white">
 
-        <LinearLayout
-            android:id="@+id/top_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_location_city"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/bg_line_color"
-                android:padding="10dp"
-                android:text="A"
-                android:textColor="@color/common_color_61ca8b"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/tv_location_city_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textSize="20sp" />
-        </LinearLayout>
-
         <com.joinsmile.community.widgets.PinnedHeaderListView
             android:id="@+id/lv_city"
             android:layout_width="match_parent"

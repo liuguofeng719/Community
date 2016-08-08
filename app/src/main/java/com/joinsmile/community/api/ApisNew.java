@@ -29,6 +29,10 @@ import com.joinsmile.community.bean.ProductListResp;
 import com.joinsmile.community.bean.ProductOrderVo;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
+import com.joinsmile.community.bean.ProvinceListResp;
+import com.joinsmile.community.bean.ProvinceVo;
+import com.joinsmile.community.bean.ReceiveProductAddressResp;
+import com.joinsmile.community.bean.ReceiveProductAddressVo;
 import com.joinsmile.community.bean.ReceiverAddressVo;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
@@ -49,7 +53,6 @@ import java.util.Map;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -84,6 +87,19 @@ public interface ApisNew {
      */
     @GET("Basic/GetCities.ashx")
     Call<CityListResp<List<CityVo>>> getCities();
+
+    /**
+     * 获取所有的省份
+     */
+    @GET("Basic/GetAllProvinces.ashx")
+    Call<ProvinceListResp<List<ProvinceVo>>> getAllProvinces();
+
+    /**
+     * 获取省份下所有城市
+     * @param provinceID
+     */
+    @GET("Basic/GetAdministrativeCities.ashx")
+    Call<CityListResp<List<CityVo>>> getAdministrativeCities(@Query("provinceID") String provinceID);
 
     /**
      * 通过gps 获取城市
@@ -277,9 +293,10 @@ public interface ApisNew {
      * @return
      */
     @GET("RepairAndComplaints/GetRepairAndComplaints.ashx")
-    Call<ResidentialListResp<List<RepairAndComplaintsVo>>> getRepairAndComplaints(
+    Call<RepairAndComplaintsResp<List<RepairAndComplaintsVo>>> getRepairAndComplaints(
             @Query("userID") String userID,
-            @Query("isRepair") int isRepair
+            @Query("isRepair") int isRepair,
+            @Query("isFinished") int isFinished
     );
 
     /**
@@ -441,16 +458,25 @@ public interface ApisNew {
     Call<ProductListResp<List<ProductOrderVo>>> getUserOrders(@Query("userID") String userID);
 
     /**
-     * 获取收货地址
+     * 添加收货地址
      *
      * @return
      */
-    @FormUrlEncoded
     @POST("Users/AddUserReceiveProductAddress.ashx")
     Call<BaseInfoVo> addUserReceiveProductAddress(
             @Body ReceiverAddressVo receiverAddressVo
     );
 
+    /**
+     * 获取收货地址
+     * ReceiveProductAddressList
+     * @param userID
+     * @return
+     */
+    @GET("Users/GetUserReceiveProductAddress.ashx")
+    Call<ReceiveProductAddressResp<List<ReceiveProductAddressVo>>> getUserReceiveProductAddress(
+            @Query("userID") String userID
+    );
     /**
      * 调查主题列表
      *

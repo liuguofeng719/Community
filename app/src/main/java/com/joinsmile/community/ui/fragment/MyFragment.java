@@ -1,12 +1,14 @@
 package com.joinsmile.community.ui.fragment;
 
-import android.text.TextUtils;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.ui.activity.LoginActivity;
+import com.joinsmile.community.ui.activity.MyComplaintActivity;
+import com.joinsmile.community.ui.activity.MyPropertyPaymentActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
 import com.joinsmile.community.ui.base.BaseFragment;
@@ -26,6 +28,8 @@ public class MyFragment extends BaseFragment {
     TextView tv_login_title;
     @InjectView(R.id.tv_not_login_title)
     TextView tv_not_login_title;
+    @InjectView(R.id.tv_complaint_suggest)
+    TextView tv_complaint_suggest;
 
     //我的小区
     @OnClick(R.id.tv_my_community)
@@ -54,10 +58,42 @@ public class MyFragment extends BaseFragment {
 
     }
 
+    //我的报修
+    @OnClick(R.id.tv_repairs)
+    public void tvRepairs() {
+        if (!checkLogin()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("title","我的报修");
+            bundle.putInt("isRepair",1);
+            bundle.putInt("isFinished",1);
+            readyGo(MyComplaintActivity.class,bundle);
+        } else {
+            readyGo(LoginActivity.class);
+        }
+    }
+
+    //我的投诉
+    @OnClick(R.id.tv_complaint_suggest)
+    public void tvComplaintSuggest() {
+        if (!checkLogin()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("title","我的投诉");
+            bundle.putInt("isRepair",0);
+            bundle.putInt("isFinished",1);
+            readyGo(MyComplaintActivity.class,bundle);
+        } else {
+            readyGo(LoginActivity.class);
+        }
+    }
+
     //我的缴费
     @OnClick(R.id.tv_my_payment)
     public void tvMyPayment() {
-
+        if (!checkLogin()) {
+            readyGo(MyPropertyPaymentActivity.class);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     //我的收藏
@@ -86,7 +122,7 @@ public class MyFragment extends BaseFragment {
 
     //检查用户是否登录
     private boolean isLogin() {
-        if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+        if (checkLogin()) {
             tv_login_title.setVisibility(View.GONE);
             tv_not_login_title.setVisibility(View.VISIBLE);
             return false;

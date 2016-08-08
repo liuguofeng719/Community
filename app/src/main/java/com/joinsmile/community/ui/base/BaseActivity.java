@@ -1,10 +1,12 @@
 package com.joinsmile.community.ui.base;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.joinsmile.community.CommunityApplication;
 import com.joinsmile.community.api.ApisNew;
 import com.joinsmile.community.netstatus.NetUtils;
+import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.RetrofitUtils;
 import com.joinsmile.community.view.base.BaseView;
 
@@ -95,5 +97,13 @@ public abstract class BaseActivity extends BaseFragmentActivity implements BaseV
     @Override
     protected boolean isFullScreen() {
         return false;
+    }
+
+    //检查登录
+    public boolean checkLogin() {
+        if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+            return false;
+        }
+        return true;
     }
 }

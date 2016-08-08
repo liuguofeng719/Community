@@ -109,7 +109,7 @@ public class ProductDetailtActivity extends BaseActivity {
     //去订单确认页
     @OnClick(R.id.tv_buy)
     public void tvBuy() {
-
+        readyGo(OrderConfirmActivity.class);
     }
 
     @OnClick(R.id.iv_back)
@@ -138,7 +138,6 @@ public class ProductDetailtActivity extends BaseActivity {
 
             @Override
             public ViewHolderBase<String> createViewHolder(int position) {
-
                 final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
                 builder.bitmapConfig(Bitmap.Config.RGB_565);
                 builder.cacheInMemory(true);

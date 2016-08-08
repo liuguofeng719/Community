@@ -101,6 +101,10 @@
     <style name="CustomCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkbox_style</item>
     </style>
+    <!-- address default checkbox -->
+    <style name="AddressCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/address_checkbox_style</item>
+    </style>
 
     <style name="CircularProgressBar" parent="CPB">
         <item name="cpb_color">@color/cpb_default_color</item>

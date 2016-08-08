@@ -62,7 +62,7 @@ public class LoginActivity extends BaseActivity {
     //登录
     @OnClick(R.id.tv_login_in)
     public void tvLoginIn() {
-        mDialog = CommonUtils.showDialog(this, "正在登登录...");
+        mDialog = CommonUtils.showDialog(this, "正在登录...");
         mDialog.show();
         if (NetUtils.isNetworkAvailable(LoginActivity.this)) {
             if (validate()) {

@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +85,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         manageService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkLogin()) {
+                if (!checkLogin()) {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", getString(R.string.online_repairs));
                     bundle.putInt("isRepair", 1);
@@ -102,7 +101,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         complaintSuggest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkLogin()) {
+                if (!checkLogin()) {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", getString(R.string.online_advice));
                     bundle.putInt("isRepair", 0);
@@ -118,7 +117,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         tenementPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkLogin()) {
+                if (!checkLogin()) {
                     Bundle bundle = new Bundle();
                     bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
                     bundle.putString("location", tvLocationContent.getTag().toString().split(",")[1]);
@@ -142,18 +141,10 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         readyGo(InvestigationActivity.class, bundle);
     }
 
-    //检查登录
-    public boolean checkLogin() {
-        if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
-            return false;
-        }
-        return true;
-    }
-
     //选择小区
     @OnClick(R.id.tv_location_content)
     public void tvLocationContent() {
-        if (checkLogin()) {
+        if (!checkLogin()) {
             Bundle bundle = new Bundle();
             bundle.putBoolean("home", true);
             readyGoForResult(MyVillageActivity.class, 1, bundle);
@@ -325,7 +316,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
      * 我的小区
      */
     private void getUserApartments() {
-        if (!TextUtils.isEmpty(AppPreferences.getString("userId"))) {
+        if (!checkLogin()) {
             showDialog = CommonUtils.showDialog(getActivity(), getString(R.string.common_loading_message));
             showDialog.show();
             Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall = getApisNew().getUserApartments(AppPreferences.getString("userId")).clone();

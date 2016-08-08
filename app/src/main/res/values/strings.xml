@@ -2,7 +2,7 @@
 <resources>
     <string name="add_tag">Add Tag</string>
     <string name="app_name">优加社区</string>
-    <string name="common_loading_message">数据正在加载...</string>
+    <string name="common_loading_message">正在加载...</string>
     <string name="common_load_message">正在下载最新版本</string>
     <string name="common_empty_msg">Oops, failed to resolve data\nPlease hit the screen and try again~</string>
     <string name="common_error_msg">Oops, something wrong!\nPlease hit the screen and try again~</string>

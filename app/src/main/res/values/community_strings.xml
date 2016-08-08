@@ -51,6 +51,7 @@
     <string name="login_nick_name_not_empty">昵称不能为空</string>
 
     <string name="select_city">选择城市</string>
+    <string name="select_province">选择省级</string>
     <string name="location_city">定位城市</string>
     <string name="select_village">选择小区</string>
     <string name="select_house">选择单元</string>
@@ -84,5 +85,8 @@
     <string name="sales_price_msg">价格</string>
     <string name="sales_new_putaway_msg">最新上架</string>
     <string name="recommend_product_msg">推荐商品</string>
-
+    <string name="order_confirm">确认订单</string>
+    <string name="delivery_address">收货地址</string>
+    <string name="add_delivery_address">添加新地址</string>
+    <string name="edit_delivery_address">编辑地址</string>
 </resources>

@@ -133,6 +133,7 @@
                     android:background="@color/bg_line_color" />
 
                 <TextView
+                    android:id="@+id/tv_repairs"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="@dimen/common_padding"
@@ -149,6 +150,7 @@
                     android:background="@color/bg_line_color" />
 
                 <TextView
+                    android:id="@+id/tv_complaint_suggest"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="@dimen/common_padding"
