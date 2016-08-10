@@ -35,6 +35,7 @@ import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.DensityUtils;
+import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.CircleImageView;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -120,7 +121,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 if (!checkLogin()) {
                     Bundle bundle = new Bundle();
                     bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
-                    bundle.putString("location", tvLocationContent.getTag().toString().split(",")[1]);
+                    bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
                     readyGo(PropertyMngPaymentActivity.class, bundle);
                 } else {
                     readyGo(LoginActivity.class);
@@ -134,7 +135,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     public void tvVote() {
         Bundle bundle = new Bundle();
         if (tvLocationContent.getTag() != null) {
-            bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[0]);
+            bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[1]);
         } else {
             bundle.putString("buildingID", "");
         }
@@ -167,6 +168,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     @Override
     protected void onFirstUserVisible() {
+        TLog.i(TAG_LOG, "onFirstUserVisible");
         getUserApartments();
         getPics();
         getOnMainPageProducts();
@@ -198,12 +200,12 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     @Override
     protected void onUserVisible() {
-
+        TLog.i(TAG_LOG, "onUserVisible");
     }
 
     @Override
     protected void onUserInvisible() {
-
+        TLog.i(TAG_LOG, "onUserInvisible");
     }
 
     @Override
@@ -333,14 +335,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             if (apartmentNumberList.get(i).isDefault() == 1) {
                                 numbersVo = apartmentNumberList.get(i);
                                 String building = numbersVo.getBuilding();
-                                String numberId = numbersVo.getBuildingID();
+                                String numberId = numbersVo.getNumberID();
                                 tvLocationContent.setText(building);
-                                tvLocationContent.setTag(numberId + "," + building + numbersVo.getUnit() + numbersVo.getApartment());
+                                tvLocationContent.setTag(numberId + "," + numbersVo.getBuildingID() + "," + building + numbersVo.getUnit() + numbersVo.getApartment());
                                 break;
                             }
                         }
                         if (numbersVo != null) {
-                            getNewAnnouncement(numbersVo.getNumberID());
+                            getNewAnnouncement(numbersVo.getBuildingID());
                         }
                     }
                 }

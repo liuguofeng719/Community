@@ -105,11 +105,14 @@ public class MyComplaintActivity extends BaseActivity {
                     public void showData(int position, RepairAndComplaintsVo itemData) {
                         tv_title.setText(itemData.getTitle());
                         tv_area_name.setText(itemData.getBuildingName());
-                        tv_detail.setTag(itemData);
+                        tv_detail.setTag(itemData.getComplaintID());
+
                         tv_detail.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Bundle bundle = new Bundle();
+                                bundle.putString("title", extras.getString("title"));
+                                bundle.putString("complaintID", v.getTag().toString());
                                 readyGo(MyComplaintDetailActivity.class, bundle);
                             }
                         });

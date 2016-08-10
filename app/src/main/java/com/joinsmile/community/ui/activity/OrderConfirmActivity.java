@@ -1,5 +1,6 @@
 package com.joinsmile.community.ui.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,12 +36,21 @@ public class OrderConfirmActivity extends BaseActivity {
     //添加收货地址
     @OnClick(R.id.tv_delivery_address)
     public void tvDeliveryAddress() {
-        readyGoForResult(DeliveryAddressActivity.class, 123);
+        readyGoForResult(DeliveryAddressActivity.class, 12);
     }
 
     @OnClick(R.id.btn_back)
     public void back() {
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 15) {
+            tvDeliveryAddress.setTag(data.getStringExtra("addressId"));
+            tvDeliveryAddress.setText(data.getStringExtra("addressName"));
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     //提交订单

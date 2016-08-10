@@ -18,8 +18,28 @@ public class ReceiveProductAddressVo implements Serializable {
     private String phoneNumber;// 电话
     @SerializedName("Address")
     private String address;//  详细收货地址
+    @SerializedName("CityID")
+    private String cityId;//城市编码
+    @SerializedName("CityName")
+    private String cityName;//城市名字
     @SerializedName("IsDefault")
     private int isDefault;//  是否为默认地址
+
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
 
     public String getAddressID() {
         return addressID;

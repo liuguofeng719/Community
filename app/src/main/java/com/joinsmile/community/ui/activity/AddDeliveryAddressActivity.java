@@ -136,6 +136,8 @@ public class AddDeliveryAddressActivity extends BaseActivity {
             editDeliveryName.setText(receiveAddress.getLinkman());
             editPhone.setText(receiveAddress.getPhoneNumber());
             editDetailsAddress.setText(receiveAddress.getAddress());
+            editArea.setText(receiveAddress.getCityName());
+            editArea.setTag(receiveAddress.getCityId());
             if (receiveAddress.getIsDefault() == 1) {
                 checkboxDefault.setChecked(true);
             } else {

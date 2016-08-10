@@ -36,6 +36,8 @@ import com.joinsmile.community.bean.ReceiveProductAddressVo;
 import com.joinsmile.community.bean.ReceiverAddressVo;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
+import com.joinsmile.community.bean.RepairAndComplaintDetailVo;
+import com.joinsmile.community.bean.RepairAndComplaintResp;
 import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
 import com.joinsmile.community.bean.ResidentialBuildingVo;
@@ -297,6 +299,16 @@ public interface ApisNew {
             @Query("userID") String userID,
             @Query("isRepair") int isRepair,
             @Query("isFinished") int isFinished
+    );
+
+    /**
+     * 获取报修和投诉的详情
+     * @param complaintID
+     * @return
+     */
+    @GET("RepairAndComplaints/GetRepairAndComplaintsDetails.ashx")
+    Call<RepairAndComplaintResp<RepairAndComplaintDetailVo>> getRepairAndComplaintsDetails(
+            @Query("complaintID") String complaintID
     );
 
     /**

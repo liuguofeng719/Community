@@ -13,6 +13,7 @@ import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
 import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
+import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.CircleImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -63,10 +64,10 @@ public class MyFragment extends BaseFragment {
     public void tvRepairs() {
         if (!checkLogin()) {
             Bundle bundle = new Bundle();
-            bundle.putString("title","我的报修");
-            bundle.putInt("isRepair",1);
-            bundle.putInt("isFinished",1);
-            readyGo(MyComplaintActivity.class,bundle);
+            bundle.putString("title", "我的报修");
+            bundle.putInt("isRepair", 1);
+            bundle.putInt("isFinished", 1);
+            readyGo(MyComplaintActivity.class, bundle);
         } else {
             readyGo(LoginActivity.class);
         }
@@ -77,10 +78,10 @@ public class MyFragment extends BaseFragment {
     public void tvComplaintSuggest() {
         if (!checkLogin()) {
             Bundle bundle = new Bundle();
-            bundle.putString("title","我的投诉");
-            bundle.putInt("isRepair",0);
-            bundle.putInt("isFinished",1);
-            readyGo(MyComplaintActivity.class,bundle);
+            bundle.putString("title", "我的投诉");
+            bundle.putInt("isRepair", 0);
+            bundle.putInt("isFinished", 1);
+            readyGo(MyComplaintActivity.class, bundle);
         } else {
             readyGo(LoginActivity.class);
         }
@@ -143,15 +144,17 @@ public class MyFragment extends BaseFragment {
 
     @Override
     protected void onFirstUserVisible() {
-
+        TLog.i(TAG_LOG, "onFirstUserVisible");
     }
 
     @Override
     protected void onUserVisible() {
+        TLog.i(TAG_LOG, "onUserVisible");
     }
 
     @Override
     protected void onUserInvisible() {
+        TLog.i(TAG_LOG, "onUserInvisible");
     }
 
     @Override

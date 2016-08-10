@@ -22,6 +22,7 @@ import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseFragment;
+import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.MyRadioGroup;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -62,18 +63,19 @@ public class ShoppingMallFragment extends BaseFragment {
 
     @Override
     protected void onFirstUserVisible() {
+        TLog.i(TAG_LOG, "onFirstUserVisible");
         getPics();
         getByTypeProduct(3, 0, 1);
     }
 
     @Override
     protected void onUserVisible() {
-
+        TLog.i(TAG_LOG, "onUserVisible");
     }
 
     @Override
     protected void onUserInvisible() {
-
+        TLog.i(TAG_LOG, "onUserInvisible");
     }
 
     @Override

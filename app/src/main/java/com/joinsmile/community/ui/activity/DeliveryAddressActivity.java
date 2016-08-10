@@ -1,9 +1,11 @@
 package com.joinsmile.community.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -76,6 +78,7 @@ public class DeliveryAddressActivity extends BaseActivity {
                     TextView tv_link_phone;
                     TextView tv_address_detail;
                     LinearLayout fl_delivery_address;
+                    ImageView iv_edit;
                     CheckBox checkbox;
 
                     @Override
@@ -85,6 +88,7 @@ public class DeliveryAddressActivity extends BaseActivity {
                         tv_link_phone = ButterKnife.findById(view, R.id.tv_link_phone);
                         tv_address_detail = ButterKnife.findById(view, R.id.tv_address_detail);
                         fl_delivery_address = ButterKnife.findById(view, R.id.fl_delivery_address);
+                        iv_edit = ButterKnife.findById(view, R.id.iv_edit);
                         checkbox = ButterKnife.findById(view, R.id.checkbox);
                         return view;
                     }
@@ -98,12 +102,25 @@ public class DeliveryAddressActivity extends BaseActivity {
                             checkbox.setChecked(true);
                             checkbox.setVisibility(View.VISIBLE);
                         }
-                        fl_delivery_address.setOnClickListener(new View.OnClickListener() {
+                        iv_edit.setTag(itemData);
+                        iv_edit.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Bundle bundle = new Bundle();
-                                bundle.putSerializable("receiveAddress", itemData);
+                                ReceiveProductAddressVo tag = (ReceiveProductAddressVo) v.getTag();
+                                bundle.putSerializable("receiveAddress", tag);
                                 readyGo(AddDeliveryAddressActivity.class, bundle);
+                            }
+                        });
+                        fl_delivery_address.setTag(itemData.getAddressID());
+                        fl_delivery_address.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent();
+                                intent.putExtra("addressId", v.getTag().toString());
+                                intent.putExtra("addressName", itemData.getAddress());
+                                setResult(15, intent);
+                                finish();
                             }
                         });
                     }

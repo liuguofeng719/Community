@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class RepairAndComplaintsVo implements Serializable {
 
+    @SerializedName("ComplaintID")
+    private String complaintID;//
     @SerializedName("Title")
     private String title; //标题
     @SerializedName("Description")
@@ -33,6 +35,14 @@ public class RepairAndComplaintsVo implements Serializable {
     private String picture4;
     @SerializedName("Picture5")
     private String picture5;
+
+    public String getComplaintID() {
+        return complaintID;
+    }
+
+    public void setComplaintID(String complaintID) {
+        this.complaintID = complaintID;
+    }
 
     public String getUploadDate() {
         return uploadDate;

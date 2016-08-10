@@ -18,7 +18,8 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-//支付包签名 93003de0777f17dc7f1b16845fef1638
+//支付包签名 9300 3de0 777f 17dc 7f1b 16845 fef1638
+
 public class WXPayEntryActivity extends BaseActivity implements IWXAPIEventHandler {
 
     private static final String TAG = "MicroMsg.SDKSample.WXPayEntryActivity";
