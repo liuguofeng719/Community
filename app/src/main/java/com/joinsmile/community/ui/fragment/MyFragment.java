@@ -8,6 +8,7 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyComplaintActivity;
+import com.joinsmile.community.ui.activity.MyOrderActivity;
 import com.joinsmile.community.ui.activity.MyPropertyPaymentActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
@@ -50,19 +51,23 @@ public class MyFragment extends BaseFragment {
     //我的投票
     @OnClick(R.id.tv_my_vote)
     public void tvMyVote() {
-
+        
     }
 
     //我的订单
     @OnClick(R.id.tv_my_order)
     public void tvMyOrder() {
-
+        if (checkLogin()) {
+            readyGo(MyOrderActivity.class);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     //我的报修
     @OnClick(R.id.tv_repairs)
     public void tvRepairs() {
-        if (!checkLogin()) {
+        if (checkLogin()) {
             Bundle bundle = new Bundle();
             bundle.putString("title", "我的报修");
             bundle.putInt("isRepair", 1);
@@ -76,7 +81,7 @@ public class MyFragment extends BaseFragment {
     //我的投诉
     @OnClick(R.id.tv_complaint_suggest)
     public void tvComplaintSuggest() {
-        if (!checkLogin()) {
+        if (checkLogin()) {
             Bundle bundle = new Bundle();
             bundle.putString("title", "我的投诉");
             bundle.putInt("isRepair", 0);
@@ -90,7 +95,7 @@ public class MyFragment extends BaseFragment {
     //我的缴费
     @OnClick(R.id.tv_my_payment)
     public void tvMyPayment() {
-        if (!checkLogin()) {
+        if (checkLogin()) {
             readyGo(MyPropertyPaymentActivity.class);
         } else {
             readyGo(LoginActivity.class);
@@ -124,10 +129,6 @@ public class MyFragment extends BaseFragment {
     //检查用户是否登录
     private boolean isLogin() {
         if (checkLogin()) {
-            tv_login_title.setVisibility(View.GONE);
-            tv_not_login_title.setVisibility(View.VISIBLE);
-            return false;
-        } else {
             AuthticationVo authticationVo = AppPreferences.getObject(AuthticationVo.class);
             tv_login_title.setVisibility(View.VISIBLE);
             tv_login_title.setText(authticationVo.getPhoneNumber());
@@ -137,8 +138,11 @@ public class MyFragment extends BaseFragment {
             builder.showImageOnLoading(R.mipmap.logo);
             ImageLoader.getInstance().displayImage(authticationVo.getHeadPicture(), iv_face, builder.build());
             tv_not_login_title.setVisibility(View.GONE);
-
             return true;
+        } else {
+            tv_login_title.setVisibility(View.GONE);
+            tv_not_login_title.setVisibility(View.VISIBLE);
+            return false;
         }
     }
 

@@ -11,18 +11,24 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.joinsmile.community.R;
+import com.joinsmile.community.bean.BaseInfoVo;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
+import com.joinsmile.community.bean.ShoppingCartVo;
 import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.AppPreferences;
+import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.widgets.ListViewForScrollView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,6 +64,7 @@ public class ProductDetailtActivity extends BaseActivity {
 
     private Bundle extras;
     private ListViewDataAdapter<String> listViewDataAdapter;
+    private ProductVo productVo;
 
     //加入收藏
     @OnClick(R.id.tv_collect)
@@ -69,6 +76,7 @@ public class ProductDetailtActivity extends BaseActivity {
     @OnClick(R.id.iv_reduce)
     public void ivReduce() {
         if (TextUtils.isEmpty(editProductNumber.getText()) || editProductNumber.getText().toString().equals("0")) {
+            editProductNumber.setText("1");
             return;
         }
         int count = Integer.parseInt(editProductNumber.getText().toString());
@@ -97,19 +105,66 @@ public class ProductDetailtActivity extends BaseActivity {
     //去购物车页面
     @OnClick(R.id.iv_shop_car)
     public void ivShopCar() {
-
+        if (checkLogin()) {
+            readyGo(MyShopCarActivity.class);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     //加入购物车
     @OnClick(R.id.tv_join_car)
     public void tvJoinCar() {
+        if (!checkLogin()) {
+            readyGo(LoginActivity.class);
+        }
+        if (TextUtils.isEmpty(editProductNumber.getText())) {
+            CommonUtils.make(this, "商品数量不能为空!");
+            return;
+        }
+        if ("0".equals(editProductNumber.getText())) {
+            CommonUtils.make(this, "商品数量不能为0!");
+            return;
+        }
 
+        Call<BaseInfoVo> infoVoCall = getApisNew().AddProductToShoppingCart(AppPreferences.getString("userId"),
+                tvProductTitle.getTag().toString(),
+                Integer.parseInt(editProductNumber.getText().toString())).clone();
+        infoVoCall.enqueue(new Callback<BaseInfoVo>() {
+            @Override
+            public void onResponse(Call<BaseInfoVo> call, Response<BaseInfoVo> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
+                    CommonUtils.make(ProductDetailtActivity.this, "添加购物车成功");
+                } else {
+                    CommonUtils.make(ProductDetailtActivity.this, response.body().getErrorMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseInfoVo> call, Throwable t) {
+
+            }
+        });
     }
 
     //去订单确认页
     @OnClick(R.id.tv_buy)
     public void tvBuy() {
-        readyGo(OrderConfirmActivity.class);
+        if (checkLogin()) {
+            List<ShoppingCartVo> list = new ArrayList<>();
+            ShoppingCartVo shoppingCartVo = new ShoppingCartVo();
+            shoppingCartVo.setAmount(editProductNumber.getText().toString());
+            shoppingCartVo.setProductName(productVo.getProductName());
+            shoppingCartVo.setProductID(productVo.getProductID());
+            shoppingCartVo.setProductPicture(productVo.getDefaultPicture());
+            shoppingCartVo.setProductPrice(productVo.getUnitPrice());
+            list.add(shoppingCartVo);
+            Bundle bundle = new Bundle();
+            bundle.putString("carts", new Gson().toJson(list));
+            readyGo(OrderConfirmActivity.class,bundle);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     @OnClick(R.id.iv_back)
@@ -174,13 +229,14 @@ public class ProductDetailtActivity extends BaseActivity {
             public void onResponse(Call<ProductResp<ProductVo>> call,
                                    Response<ProductResp<ProductVo>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
-                    ProductVo productVo = response.body().getProduct();
+                    productVo = response.body().getProduct();
                     final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
                     builder.bitmapConfig(Bitmap.Config.RGB_565);
                     builder.cacheInMemory(true);
                     builder.cacheOnDisk(true);
                     builder.considerExifParams(true);
                     ImageLoader.getInstance().displayImage(productVo.getDefaultPicture(), ivProductImg, builder.build());
+                    tvProductTitle.setTag(productVo.getProductID());
                     tvProductTitle.setText(productVo.getProductName());
                     tvProductPrice.setText("￥" + productVo.getUnitPrice());
                     tvInventoryTotal.setText("" + productVo.getSalesVolume());

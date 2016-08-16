@@ -39,7 +39,7 @@
                             android:layout_height="wrap_content"
                             android:drawableLeft="@drawable/location"
                             android:drawablePadding="6dp"
-                            android:text="美好家园"
+                            android:text="优加社区"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
                     </FrameLayout>

@@ -122,6 +122,8 @@ public class UserInfoActivity extends BaseActivity {
     //退出登录
     @OnClick(R.id.tv_submit)
     public void quitLogin() {
+        AppPreferences.putString("userId", "");
+        AppPreferences.putString("phoneNumber", "");
         AppPreferences.clearAll();
         finish();
     }

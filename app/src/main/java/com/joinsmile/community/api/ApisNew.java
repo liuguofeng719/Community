@@ -26,7 +26,9 @@ import com.joinsmile.community.bean.OrderInfoResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.ProductListResp;
+import com.joinsmile.community.bean.ProductOrderListResp;
 import com.joinsmile.community.bean.ProductOrderVo;
+import com.joinsmile.community.bean.ProductOrderVoResp;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.bean.ProvinceListResp;
@@ -42,6 +44,8 @@ import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
 import com.joinsmile.community.bean.ResidentialBuildingVo;
 import com.joinsmile.community.bean.ResidentialListResp;
+import com.joinsmile.community.bean.ShoppingCartResp;
+import com.joinsmile.community.bean.ShoppingCartVo;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersResp;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersVo;
 import com.joinsmile.community.bean.UserVoResp;
@@ -98,6 +102,7 @@ public interface ApisNew {
 
     /**
      * 获取省份下所有城市
+     *
      * @param provinceID
      */
     @GET("Basic/GetAdministrativeCities.ashx")
@@ -303,6 +308,7 @@ public interface ApisNew {
 
     /**
      * 获取报修和投诉的详情
+     *
      * @param complaintID
      * @return
      */
@@ -326,7 +332,7 @@ public interface ApisNew {
      * Map<String, RequestBody> map = new HashMap<>();
      * map.put("Id", AZUtils.toRequestBody(eventId));
      * map.put("Name", AZUtils.toRequestBody(titleView.getValue()));
-     * <p>
+     * <p/>
      * if (imageUri != null) {
      * File file = new File(imageUri.getPath());
      * image/*
@@ -434,12 +440,99 @@ public interface ApisNew {
      *
      * @param userID
      * @param products
+     * @param remark
+     * @param addressID
      * @return
      */
     @GET("Orders/CreateOrder.ashx")
     Call<OrderInfoResp> createOrder(
             @Query("userID") String userID,
-            @Query("products") String products
+            @Query("products") String products,
+            @Query("remark") String remark,
+            @Query("addressID") String addressID
+    );
+
+    /**
+     * 取消订单
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/CancelOrder.ashx")
+    Call<BaseInfoVo> cancelOrder(@Query("orderID") String orderID);
+
+    /**
+     * 确认收货
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/ConfirmReceived.ashx")
+    Call<BaseInfoVo> confirmReceived(@Query("orderID") String orderID);
+
+    /**
+     * 申请退款
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/ApplyRefund.ashx")
+    Call<BaseInfoVo> applyRefund(@Query("orderID") String orderID);
+
+    /**
+     * 获取订单详情
+     * @param orderID
+     * @return
+     */
+    @GET("Orders/GetOrderDetails.ashx")
+    Call<ProductOrderVoResp<ProductOrderVo>> getOrderDetails(@Query("orderID") String orderID);
+
+    /**
+     * 添加购物车
+     *
+     * @param userID
+     * @param productID
+     * @param amount
+     * @return
+     */
+    @GET("ShoppingCart/AddProductToShoppingCart.ashx")
+    Call<BaseInfoVo> AddProductToShoppingCart(
+            @Query("userID") String userID,
+            @Query("productID") String productID,
+            @Query("amount") int amount
+    );
+
+    /**
+     * 获取购物车
+     *
+     * @param userID
+     * @return
+     */
+    @GET("ShoppingCart/GetShoppingCartProducts.ashx")
+    Call<ShoppingCartResp<List<ShoppingCartVo>>> getShoppingCartProducts(
+            @Query("userID") String userID
+    );
+
+    /**
+     * 修改购物车商品数量
+     *
+     * @param shoppingCartID
+     * @return
+     */
+    @GET("ShoppingCart/EditShoppingCartProduct.ashx")
+    Call<ShoppingCartResp<List<ShoppingCartVo>>> editShoppingCartProduct(
+            @Query("userID") String userID,
+            @Query("amount") int amount,
+            @Query("shoppingCartID") String shoppingCartID
+    );
+
+    /**
+     * 删除购物车产品
+     *
+     * @param shoppingCartID
+     * @return
+     */
+    @GET("ShoppingCart/RemoveShoppingCartProduct.ashx")
+    Call<ShoppingCartResp<List<ShoppingCartVo>>> removeShoppingCartProduct(
+            @Query("userID") String userID,
+            @Query("shoppingCartID") String shoppingCartID
     );
 
     /**
@@ -462,12 +555,16 @@ public interface ApisNew {
 
     /**
      * 用户购买商品订单列表
-     *
+     * 订单状态 (0：待支付 1：待收货 2：已完成 3：退款中 4：退款完成)
      * @param userID
+     * @param orderState
      * @return
      */
     @GET("Orders/GetUserOrders.ashx")
-    Call<ProductListResp<List<ProductOrderVo>>> getUserOrders(@Query("userID") String userID);
+    Call<ProductOrderListResp<List<ProductOrderVo>>> getUserOrders(
+            @Query("userID") String userID,
+            @Query("orderState") int orderState
+    );
 
     /**
      * 添加收货地址
@@ -482,6 +579,7 @@ public interface ApisNew {
     /**
      * 获取收货地址
      * ReceiveProductAddressList
+     *
      * @param userID
      * @return
      */
@@ -489,6 +587,7 @@ public interface ApisNew {
     Call<ReceiveProductAddressResp<List<ReceiveProductAddressVo>>> getUserReceiveProductAddress(
             @Query("userID") String userID
     );
+
     /**
      * 调查主题列表
      *

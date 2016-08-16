@@ -3,7 +3,6 @@ package com.joinsmile.community.bean;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +23,7 @@ public class ProductVo implements Serializable {
     @SerializedName("CategoryName")
     private String categoryName;//产品分类名称
     @SerializedName("UnitPrice")
-    private BigDecimal unitPrice;//销售单价
+    private String unitPrice;//销售单价
     @SerializedName("DefaultPicture")
     private String defaultPicture;//默认图片（商品在列表时展示的图片）
     @SerializedName("IsOnMainPage")
@@ -117,11 +116,11 @@ public class ProductVo implements Serializable {
         this.categoryName = categoryName;
     }
 
-    public BigDecimal getUnitPrice() {
+    public String getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
+    public void setUnitPrice(String unitPrice) {
         this.unitPrice = unitPrice;
     }
 

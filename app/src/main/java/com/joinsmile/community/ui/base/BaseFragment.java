@@ -54,8 +54,8 @@ public abstract class BaseFragment extends BaseLazyFragment implements BaseView 
     //检查登录
     public boolean checkLogin() {
         if (TextUtils.isEmpty(AppPreferences.getString("userId"))) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }

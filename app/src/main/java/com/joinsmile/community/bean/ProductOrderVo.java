@@ -14,6 +14,8 @@ public class ProductOrderVo {
     private String orderNumber;// 订单号
     @SerializedName("OrderSate")
     private String orderSate;//  订单状态 (0：待支付 1：待收货 2：已完成 3：退款中 4：退款完成)
+    @SerializedName("OrderStateDescription")
+    private String orderStateDescription;
     @SerializedName("TotalPrice")
     private String totalPrice;// 总金额
     @SerializedName("CreateDate")
@@ -26,6 +28,74 @@ public class ProductOrderVo {
     private String refundPrice;// 退款金额
     @SerializedName("BuyProductList")
     private List<BuyProductVo> buyProductList;
+    @SerializedName("LogisticsCompany")
+    private String logisticsCompany;// 物流公司
+    @SerializedName("LogisticsNumber")
+    private String logisticsNumber; //快递货运单号
+    @SerializedName("Remark")
+    private String remark; //买家留言
+    @SerializedName("BuyersPhoneNumber")
+    private String buyersPhoneNumber; //收货人电话
+    @SerializedName("BuyersName")
+    private String buyersName; //收货人姓名
+    @SerializedName("BuyersAddress")
+    private String buyersAddress; //收货人地址
+
+
+    public String getOrderStateDescription() {
+        return orderStateDescription;
+    }
+
+    public void setOrderStateDescription(String orderStateDescription) {
+        this.orderStateDescription = orderStateDescription;
+    }
+    public String getLogisticsCompany() {
+        return logisticsCompany;
+    }
+
+    public void setLogisticsCompany(String logisticsCompany) {
+        this.logisticsCompany = logisticsCompany;
+    }
+
+    public String getLogisticsNumber() {
+        return logisticsNumber;
+    }
+
+    public void setLogisticsNumber(String logisticsNumber) {
+        this.logisticsNumber = logisticsNumber;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getBuyersPhoneNumber() {
+        return buyersPhoneNumber;
+    }
+
+    public void setBuyersPhoneNumber(String buyersPhoneNumber) {
+        this.buyersPhoneNumber = buyersPhoneNumber;
+    }
+
+    public String getBuyersName() {
+        return buyersName;
+    }
+
+    public void setBuyersName(String buyersName) {
+        this.buyersName = buyersName;
+    }
+
+    public String getBuyersAddress() {
+        return buyersAddress;
+    }
+
+    public void setBuyersAddress(String buyersAddress) {
+        this.buyersAddress = buyersAddress;
+    }
 
     public String getOrderID() {
         return orderID;
@@ -115,7 +185,7 @@ public class ProductOrderVo {
         @SerializedName("Amount")
         private int amount ;//购买数量
         @SerializedName("ItemTotalPrice")
-        private int itemTotalPrice ;//购买金额
+        private String itemTotalPrice ;//购买金额
         @SerializedName("HasRefund")
         private int hasRefund ;//是否发生退款（0：未发生 1：发生）
 
@@ -175,11 +245,11 @@ public class ProductOrderVo {
             this.amount = amount;
         }
 
-        public int getItemTotalPrice() {
+        public String getItemTotalPrice() {
             return itemTotalPrice;
         }
 
-        public void setItemTotalPrice(int itemTotalPrice) {
+        public void setItemTotalPrice(String itemTotalPrice) {
             this.itemTotalPrice = itemTotalPrice;
         }
 
