@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AuthticationVo;
+import com.joinsmile.community.ui.activity.AboutActivity;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyComplaintActivity;
 import com.joinsmile.community.ui.activity.MyOrderActivity;
@@ -36,7 +37,11 @@ public class MyFragment extends BaseFragment {
     //我的小区
     @OnClick(R.id.tv_my_community)
     public void tvMyCommunity() {
-        readyGo(MyVillageActivity.class);
+        if(checkLogin()) {
+            readyGo(MyVillageActivity.class);
+        }else{
+            readyGo(LoginActivity.class);
+        }
     }
 
     @OnClick(R.id.rl_head_face)
@@ -117,7 +122,7 @@ public class MyFragment extends BaseFragment {
     //关于我们
     @OnClick(R.id.tv_about)
     public void tvabout() {
-
+        readyGo(AboutActivity.class);
     }
 
     @Override
@@ -136,6 +141,8 @@ public class MyFragment extends BaseFragment {
             builder.showImageForEmptyUri(R.mipmap.logo);
             builder.showImageOnFail(R.mipmap.logo);
             builder.showImageOnLoading(R.mipmap.logo);
+            builder.cacheInMemory(true);
+            builder.cacheOnDisk(true);
             ImageLoader.getInstance().displayImage(authticationVo.getHeadPicture(), iv_face, builder.build());
             tv_not_login_title.setVisibility(View.GONE);
             return true;

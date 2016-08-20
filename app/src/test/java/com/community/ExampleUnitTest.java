@@ -4,6 +4,7 @@ import com.joinsmile.community.bean.UserVoResp;
 
 import org.junit.Test;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -19,6 +20,9 @@ public class ExampleUnitTest {
 
     @Test
     public void addition_isCorrect() throws Exception {
+
+        String decode = URLDecoder.decode("a88ee2c4-7acc-44f0-a011-5363213135d6%252C3%257C54cf131f-d2a0-401c-a48b-216c0f0e3093%252C3", "UTF-8");
+        System.out.println(decode);
 
         System.out.println("15882035337".substring(0, 4));
         int number = 10 & 1;

@@ -29,7 +29,6 @@ import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
 import com.joinsmile.community.crop.CropFileUtils;
 import com.joinsmile.community.crop.PhotoActionHelper;
-import com.joinsmile.community.netstatus.NetUtils;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
@@ -93,6 +92,7 @@ public class OnlineRepairsActivity extends BaseActivity {
     /* 请求识别码 */
     private static final int CODE_GALLERY_REQUEST = 0xa0;
     private static final int CODE_CAMERA_REQUEST = 0xa1;
+    private Dialog showDialog;
 
     @OnClick(R.id.btn_back)
     public void btnBack() {
@@ -149,42 +149,43 @@ public class OnlineRepairsActivity extends BaseActivity {
     public void tvSubmit() {
         //validate
         if (validate()) {
-            if (NetUtils.isNetworkAvailable(this)) {
-                final Dialog dialog = CommonUtils.showDialog(this);
-                dialog.show();
-                Map<String, RequestBody> map = new HashMap<>();
-                for (Bitmap imageByte : imageBytes) {
-                    final RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), CommonUtils.Bitmap2Bytes(imageByte));
-                    map.put("image\"; filename=\"icon.png", requestBody);
-                }
-                map.put("userID", CommonUtils.toRequestBody(AppPreferences.getString("userId")));
-                map.put("apartmentNumberID", CommonUtils.toRequestBody(tvHouseNumber.getTag().toString()));
-                map.put("title", CommonUtils.toRequestBody(edit_question_title.getText().toString()));
-                map.put("description", CommonUtils.toRequestBody(edit_description.getText().toString()));
-                map.put("linkmanPhoneNumber", CommonUtils.toRequestBody(tv_phone.getText().toString()));
-                map.put("isRepair", CommonUtils.toRequestBody("" + extras.getInt("isRepair")));
-                repairAndComplaintsVoCall = getApisNew().addRepairAndComplaints(map);
-                repairAndComplaintsVoCall.enqueue(new Callback<RepairAndComplaintsResp<RepairAndComplaintsVo>>() {
-                    @Override
-                    public void onResponse(Call<RepairAndComplaintsResp<RepairAndComplaintsVo>> call,
-                                           Response<RepairAndComplaintsResp<RepairAndComplaintsVo>> response) {
-                        CommonUtils.dismiss(dialog);
-                        TLog.d(TAG_LOG, response.body().toString());
-                        if (response.isSuccessful() && response.body().isSuccessfully()) {
-                            CommonUtils.make(OnlineRepairsActivity.this, "上报成功");
-                            readyGoThenKill(IndexActivity.class);
+            showDialog.show();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Map<String, RequestBody> map = new HashMap<>();
+                    int index = 0;
+                    for (Bitmap imageByte : imageBytes) {
+                        final RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), CommonUtils.Bitmap2Bytes(imageByte));
+                        map.put("image\"; filename=\"icon" + index + ".png", requestBody);
+                        index++;
+                    }
+                    map.put("userID", CommonUtils.toRequestBody(AppPreferences.getString("userId")));
+                    map.put("apartmentNumberID", CommonUtils.toRequestBody(tvHouseNumber.getTag().toString()));
+                    map.put("title", CommonUtils.toRequestBody(edit_question_title.getText().toString()));
+                    map.put("description", CommonUtils.toRequestBody(edit_description.getText().toString()));
+                    map.put("linkmanPhoneNumber", CommonUtils.toRequestBody(tv_phone.getText().toString()));
+                    map.put("isRepair", CommonUtils.toRequestBody("" + extras.getInt("isRepair")));
+                    repairAndComplaintsVoCall = getApisNew().addRepairAndComplaints(map);
+                    repairAndComplaintsVoCall.enqueue(new Callback<RepairAndComplaintsResp<RepairAndComplaintsVo>>() {
+                        @Override
+                        public void onResponse(Call<RepairAndComplaintsResp<RepairAndComplaintsVo>> call,
+                                               Response<RepairAndComplaintsResp<RepairAndComplaintsVo>> response) {
+                            CommonUtils.dismiss(showDialog);
+                            TLog.d(TAG_LOG, response.body().toString());
+                            if (response.isSuccessful() && response.body().isSuccessfully()) {
+                                CommonUtils.make(OnlineRepairsActivity.this, "上报成功");
+                                readyGoThenKill(IndexActivity.class);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<RepairAndComplaintsResp<RepairAndComplaintsVo>> call, Throwable t) {
-                        CommonUtils.dismiss(dialog);
-                    }
-                });
-
-            } else {
-                CommonUtils.make(this, getString(R.string.no_network));
-            }
+                        @Override
+                        public void onFailure(Call<RepairAndComplaintsResp<RepairAndComplaintsVo>> call, Throwable t) {
+                            CommonUtils.dismiss(showDialog);
+                        }
+                    });
+                }
+            }).start();
         }
     }
 
@@ -232,6 +233,7 @@ public class OnlineRepairsActivity extends BaseActivity {
         tvHeaderTitle.setText(extras.getString("title"));
         tv_phone.setHint(extras.getString("hintPhone"));
         mOutputPath = new File(getExternalCacheDir(), "face.jpg").getPath();
+        showDialog = CommonUtils.showDialog(this, getString(R.string.common_loading_message));
     }
 
     class HomeAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -333,16 +335,18 @@ public class OnlineRepairsActivity extends BaseActivity {
             }
             return;
         } else if (requestCode == CODE_GALLERY_REQUEST) {//选择本地图片
-            Uri uri = data.getData();
-            if (uri == null) {
-                Bundle bundle = data.getExtras();
-                if (bundle != null) {
-                    Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
-                    saveImage(photo, mOutputPath);
-                    PhotoActionHelper.clipImage(this).input(mOutputPath).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
+            if (data.getData() != null) {
+                Uri uri = data.getData();
+                if (uri == null) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null) {
+                        Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
+                        saveImage(photo, mOutputPath);
+                        PhotoActionHelper.clipImage(this).input(mOutputPath).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
+                    }
+                } else {
+                    PhotoActionHelper.clipImage(this).input(CropFileUtils.getPath(this, uri)).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
                 }
-            } else {
-                PhotoActionHelper.clipImage(this).input(CropFileUtils.getPath(this, uri)).output(mOutputPath).requestCode(Const.REQUEST_CLIP_IMAGE).start();
             }
         } else if (resultCode == 4) {
             String numberName = data.getStringExtra("numberName");

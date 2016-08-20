@@ -137,7 +137,7 @@ public class MyVillageActivity extends BaseActivity {
             @Override
             public void onResponse(Call<BaseInfoVo> call, Response<BaseInfoVo> response) {
                 if (response.isSuccessful() && response.body().isSuccessfully()) {
-                    if (extras.getBoolean("home")) {
+                    if (extras != null && extras.getBoolean("home")) {
                         Intent intent = new Intent();
                         intent.putExtra("location", numbersVo.getBuilding());
                         intent.putExtra("locationDone", numbersVo.getBuilding() + numbersVo.getUnit() + numbersVo.getApartment());

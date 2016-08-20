@@ -272,6 +272,8 @@ public class UserInfoActivity extends BaseActivity {
                     builder.showImageForEmptyUri(R.mipmap.logo);
                     builder.showImageOnFail(R.mipmap.logo);
                     builder.showImageOnLoading(R.mipmap.logo);
+                    builder.cacheOnDisk(true);
+                    builder.cacheInMemory(true);
                     ImageLoader.getInstance().displayImage(userInfo.getHeadPicture(), circleFace, builder.build());
                     tvNickname.setText("" + userInfo.getNickName().trim());
                     tvSex.setText(userInfo.getSex());

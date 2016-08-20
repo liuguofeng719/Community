@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ import com.joinsmile.community.ui.activity.InvestigationActivity;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.OnlineRepairsActivity;
+import com.joinsmile.community.ui.activity.OpenDoorActivity;
 import com.joinsmile.community.ui.activity.ProductDetailtActivity;
 import com.joinsmile.community.ui.activity.ProductListActivity;
 import com.joinsmile.community.ui.activity.PropertyMngPaymentActivity;
@@ -58,18 +58,10 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     SlideShowView mSlideShowView;
     @InjectView(R.id.tv_location_content)
     TextView tvLocationContent;
-    @InjectView(R.id.fl_location)
-    FrameLayout flLocation;
     @InjectView(R.id.tv_tips_content)
     TextView tvTipsContent;
-    @InjectView(R.id.tv_house_keeper)
-    TextView tvHouseKeeper;
-    @InjectView(R.id.tv_intelligence)
-    TextView tvIntelligence;
     @InjectView(R.id.tv_integral)
     TextView tvIntegral;
-    @InjectView(R.id.tv_vote)
-    TextView tvVote;
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -78,6 +70,11 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     private Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall;
     private Call<AnnouncementResp> respCall;
 
+
+    @OnClick(R.id.tv_intelligence)
+    public void tvIntelligence() {
+        readyGo(OpenDoorActivity.class);
+    }
 
     @OnClick(R.id.tv_house_keeper)
     public void tvHouseKeeper() {

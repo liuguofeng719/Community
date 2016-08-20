@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.ui.base.BaseActivity;
@@ -17,6 +21,8 @@ public class WebViewActivity extends BaseActivity {
 
     @InjectView(R.id.btn_back)
     ImageView btn_back;
+    @InjectView(R.id.tv_header_title)
+    TextView tv_header_title;
 
     @InjectView(R.id.iv_preview)
     WebView iv_preview;
@@ -39,6 +45,7 @@ public class WebViewActivity extends BaseActivity {
 
     @Override
     protected void initViewsAndEvents() {
+        tv_header_title.setText("商品推荐");
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +65,21 @@ public class WebViewActivity extends BaseActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
-                return super.shouldOverrideUrlLoading(view, url);
+                return true;
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request,
+                                            WebResourceResponse errorResponse) {
+                view.loadUrl("file:///android_asset/error.html");
+                super.onReceivedHttpError(view, request, errorResponse);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request,
+                                        WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                view.loadUrl("file:///android_asset/error.html");
             }
         });
     }

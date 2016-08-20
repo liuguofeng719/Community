@@ -244,6 +244,7 @@ public class ProductDetailtActivity extends BaseActivity {
                     ArrayList<String> dataList = listViewDataAdapter.getDataList();
                     dataList.clear();
                     dataList.addAll(pictures);
+                    listViewDataAdapter.notifyDataSetChanged();
                 }
             }
 

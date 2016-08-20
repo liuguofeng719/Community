@@ -9,12 +9,12 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '23.0.1'
     defaultConfig {
         applicationId "com.joinsmile.community"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 30
         versionName "1.5"
         signingConfig signingConfigs.community
@@ -46,23 +46,29 @@ android {
         abortOnError false
         disable 'InconsistentArrays', 'DefaultLocale', 'OldTargetApi', 'GradleOverrides', 'MissingTranslation', 'UnusedResources', 'GoogleAppIndexingWarning'
     }
+    dexOptions {
+        incremental true
+        jumboMode true
+        preDexLibraries true
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:+'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:support-v4:24.2.0'
+
+    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
     //网络包rest
-//    compile 'io.reactivex:rxjava:1.1.6'
-//    compile 'io.reactivex:rxandroid:1.1.0'
+    //    compile 'io.reactivex:rxjava:1.1.6'
+    //    compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-//    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    //    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'com.google.code.gson:gson:2.6.2'
-//    compile 'com.github.bumptech.glide:glide:3.7.0'
-//    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+    //    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
     //注解
     compile 'com.jakewharton:butterknife:5.1.1'
@@ -72,7 +78,6 @@ dependencies {
     compile files('libs/alipaySdk-20151112.jar')
     compile files('libs/libammsdk.jar')
     compile 'com.githang:clipimageview:0.1'
-
     // Apache Http
     android {
         useLibrary 'org.apache.http.legacy'
@@ -84,6 +89,7 @@ dependencies {
     compile 'com.squareup:android-times-square:1.6.4@aar'
     compile files('libs/universal-image-loader-1.9.2.jar')
     compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/rfBleService_V1.6.0.jar')
     compile files('libs/MobCommons-2016.0301.1053.jar')
     compile files('libs/MobTools-2016.0301.1053.jar')
     compile files('libs/ShareSDK-Core-2.7.0.jar')
