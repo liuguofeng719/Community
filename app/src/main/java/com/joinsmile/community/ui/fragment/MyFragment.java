@@ -12,6 +12,7 @@ import com.joinsmile.community.ui.activity.MyComplaintActivity;
 import com.joinsmile.community.ui.activity.MyOrderActivity;
 import com.joinsmile.community.ui.activity.MyPropertyPaymentActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
+import com.joinsmile.community.ui.activity.MyVoteActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
 import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
@@ -56,7 +57,11 @@ public class MyFragment extends BaseFragment {
     //我的投票
     @OnClick(R.id.tv_my_vote)
     public void tvMyVote() {
-        
+        if (isLogin()) {//18030867236
+            readyGo(MyVoteActivity.class);
+        } else {
+            readyGo(LoginActivity.class);
+        }
     }
 
     //我的订单

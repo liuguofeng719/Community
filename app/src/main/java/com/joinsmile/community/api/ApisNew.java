@@ -19,6 +19,7 @@ import com.joinsmile.community.bean.InvestigationAnswerVo;
 import com.joinsmile.community.bean.InvestigationListResp;
 import com.joinsmile.community.bean.InvestigationQuestionListResp;
 import com.joinsmile.community.bean.InvestigationQuestionVo;
+import com.joinsmile.community.bean.InvestigationStatisticsResp;
 import com.joinsmile.community.bean.InvestigationVo;
 import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.bean.OnTopProductListResp;
@@ -48,6 +49,7 @@ import com.joinsmile.community.bean.ShoppingCartResp;
 import com.joinsmile.community.bean.ShoppingCartVo;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersResp;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersVo;
+import com.joinsmile.community.bean.UserInvestigationListResp;
 import com.joinsmile.community.bean.UserVoResp;
 import com.joinsmile.community.bean.VersionVo;
 import com.joinsmile.community.bean.WXPayVo;
@@ -624,6 +626,26 @@ public interface ApisNew {
     @POST("Investigations/UploadUserAnaswer.ashx")
     Call<BaseInfoVo> uploadUserAnswer(
             @Body InvestigationAnswerVo investigationAnswerVo
+    );
+
+    /**
+     * 获取我的调查
+     * @param userID
+     * @return
+     */
+    @GET("Investigations/UserInvestigations.ashx")
+    Call<UserInvestigationListResp> userInvestigations(
+            @Query("userID") String userID
+    );
+
+    /**
+     * 获取调查统计数据
+     * @param investigationID
+     * @return
+     */
+    @GET("Investigations/GetInvestigationsStatistics.ashx")
+    Call<InvestigationStatisticsResp> getInvestigationsStatistics(
+            @Query("InvestigationID") String investigationID
     );
 
     /**

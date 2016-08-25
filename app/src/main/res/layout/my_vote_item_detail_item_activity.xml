@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="是的：40%"
+        android:textSize="16sp"
+        android:textColor="@color/text_color"
+        android:paddingTop="@dimen/common_padding"
+        android:paddingLeft="@dimen/common_padding"
+        android:paddingRight="@dimen/common_padding"
+        android:paddingBottom="@dimen/common_padding"
+    />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_line_color"
+        android:layout_marginBottom="5dp"
+    />
+    <ProgressBar
+        android:id="@+id/progress_grade"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/common_padding"
+        android:paddingRight="@dimen/common_padding"
+        android:max="100"
+        android:progress="40"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/bar_color"
+    />
+</LinearLayout>
