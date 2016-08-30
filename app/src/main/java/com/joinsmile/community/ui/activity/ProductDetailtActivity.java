@@ -198,6 +198,9 @@ public class ProductDetailtActivity extends BaseActivity {
                 builder.cacheInMemory(true);
                 builder.cacheOnDisk(true);
                 builder.considerExifParams(true);
+                builder.showImageForEmptyUri(R.drawable.no_banner);
+                builder.showImageOnFail(R.drawable.no_banner);
+                builder.showImageOnLoading(R.drawable.no_banner);
 
                 return new ViewHolderBase<String>() {
                     ImageView imageView;
@@ -235,6 +238,9 @@ public class ProductDetailtActivity extends BaseActivity {
                     builder.cacheInMemory(true);
                     builder.cacheOnDisk(true);
                     builder.considerExifParams(true);
+                    builder.showImageForEmptyUri(R.drawable.no_banner);
+                    builder.showImageOnFail(R.drawable.no_banner);
+                    builder.showImageOnLoading(R.drawable.no_banner);
                     ImageLoader.getInstance().displayImage(productVo.getDefaultPicture(), ivProductImg, builder.build());
                     tvProductTitle.setTag(productVo.getProductID());
                     tvProductTitle.setText(productVo.getProductName());

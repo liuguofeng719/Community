@@ -184,7 +184,7 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
             ImageView view = new ImageView(context);
             view.setTag(new ImageViewTag(i, imageUrls.get(i).getPictureUrl(), imageUrls.get(i).getNavigateUrl()));
             if (i == 0)//给一个默认图
-//                view.setBackgroundResource(R.drawable.no_banner);
+                view.setBackgroundResource(R.drawable.no_banner);
             view.setScaleType(ScaleType.FIT_XY);
             imageViewsList.add(view);
             view.setOnClickListener(this);
@@ -224,6 +224,9 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
+                    .showImageForEmptyUri(R.drawable.no_banner)
+                    .showImageOnFail(R.drawable.no_banner)
+                    .showImageOnLoading(R.drawable.no_banner)
                     .build();
 
             imageLoader.displayImage(((ImageViewTag) imageView.getTag()).url + "", imageView, options);

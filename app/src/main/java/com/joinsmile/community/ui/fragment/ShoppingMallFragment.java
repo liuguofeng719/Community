@@ -99,6 +99,10 @@ public class ShoppingMallFragment extends BaseFragment {
                 builder.cacheInMemory(true);
                 builder.cacheOnDisk(true);
                 builder.considerExifParams(true);
+                builder.showImageForEmptyUri(R.drawable.no_banner);
+                builder.showImageOnFail(R.drawable.no_banner);
+                builder.showImageOnLoading(R.drawable.no_banner);
+
                 return new ViewHolderBase<ProductVo>() {
                     ImageView iv_product_img;
                     TextView tv_product_desc;

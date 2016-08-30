@@ -236,6 +236,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             builder.cacheInMemory(true);
             builder.cacheOnDisk(true);
             builder.considerExifParams(true);
+            builder.showImageForEmptyUri(R.drawable.no_banner);
+            builder.showImageOnFail(R.drawable.no_banner);
+            builder.showImageOnLoading(R.drawable.no_banner);
         }
 
         @Override

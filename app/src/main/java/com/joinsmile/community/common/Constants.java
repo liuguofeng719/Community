@@ -81,7 +81,7 @@ public class Constants {
      * 微信支付
      */
     public static class wxpay {
-        public final static String APPID = "wx5187932eddf0d92d";//开发平台申请成功之后的appId
-        public final static String API_KEY= "1258796351av14bgcnaETEvv1zxrefqw";//商户平台Apis的密钥
+        public final static String APPID = "wxbd0e3bbd5373e30e";//开发平台申请成功之后的appId
+        public final static String API_KEY= "2158715321cc54bgcnaETEvv1zxrefqw";//商户平台Apis的密钥
     }
 }
