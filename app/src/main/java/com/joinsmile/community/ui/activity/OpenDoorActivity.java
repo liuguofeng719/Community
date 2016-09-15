@@ -165,8 +165,8 @@ public class OpenDoorActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (sp_password.getSelectedItemId() == 0) {
-                    if (0 == rfBleKey.openDoor(stringToBytes(adapter.getItem(i).substring(0,18))
-                            , Integer.decode(et_outputTime.getText().toString())
+                    if (0 == rfBleKey.openDoor(stringToBytes(adapter.getItem(i).substring(0,18)),
+                            Integer.decode(et_outputTime.getText().toString())
                             , et_password.getText().toString())) {
                         tv_result.setText(R.string.openning);
                     }

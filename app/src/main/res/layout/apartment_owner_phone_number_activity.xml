@@ -99,7 +99,6 @@
                 android:paddingLeft="@dimen/common_padding"
                 android:paddingRight="@dimen/common_padding"
                 android:singleLine="true"
-                android:text="135****"
                 android:textColor="@color/text_color"
                 android:textSize="16sp" />
 

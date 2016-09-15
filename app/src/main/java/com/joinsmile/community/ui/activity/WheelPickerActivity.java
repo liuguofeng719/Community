@@ -78,9 +78,8 @@ public class WheelPickerActivity extends BaseActivity {
     protected void initViewsAndEvents() {
         tvHeaderTitle.setText("请选择角色");
         List data = getList();
-        initData();
         SparseBooleanUtils.putBoolean(bundle.getInt("role"), true);
-        listViewDataAdapter = new ListViewDataAdapter<String>(new ViewHolderCreator() {
+        listViewDataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator() {
             @Override
             public ViewHolderBase createViewHolder(int position) {
                 return new ViewHolderBase<String>() {
@@ -120,16 +119,12 @@ public class WheelPickerActivity extends BaseActivity {
                 };
             }
         });
-        listViewDataAdapter.getDataList().clear();
-        listViewDataAdapter.getDataList().addAll(data);
+        ArrayList dataList = listViewDataAdapter.getDataList();
+        dataList.clear();
+        dataList.addAll(data);
         lv_list_view.setAdapter(listViewDataAdapter);
     }
 
-    private void initData() {
-        SparseBooleanUtils.putBoolean(0, false);
-        SparseBooleanUtils.putBoolean(1, false);
-        SparseBooleanUtils.putBoolean(2, false);
-    }
 
     @NonNull
     private List getList() {
@@ -137,6 +132,7 @@ public class WheelPickerActivity extends BaseActivity {
         data.add("业主本人");
         data.add("代理业主");
         data.add("家庭成员");
+        SparseBooleanUtils.setData(data.size(),false);
         return data;
     }
 }

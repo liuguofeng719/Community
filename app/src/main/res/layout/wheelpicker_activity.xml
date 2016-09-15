@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/common_color_61ca8b"
-        android:paddingLeft="@dimen/common_padding"
-        android:paddingRight="@dimen/common_padding"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:layout_gravity="center_vertical">
 
         <ImageView
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:cacheColorHint="@color/transparent"
-        android:divider="@color/bg_line_color"
-        android:dividerHeight="1dp"
-        android:listSelector="@color/transparent"></ListView>
+        android:divider="@color/transparent"
+        android:dividerHeight="@null"
+        android:listSelector="@color/transparent"/>
 </LinearLayout>

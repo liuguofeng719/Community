@@ -24,15 +24,19 @@
         />
         <CheckBox
             android:id="@+id/checkbox"
-            style="@style/CustomCheckboxTheme"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_gravity="right|center_vertical"
-            android:paddingRight="@dimen/common_padding"
+            android:padding="@dimen/common_padding"
             android:checked="true"
             android:clickable="false"
             android:focusable="false"
-            android:visibility="invisible"
+            style="@style/CustomCheckboxTheme"
         />
     </FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_line_color"
+    />
 </LinearLayout>

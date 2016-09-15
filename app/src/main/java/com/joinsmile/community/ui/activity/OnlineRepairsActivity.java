@@ -48,7 +48,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -156,7 +156,7 @@ public class OnlineRepairsActivity extends BaseActivity {
                     Map<String, RequestBody> map = new HashMap<>();
                     int index = 0;
                     for (Bitmap imageByte : imageBytes) {
-                        final RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), CommonUtils.Bitmap2Bytes(imageByte));
+                        final RequestBody requestBody = RequestBody.create(MultipartBody.FORM, CommonUtils.Bitmap2Bytes(imageByte));
                         map.put("image\"; filename=\"icon" + index + ".png", requestBody);
                         index++;
                     }

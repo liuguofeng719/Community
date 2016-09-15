@@ -143,6 +143,11 @@
     <color name="gplus_color_3">#427fed</color>
     <color name="gplus_color_4">#b23424</color>
 
+    <color name="actionsheet_blue">#037BFF</color>
+    <color name="actionsheet_red">#FD4A2E</color>
+    <color name="actionsheet_gray">#8F8F8F</color>
+
+
     <!-- 登录 -->
     <color name="text_color">#333333</color>
     <color name="text_color_c">#cccccc</color>

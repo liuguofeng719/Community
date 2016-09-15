@@ -1,10 +1,14 @@
 package com.joinsmile.community.ui.fragment;
 
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,7 +30,6 @@ import com.joinsmile.community.ui.activity.InvestigationActivity;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.OnlineRepairsActivity;
-import com.joinsmile.community.ui.activity.OpenDoorActivity;
 import com.joinsmile.community.ui.activity.ProductDetailtActivity;
 import com.joinsmile.community.ui.activity.ProductListActivity;
 import com.joinsmile.community.ui.activity.PropertyMngPaymentActivity;
@@ -36,6 +39,7 @@ import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.utils.TLog;
+import com.joinsmile.community.widgets.ActionSheetDialog;
 import com.joinsmile.community.widgets.CircleImageView;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -47,6 +51,10 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.com.reformer.rfBleService.BleDevContext;
+import cn.com.reformer.rfBleService.BleService;
+import cn.com.reformer.rfBleService.OnCompletedListener;
+import cn.com.reformer.rfBleService.OnPasswordWriteListener;
 import cn.sharesdk.framework.ShareSDK;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,10 +78,156 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     private Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall;
     private Call<AnnouncementResp> respCall;
 
+    //开门sdk
+    private BleService mService;
+    private BleService.RfBleKey rfBleKey = null;
+
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder rawBinder) {
+            mService = ((BleService.LocalBinder) rawBinder).getService();
+            rfBleKey = mService.getRfBleKey();
+            rfBleKey.init(null);
+            rfBleKey.setOnCompletedListener(new OnCompletedListener() {
+                @Override
+                public void OnCompleted(byte[] bytes, int i) {
+                    final int result = i;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (result) {
+                                case 0:
+                                    CommonUtils.make(getActivity(), getString(R.string.result_Success));
+                                    break;
+                                case 1:
+                                    CommonUtils.make(getActivity(), getString(R.string.result_password_error));
+                                    break;
+                                case 2:
+                                    CommonUtils.make(getActivity(), getString(R.string.result_bluetooth_break));
+                                    break;
+                                case 3:
+                                    CommonUtils.make(getActivity(), getString(R.string.result_timeout));
+                                    break;
+                            }
+                        }
+                    });
+                }
+            });
+
+            rfBleKey.setOnPasswordWriteListener(new OnPasswordWriteListener() {
+                @Override
+                public void OnPasswordWrite(byte[] bytes, int i) {
+                    final int result = i;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (result == 0) {
+                                CommonUtils.make(getActivity(), getString(R.string.result_set_success));
+                            } else if (result == 1) {
+                                CommonUtils.make(getActivity(), getString(R.string.result_set_failed));
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName classname) {
+            mService = null;
+        }
+    };
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
-        readyGo(OpenDoorActivity.class);
+//        new ActionSheetDialog(getActivity())
+//                .builder()
+//                .setTitle("请选择操作")
+//                .setCancelable(false)
+//                .setCanceledOnTouchOutside(false)
+//                .addSheetItem("条目一", ActionSheetDialog.SheetItemColor.Blue,
+//                        new ActionSheetDialog.OnSheetItemClickListener() {
+//                            @Override
+//                            public void onClick(int which) {
+//                                Toast.makeText(getActivity(),
+//                                        "item" + which, Toast.LENGTH_SHORT)
+//                                        .show();
+//                            }
+//                        })
+//                .addSheetItem("条目二", ActionSheetDialog.SheetItemColor.Blue,
+//                        new ActionSheetDialog.OnSheetItemClickListener() {
+//                            @Override
+//                            public void onClick(int which) {
+//                                Toast.makeText(getActivity(),
+//                                        "item" + which, Toast.LENGTH_SHORT)
+//                                        .show();
+//                            }
+//                }).show();
+        if (rfBleKey != null) {
+            //Scan dev list
+            ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
+            ArrayList<String> list = new ArrayList<>();
+            for (BleDevContext dev : lst) {
+                StringBuffer stringBuffer = new StringBuffer();
+                stringBuffer.append(bytePadLeft(Integer.toHexString(dev.mac[0]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[1]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[2]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[3]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[4]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[5]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[6]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[7]), 2))
+                        .append(bytePadLeft(Integer.toHexString(dev.mac[8]), 2))
+                        .append(" (").append(dev.rssi).append(")");
+//                adapter.add(stringBuffer.toString().toUpperCase());
+                list.add(stringBuffer.toString().toUpperCase());
+            }
+
+            ActionSheetDialog actionSheetDialog = new ActionSheetDialog(getActivity())
+                    .builder()
+                    .setTitle("请选择操作")
+                    .setCancelable(false)
+                    .setCanceledOnTouchOutside(false);
+            final ArrayList<String> newList = list;
+            for (String s : list) {
+                actionSheetDialog.addSheetItem(s, ActionSheetDialog.SheetItemColor.Blue,
+                        new ActionSheetDialog.OnSheetItemClickListener() {
+                            @Override
+                            public void onClick(int which) {
+                                if (0 == rfBleKey.openDoor(stringToBytes(newList.get(which).substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
+                                    CommonUtils.make(getActivity(), "开锁成功");
+                                }
+                            }
+                        });
+            }
+            actionSheetDialog.show();
+        }
+//        readyGo(OpenDoorActivity.class);
+    }
+
+    public static String bytePadLeft(String str, int len) {
+        if (str.length() > 2)
+            str = str.substring(str.length() - 2);
+        String pad = "0000000000000000";
+        return len > str.length() && len <= 16 && len >= 0 ? pad.substring(0, len - str.length()) + str : str;
+    }
+
+    public static byte[] stringToBytes(String outStr) {
+        if (outStr.length() != 18)
+            return null;
+        int len = outStr.length() / 2;
+        byte[] mac = new byte[len];
+        for (int i = 0; i < len; i++) {
+            String s = outStr.substring(i * 2, i * 2 + 2);
+            if (Integer.valueOf(s, 16) > 0x7F) {
+                mac[i] = (byte) (Integer.valueOf(s, 16) - 0xFF - 1);
+            } else {
+                mac[i] = Byte.valueOf(s, 16);
+            }
+        }
+        return mac;
     }
 
     @OnClick(R.id.tv_house_keeper)
@@ -223,6 +377,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         mDialog.setCancelable(true);
         mDialog.setCanceledOnTouchOutside(true);
         this.mSlideShowView.setOnImageClickedListener(this);
+        Intent bindIntent = new Intent(getActivity().getApplicationContext(), BleService.class);
+        getActivity().bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> {
@@ -448,7 +604,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        rfBleKey.free();
+        getActivity().unbindService(mServiceConnection);
         if (mSlideShowView != null) {
             mSlideShowView.onDestroy();
         }
@@ -459,5 +616,6 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             respCall.cancel();
         }
         closeDialog();
+        super.onDestroy();
     }
 }
