@@ -8,8 +8,15 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.joinsmile.community.R;
+import com.joinsmile.community.bean.VersionVo;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.CommonUtils;
+import com.joinsmile.community.utils.TLog;
+import com.joinsmile.community.utils.UpdateManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SplashActivity extends BaseActivity {
 
@@ -32,42 +39,42 @@ public class SplashActivity extends BaseActivity {
     protected void initViewsAndEvents() {
         final ImageView iv_bg = (ImageView) findViewById(R.id.splash_image);
 
-//        Call<VersionVo> versionVoCall = getApisNew().getVersion().clone();
-//        versionVoCall.enqueue(new Callback<VersionVo>() {
-//            @Override
-//            public void onResponse(Call<VersionVo> call, Response<VersionVo> response) {
-//                if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
-//                    TLog.d("version", "" + getVersionCode()+" =serverCode= "+response.body().getVersionCode());
-//                    if (response.body().getVersionCode() > getVersionCode()) {
-//                        new UpdateManager(SplashActivity.this,
-//                                response.body().getAppUrl(),
-//                                new IncomingHandler()).showDownloadDialog();
-//                    } else {
-//                        iv_bg.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Intent intent = new Intent(SplashActivity.this, IndexActivity.class);
-//                                startActivity(intent);
-//                                finish();
-//                            }
-//                        }, 3000);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<VersionVo> call, Throwable t) {
-//
-//            }
-//        });
-        iv_bg.postDelayed(new Runnable() {
+        Call<VersionVo> versionVoCall = getApisNew().getVersion().clone();
+        versionVoCall.enqueue(new Callback<VersionVo>() {
             @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, IndexActivity.class);
-                startActivity(intent);
-                finish();
+            public void onResponse(Call<VersionVo> call, Response<VersionVo> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
+                    TLog.d("version", "" + getVersionCode()+" =serverCode= "+response.body().getVersionCode());
+                    if (response.body().getVersionCode() > getVersionCode()) {
+                        new UpdateManager(SplashActivity.this,
+                                response.body().getAppUrl(),
+                                new IncomingHandler()).showDownloadDialog();
+                    } else {
+                        iv_bg.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(SplashActivity.this, IndexActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }, 3000);
+                    }
+                }
             }
-        }, 3000);
+
+            @Override
+            public void onFailure(Call<VersionVo> call, Throwable t) {
+
+            }
+        });
+//        iv_bg.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Intent intent = new Intent(SplashActivity.this, IndexActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        }, 3000);
 
     }
 

@@ -15,8 +15,8 @@ android {
         applicationId "com.joinsmile.community"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 31
-        versionName "1.5"
+        versionCode 33
+        versionName "1.6"
         signingConfig signingConfigs.community
     }
     compileOptions {
@@ -27,7 +27,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.community
         }

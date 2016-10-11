@@ -81,7 +81,7 @@ public interface ApisNew {
      *
      * @return
      */
-    @GET("common/checkversion.ashx?platform=android")
+    @GET("common/CheckVersion.ashx?platform=android")
     Call<VersionVo> getVersion();
 
     /**
