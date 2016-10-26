@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,6 +52,47 @@ public class CommonUtils {
         }
         return patt.matcher(value).matches();
     }
+
+    /**
+     * 计算两个日期之间相差的月数
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static int getMonths(Date date1, Date date2){
+        int iMonth = 0;
+        int flag = 0;
+        try{
+            Calendar objCalendarDate1 = Calendar.getInstance();
+            objCalendarDate1.setTime(date1);
+
+            Calendar objCalendarDate2 = Calendar.getInstance();
+            objCalendarDate2.setTime(date2);
+
+            if (objCalendarDate2.equals(objCalendarDate1))
+                return 0;
+            if (objCalendarDate1.after(objCalendarDate2)){
+                Calendar temp = objCalendarDate1;
+                objCalendarDate1 = objCalendarDate2;
+                objCalendarDate2 = temp;
+            }
+            if (objCalendarDate2.get(Calendar.DAY_OF_MONTH) < objCalendarDate1.get(Calendar.DAY_OF_MONTH))
+                flag = 1;
+
+            if (objCalendarDate2.get(Calendar.YEAR) > objCalendarDate1.get(Calendar.YEAR))
+                iMonth = ((objCalendarDate2.get(Calendar.YEAR) - objCalendarDate1.get(Calendar.YEAR))
+                        * 12 + objCalendarDate2.get(Calendar.MONTH) - flag)
+                        - objCalendarDate1.get(Calendar.MONTH);
+            else
+                iMonth = objCalendarDate2.get(Calendar.MONTH)
+                        - objCalendarDate1.get(Calendar.MONTH) - flag;
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return iMonth;
+    }
+
 
     /**
      * return if str is empty
@@ -297,7 +339,7 @@ public class CommonUtils {
     }
 
     //在dialog.show()之后调用
-    public static void setDialogWindowAttr(Dialog dlg){
+    public static void setDialogWindowAttr(Dialog dlg) {
         Window window = dlg.getWindow();
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.gravity = Gravity.CENTER;
@@ -375,6 +417,7 @@ public class CommonUtils {
 
     /**
      * 拨打电话
+     *
      * @param context
      * @param phone
      */

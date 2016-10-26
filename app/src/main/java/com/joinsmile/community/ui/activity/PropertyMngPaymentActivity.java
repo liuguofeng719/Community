@@ -2,10 +2,7 @@ package com.joinsmile.community.ui.activity;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +15,9 @@ import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.TLog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.InjectView;
@@ -46,7 +45,7 @@ public class PropertyMngPaymentActivity extends BaseActivity {
     @InjectView(R.id.tv_submit)
     TextView tv_submit;
     @InjectView(R.id.edit_monthly)
-    EditText edit_monthly;
+    TextView edit_monthly;
     @InjectView(R.id.tv_total_price)
     TextView tv_total_price;
 
@@ -117,37 +116,27 @@ public class PropertyMngPaymentActivity extends BaseActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String format = sdf.format(date);
                 edit_end_year.setText(format);
+                String startYear = edit_start_year.getText().toString();
+                String endYear = edit_end_year.getText().toString();
+                Calendar c1 = Calendar.getInstance();
+                Calendar c2 = Calendar.getInstance();
+
+                try {
+                    c1.setTime(sdf.parse(startYear));
+                    c2.setTime(sdf.parse(endYear));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                int monthSpace = CommonUtils.getMonths(c1.getTime(), c2.getTime());
+                edit_monthly.setText(""+monthSpace);
+                int totalPrice =  (int) (Double.parseDouble(propertyCostStandard) * monthSpace);
+                tv_total_price.setText(""+ totalPrice);
             }
         });
         edit_end_year.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pvTimeEnd.show();
-            }
-        });
-        edit_monthly.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    int price = Integer.parseInt(s.toString());
-                    if (price > 0) {
-                        tv_total_price.setText(""+(int) (Double.parseDouble(propertyCostStandard) * price));
-                    } else {
-                        CommonUtils.make(PropertyMngPaymentActivity.this, "请输入大于1的数");
-                    }
-                } else {
-                    tv_total_price.setText("");
-                }
             }
         });
     }

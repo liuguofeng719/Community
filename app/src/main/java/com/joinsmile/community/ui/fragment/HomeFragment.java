@@ -270,10 +270,34 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             @Override
             public void onClick(View v) {
                 if (checkLogin()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
-                    bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
-                    readyGo(PropertyMngPaymentActivity.class, bundle);
+                    Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall = getApisNew().getUserApartments(AppPreferences.getString("userId")).clone();
+                    numbersRespCall.enqueue(new Callback<ApartmentNumbersResp<List<ApartmentNumbersVo>>>() {
+                        @Override
+                        public void onResponse(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call,
+                                               Response<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall) {
+                            if (numbersRespCall.isSuccessful()) {
+                                ApartmentNumbersResp<List<ApartmentNumbersVo>> body = numbersRespCall.body();
+                                if (body != null) {
+                                    List<ApartmentNumbersVo> apartmentNumberList = body.getApartmentNumberList();
+                                    int size = apartmentNumberList.size();
+                                    if (size > 0) {
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
+                                        bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
+                                        readyGo(PropertyMngPaymentActivity.class, bundle);
+                                    } else {
+                                        CommonUtils.make(getActivity(),"请绑定小区");
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> call, Throwable t) {
+
+                        }
+                    });
+
                 } else {
                     readyGo(LoginActivity.class);
                 }
