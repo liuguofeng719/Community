@@ -5,7 +5,7 @@ android {
         community {
             keyAlias 'community'
             keyPassword '123456'
-            storeFile file('D:/app/keystore/community.jks')
+            storeFile file('community.jks')
             storePassword '123456'
         }
     }
