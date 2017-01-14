@@ -2,15 +2,26 @@ package com.joinsmile.community.ui.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.BaseInfoVo;
@@ -59,12 +70,15 @@ public class ProductDetailtActivity extends BaseActivity {
     RadioButton tvPicDetail;
     @InjectView(R.id.tv_appraise)
     RadioButton tvAppraise;
-    @InjectView(R.id.lv_list_view)
-    ListViewForScrollView lvListView;
+//    @InjectView(R.id.lv_list_view)
+//    ListViewForScrollView lvListView;
+    @InjectView(R.id.webView)
+    WebView webView;
 
     private Bundle extras;
     private ListViewDataAdapter<String> listViewDataAdapter;
     private ProductVo productVo;
+    private WebSettings webSettings;
 
     //加入收藏
     @OnClick(R.id.tv_collect)
@@ -161,7 +175,7 @@ public class ProductDetailtActivity extends BaseActivity {
             list.add(shoppingCartVo);
             Bundle bundle = new Bundle();
             bundle.putString("carts", new Gson().toJson(list));
-            readyGo(OrderConfirmActivity.class,bundle);
+            readyGo(OrderConfirmActivity.class, bundle);
         } else {
             readyGo(LoginActivity.class);
         }
@@ -189,37 +203,62 @@ public class ProductDetailtActivity extends BaseActivity {
 
     @Override
     protected void initViewsAndEvents() {
-        listViewDataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator<String>() {
-
-            @Override
-            public ViewHolderBase<String> createViewHolder(int position) {
-                final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                builder.bitmapConfig(Bitmap.Config.RGB_565);
-                builder.cacheInMemory(true);
-                builder.cacheOnDisk(true);
-                builder.considerExifParams(true);
-                builder.showImageForEmptyUri(R.drawable.no_banner);
-                builder.showImageOnFail(R.drawable.no_banner);
-                builder.showImageOnLoading(R.drawable.no_banner);
-
-                return new ViewHolderBase<String>() {
-                    ImageView imageView;
-
-                    @Override
-                    public View createView(LayoutInflater layoutInflater) {
-                        View view = layoutInflater.inflate(R.layout.product_detail_pic_item, null);
-                        imageView = ButterKnife.findById(view, R.id.iv_product_detail_pic);
-                        return view;
-                    }
-
-                    @Override
-                    public void showData(int position, String itemData) {
-                        ImageLoader.getInstance().displayImage(itemData, imageView, builder.build());
-                    }
-                };
-            }
-        });
-        lvListView.setAdapter(listViewDataAdapter);
+//        listViewDataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator<String>() {
+//
+//            @Override
+//            public ViewHolderBase<String> createViewHolder(int position) {
+//                final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
+//                builder.bitmapConfig(Bitmap.Config.RGB_565);
+//                builder.cacheInMemory(true);
+//                builder.cacheOnDisk(true);
+//                builder.considerExifParams(true);
+//                builder.showImageForEmptyUri(R.drawable.no_banner);
+//                builder.showImageOnFail(R.drawable.no_banner);
+//                builder.showImageOnLoading(R.drawable.no_banner);
+//
+//                return new ViewHolderBase<String>() {
+//                    ImageView imageView;
+//
+//                    @Override
+//                    public View createView(LayoutInflater layoutInflater) {
+//                        View view = layoutInflater.inflate(R.layout.product_detail_pic_item, null);
+//                        imageView = ButterKnife.findById(view, R.id.iv_product_detail_pic);
+//                        return view;
+//                    }
+//
+//                    @Override
+//                    public void showData(int position, String itemData) {
+//                        Glide.with(ProductDetailtActivity.this).load(itemData).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
+//                            @Override
+//                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+//                                return false;
+//                            }
+//
+//                            @Override
+//                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                                if (imageView == null) {
+//                                    return false;
+//                                }
+//                                if (imageView.getScaleType() != ImageView.ScaleType.FIT_XY) {
+//                                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//                                }
+//                                ViewGroup.LayoutParams params = imageView.getLayoutParams();
+//                                int vw = imageView.getWidth() - imageView.getPaddingLeft() - imageView.getPaddingRight();
+//                                float scale = (float) vw / (float) resource.getIntrinsicWidth();
+//                                int vh = Math.round(resource.getIntrinsicHeight() * scale);
+//                                params.height = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+//                                imageView.setLayoutParams(params);
+//                                return false;
+//                            }
+//                        })
+//                                .placeholder(R.drawable.no_banner)
+//                                .into(imageView);
+////                        ImageLoader.getInstance().displayImage(itemData, imageView, builder.build());
+//                    }
+//                };
+//            }
+//        });
+//        lvListView.setAdapter(listViewDataAdapter);
         getProductById();
     }
 
@@ -247,10 +286,11 @@ public class ProductDetailtActivity extends BaseActivity {
                     tvProductPrice.setText("￥" + productVo.getUnitPrice());
                     tvInventoryTotal.setText("" + productVo.getSalesVolume());
                     ArrayList<String> pictures = productVo.getPictures();
-                    ArrayList<String> dataList = listViewDataAdapter.getDataList();
-                    dataList.clear();
-                    dataList.addAll(pictures);
-                    listViewDataAdapter.notifyDataSetChanged();
+//                    ArrayList<String> dataList = listViewDataAdapter.getDataList();
+//                    dataList.clear();
+//                    dataList.addAll(pictures);
+//                    listViewDataAdapter.notifyDataSetChanged();
+                    initWebView(pictures);
                 }
             }
 
@@ -260,4 +300,74 @@ public class ProductDetailtActivity extends BaseActivity {
             }
         });
     }
+
+    public void initWebView(List<String> strings) {
+        webView.setFocusable(false);
+        webSettings = webView.getSettings();
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setLoadsImagesAutomatically(true);
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        webSettings.setBlockNetworkImage(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webView.setWebViewClient(new GoodsDetailWebViewClient());
+        load(webView,strings);
+    }
+
+    public void load(WebView webView,List<String> strings){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE HTML>\n" +
+                "<html>\n" +
+                "    <head>\n" +
+                "        <meta http-equiv=\"Content-Type\" content=\"; charset=\" />\n" +
+                "        <meta name=\"copyright\" content=\"\" />\n" +
+                "        <meta name=\"keywords\" content=\"\" />\n" +
+                "        <meta name=\"description\" content=\"\" />\n" +
+                "        <meta content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0\" name=\"viewport\" />\n" +
+                "        <title></title>\n" +
+                "        <style type=\"text/css\">\n" +
+                "          html{min-height:100%;background:#FFF;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0)}body{min-width:320px;max-width:640px;min-height:100%;line-height:1.4;margin:0 auto;font:14px/1.4\"Helvetica Neue\", Helvetica, STHeiTi, sans-serif, tahoma, arial, \\5b8b\\4f53;color:#444}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block;margin:0;padding:0}audio,canvas,video{display:inline-block;*display:inline;*zoom:1}input:focus,a:focus{outline:none}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var,i{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}:root sub,:root sup{vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}button,input,textarea,select{font-family:tahoma, arial, simsun, sans-serif;font-size:inherit;font-weight:inherit;line-height:1.5;vertical-align:middle}button,input,textarea,select{*font-size:100%}textarea{resize:none}table{border-collapse:collapse;border-spacing:0}th{text-align:inherit}a{vertical-align:baseline;color:#444;}a:hover{text-decoration:none}ins,a{text-decoration:none}del{text-decoration:line-through}.clear{display:block;float:none;clear:both;overflow:hidden;visibility:hidden;width:0;height:0;background:none;border:0;font-size:0}.cfix:before,.cfix:after{content:\"\";display:table}.cfix:after{clear:both}.cfix{*zoom:1}.fl{float:left;display:inline}.fr{float:right;display:inline}.dib-wrap{font-size:0;letter-spacing:-.31em;*letter-spacing:normal}.dib-wrap .dib{font-size:12px;letter-spacing:normal;word-spacing:normal;vertical-align:top}.dib{display:inline-block;*display:inline;*zoom:1}.hide{display:none}\n" +
+                "          a img {vertical-align: middle;}\n" +
+                "\n" +
+                "          /*图文详情*/\n" +
+                "          .des_cnt {padding:10px 5px; -webkit-box-sizing:border-box; box-sizing:border-box;}\n" +
+                "          .des_cnt .des_item h2 { font:bold 12px/18px; padding-bottom:3px; border-bottom:3px solid #000;}\n" +
+                "          .des_cnt .des_img img {width:100% !important; height:auto !important;}\n" +
+                "          .des_cnt .des_item  p{ line-height:1.7em; text-indent:15px;}\n" +
+                "          .des_cnt .des_item  .dl_cnt{ font-weight:bold;}\n" +
+                "        </style>\n" +
+                "    </head>\n" +
+                "    <body>\n" +
+                "        <div class=\"mobile_sp_body\">\n" +
+                "          <div class=\"des_cnt cfix\">\n" +
+                "              <div class=\"des_item cfix\">\n" +
+                "                  <div class=\"des_img\">\n" +
+                "                    <div style=\"text-align:center;\">");
+        for (String string : strings) {
+            sb.append("<img src='"+string+"' />");
+        }
+        sb.append("                   </div>\n" +
+                "                  </div>\n" +
+                "              </div>\n" +
+                "          </div>\n" +
+                "      </div>\n" +
+                "    </body>\n" +
+                "</html>");
+        webView.loadDataWithBaseURL(null,sb.toString(), "text/html", "utf-8", null);
+    }
+
+    private class GoodsDetailWebViewClient extends WebViewClient {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            webSettings.setBlockNetworkImage(false);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return true;
+        }
+    }
+
 }

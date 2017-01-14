@@ -15,8 +15,8 @@ android {
         applicationId "com.joinsmile.community"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 34
-        versionName "1.6"
+        versionCode 36
+        versionName "1.7"
         signingConfig signingConfigs.community
     }
     compileOptions {
@@ -80,6 +80,10 @@ dependencies {
     compile files('libs/alipaySdk-20151112.jar')
     compile files('libs/libammsdk.jar')
     compile 'com.githang:clipimageview:0.1'
+
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
+
     // Apache Http
     android {
         useLibrary 'org.apache.http.legacy'

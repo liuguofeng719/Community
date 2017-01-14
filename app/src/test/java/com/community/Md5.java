@@ -1,5 +1,6 @@
 package com.community;
 
+import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.MD5Util;
 
 import org.junit.Test;
@@ -7,12 +8,30 @@ import org.junit.Test;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by liuguofeng719 on 2016/7/6.
  */
 public class Md5 {
+
+    @Test
+    public void testMonth(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+
+        try {
+            c1.setTime(sdf.parse("2016-10-24"));
+            c2.setTime(sdf.parse("2017-01-24"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        int monthSpace = CommonUtils.getMonths(c1.getTime(), c2.getTime());
+        System.out.printf(monthSpace+"");
+    }
 
     @Test
     public void testMd5() throws Exception {

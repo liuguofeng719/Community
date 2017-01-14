@@ -53,6 +53,11 @@ public class ProductListActivity extends BaseActivity {
     private Call<ProductListResp<List<ProductVo>>> allProductByType;
     private ListViewDataAdapter<ProductVo> listViewDataAdapter;
 
+    boolean isMore = true;
+    private int currPage = 1;
+    private int sortType = 3;
+    private int desc = 0;
+
     @OnClick(R.id.btn_back)
     public void btnBack() {
         finish();
@@ -121,12 +126,23 @@ public class ProductListActivity extends BaseActivity {
                 // Update the LastUpdatedLabel
                 refreshView.getLoadingLayoutProxy(true, false).setLastUpdatedLabel(label);
                 refreshView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
-                getByTypeProduct(3, 0, 1);
+                isMore = true;
+                currPage = 1;
+                getByTypeProduct(sortType, desc, currPage);
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-                getByTypeProduct(3, 0, 1);
+                if (!isMore) {
+                    refreshView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPullRefreshGridView.onRefreshComplete();
+                        }
+                    }, 100);
+                } else {
+                    getByTypeProduct(sortType, desc, currPage);
+                }
             }
         });
 
@@ -141,8 +157,10 @@ public class ProductListActivity extends BaseActivity {
             }
         });
         getPics();
-        getByTypeProduct(3, 0, 1);
+        getByTypeProduct(sortType, desc, currPage);
 
+        //@param sortType 排序类型 1:销量 2:价格 3:上架时间
+        //@param isDesc 是否是降序 0:升序 1:降序
         //@param sortType 排序类型 1:销量 2:价格 3:上架时间
         //@param isDesc 是否是降序 0:升序 1:降序
         my_rdo_group.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
@@ -150,15 +168,23 @@ public class ProductListActivity extends BaseActivity {
             public void onCheckedChanged(MyRadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.tv_sales_amount:
+                        sortType = 1;
+                        desc = 1;
                         getByTypeProduct(1, 1, 1);
                         break;
                     case R.id.tv_sales_price:
+                        sortType = 2;
+                        desc = 0;
                         getByTypeProduct(2, 0, 1);
                         break;
                     case R.id.tv_sales_new_put_away:
+                        sortType = 3;
+                        desc = 0;
                         getByTypeProduct(3, 0, 1);
                         break;
                 }
+                currPage = 1;
+                listViewDataAdapter.getDataList().clear();
             }
         });
     }
@@ -203,11 +229,24 @@ public class ProductListActivity extends BaseActivity {
                     ProductListResp<List<ProductVo>> productListResp = response.body();
                     //设置适配器
                     List<ProductVo> productList = productListResp.getProductList();
-                    ArrayList<ProductVo> dataList = listViewDataAdapter.getDataList();
-                    dataList.clear();
-                    dataList.addAll(productList);
-                    listViewDataAdapter.notifyDataSetChanged();
-                    //执行完数据调用刷新完成
+                    List<ProductVo> dataList = listViewDataAdapter.getDataList();
+                    int totalPage = productListResp.getPageCount();
+                    if (currPage == 1) {
+                        dataList.clear();
+                    }
+                    if (currPage == totalPage) {
+                        isMore = false;
+                        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setReleaseLabel("没有更多数据了");
+                    }
+                    if (currPage < totalPage) {
+                        currPage++;
+                    }
+                    if (productList.isEmpty()) {
+                        isMore = false;
+                    } else {
+                        dataList.addAll(productList);
+                        listViewDataAdapter.notifyDataSetChanged();
+                    }
                     mPullRefreshGridView.onRefreshComplete();
                 }
             }

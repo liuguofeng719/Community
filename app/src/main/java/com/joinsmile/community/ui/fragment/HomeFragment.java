@@ -3,12 +3,14 @@ package com.joinsmile.community.ui.fragment;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -142,29 +144,6 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
-//        new ActionSheetDialog(getActivity())
-//                .builder()
-//                .setTitle("请选择操作")
-//                .setCancelable(false)
-//                .setCanceledOnTouchOutside(false)
-//                .addSheetItem("条目一", ActionSheetDialog.SheetItemColor.Blue,
-//                        new ActionSheetDialog.OnSheetItemClickListener() {
-//                            @Override
-//                            public void onClick(int which) {
-//                                Toast.makeText(getActivity(),
-//                                        "item" + which, Toast.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//                        })
-//                .addSheetItem("条目二", ActionSheetDialog.SheetItemColor.Blue,
-//                        new ActionSheetDialog.OnSheetItemClickListener() {
-//                            @Override
-//                            public void onClick(int which) {
-//                                Toast.makeText(getActivity(),
-//                                        "item" + which, Toast.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//                }).show();
         if (rfBleKey != null) {
             //Scan dev list
             ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
@@ -185,24 +164,41 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 list.add(stringBuffer.toString().toUpperCase());
             }
 
-            ActionSheetDialog actionSheetDialog = new ActionSheetDialog(getActivity())
-                    .builder()
-                    .setTitle("请选择操作")
-                    .setCancelable(false)
-                    .setCanceledOnTouchOutside(false);
-            final ArrayList<String> newList = list;
-            for (String s : list) {
-                actionSheetDialog.addSheetItem(s, ActionSheetDialog.SheetItemColor.Blue,
-                        new ActionSheetDialog.OnSheetItemClickListener() {
-                            @Override
-                            public void onClick(int which) {
-                                if (0 == rfBleKey.openDoor(stringToBytes(newList.get(which).substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
-                                    CommonUtils.make(getActivity(), "开锁成功");
-                                }
-                            }
-                        });
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("请选择操作");
+            final String[] strings = list.toArray(new String[]{});
+            if (strings.length != 0) {
+                builder.setItems(strings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (0 == rfBleKey.openDoor(stringToBytes(strings[which].substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
+                            CommonUtils.make(getActivity(), "开锁成功");
+                        }
+                    }
+                });
+                builder.create().show();
+            } else {
+                CommonUtils.make(getActivity(), "没有找到设备");
             }
-            actionSheetDialog.show();
+
+//            ActionSheetDialog actionSheetDialog = new ActionSheetDialog(getActivity())
+//                    .builder()
+//                    .setTitle("请选择操作")
+//                    .setCancelable(false)
+//                    .setCanceledOnTouchOutside(false);
+//            final ArrayList<String> newList = list;
+//            for (String s : list) {
+//                actionSheetDialog.addSheetItem(s, ActionSheetDialog.SheetItemColor.Blue,
+//                        new ActionSheetDialog.OnSheetItemClickListener() {
+//                            @Override
+//                            public void onClick(int which) {
+//                                if (0 == rfBleKey.openDoor(stringToBytes(newList.get(which).substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
+//                                    CommonUtils.make(getActivity(), "开锁成功");
+//                                }
+//                            }
+//                        });
+//            }
+//            actionSheetDialog.show();
         }
 //        readyGo(OpenDoorActivity.class);
     }
@@ -286,7 +282,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                                         bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
                                         readyGo(PropertyMngPaymentActivity.class, bundle);
                                     } else {
-                                        CommonUtils.make(getActivity(),"请绑定小区");
+                                        CommonUtils.make(getActivity(), "请绑定小区");
                                     }
                                 }
                             }

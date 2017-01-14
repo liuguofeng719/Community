@@ -60,6 +60,8 @@ public class ShoppingMallFragment extends BaseFragment {
 
     boolean isMore = true;
     private int currPage = 1;
+    private int sortType = 3;
+    private int desc = 0;
 
     @Override
     protected void onFirstUserVisible() {
@@ -108,6 +110,7 @@ public class ShoppingMallFragment extends BaseFragment {
                     TextView tv_product_desc;
                     TextView tv_sales_price;
                     TextView tv_postage;
+
                     @Override
                     public View createView(LayoutInflater layoutInflater) {
                         View view = layoutInflater.inflate(R.layout.product_list_item_activity, null);
@@ -120,10 +123,11 @@ public class ShoppingMallFragment extends BaseFragment {
 
                     @Override
                     public void showData(int position, ProductVo itemData) {
-                        ImageLoader.getInstance().displayImage(itemData.getDefaultPicture(), iv_product_img,builder.build());
+                        ImageLoader.getInstance().displayImage(itemData.getDefaultPicture(), iv_product_img, builder.build());
                         tv_product_desc.setText(itemData.getProductName());
                         tv_product_desc.setTag(itemData.getProductID());
                         tv_sales_price.setText("￥" + itemData.getUnitPrice());
+                        tv_postage.setText("");
                     }
                 };
             }
@@ -149,9 +153,9 @@ public class ShoppingMallFragment extends BaseFragment {
                 // Update the LastUpdatedLabel
                 refreshView.getLoadingLayoutProxy(true, false).setLastUpdatedLabel(label);
                 refreshView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
-                getByTypeProduct(3, 0, 1);
                 isMore = true;
                 currPage = 1;
+                getByTypeProduct(sortType, desc, currPage);
             }
 
             @Override
@@ -164,7 +168,7 @@ public class ShoppingMallFragment extends BaseFragment {
                         }
                     }, 100);
                 } else {
-                    getByTypeProduct(3, 0, 1);
+                    getByTypeProduct(sortType, desc, currPage);
                 }
             }
         });
@@ -187,15 +191,23 @@ public class ShoppingMallFragment extends BaseFragment {
             public void onCheckedChanged(MyRadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.tv_sales_amount:
+                        sortType = 1;
+                        desc = 1;
                         getByTypeProduct(1, 1, 1);
                         break;
                     case R.id.tv_sales_price:
+                        sortType = 2;
+                        desc = 0;
                         getByTypeProduct(2, 0, 1);
                         break;
                     case R.id.tv_sales_new_put_away:
+                        sortType = 3;
+                        desc = 0;
                         getByTypeProduct(3, 0, 1);
                         break;
                 }
+                currPage = 1;
+                listViewDataAdapter.getDataList().clear();
             }
         });
         btn_back.setVisibility(View.GONE);
@@ -241,7 +253,7 @@ public class ShoppingMallFragment extends BaseFragment {
                     ProductListResp<List<ProductVo>> productListResp = response.body();
                     //设置适配器
                     List<ProductVo> productList = productListResp.getProductList();
-                    ArrayList<ProductVo> dataList = listViewDataAdapter.getDataList();
+                    List<ProductVo> dataList = listViewDataAdapter.getDataList();
                     int totalPage = productListResp.getPageCount();
                     if (currPage == 1) {
                         dataList.clear();
