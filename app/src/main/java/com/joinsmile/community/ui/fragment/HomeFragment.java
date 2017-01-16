@@ -1,5 +1,6 @@
 package com.joinsmile.community.ui.fragment;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,7 +41,6 @@ import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.utils.TLog;
-import com.joinsmile.community.widgets.ActionSheetDialog;
 import com.joinsmile.community.widgets.CircleImageView;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -146,23 +145,35 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     public void tvIntelligence() {
         if (rfBleKey != null) {
             //Scan dev list
-            ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
             ArrayList<String> list = new ArrayList<>();
-            for (BleDevContext dev : lst) {
-                StringBuffer stringBuffer = new StringBuffer();
-                stringBuffer.append(bytePadLeft(Integer.toHexString(dev.mac[0]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[1]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[2]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[3]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[4]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[5]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[6]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[7]), 2))
-                        .append(bytePadLeft(Integer.toHexString(dev.mac[8]), 2))
-                        .append(" (").append(dev.rssi).append(")");
-//                adapter.add(stringBuffer.toString().toUpperCase());
-                list.add(stringBuffer.toString().toUpperCase());
+            try {
+                ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
+//                CommonUtils.make(getActivity(), "设备"+lst.toString());
+                if (!lst.isEmpty()) {
+                    for (BleDevContext dev : lst) {
+                        StringBuffer stringBuffer = new StringBuffer();
+                        stringBuffer.append(bytePadLeft(Integer.toHexString(dev.mac[0]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[1]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[2]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[3]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[4]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[5]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[6]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[7]), 2))
+                                .append(bytePadLeft(Integer.toHexString(dev.mac[8]), 2))
+                                .append(" (").append(dev.rssi).append(")");
+    //                adapter.add(stringBuffer.toString().toUpperCase());
+                        list.add("设备号:"+stringBuffer.toString().toUpperCase());
+                    }
+                } else {
+                    CommonUtils.make(getActivity(), "没有找到设备");
+                    return;
+                }
+            } catch (Exception e) {
+                CommonUtils.make(getActivity(), e.getMessage());
             }
+
+//            CommonUtils.make(getActivity(), "===" + list.toString());
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("请选择操作");
@@ -171,7 +182,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 builder.setItems(strings, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (0 == rfBleKey.openDoor(stringToBytes(strings[which].substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
+                        String string = strings[which];
+                        int indexOf = string.indexOf(":");
+                        if (0 == rfBleKey.openDoor(stringToBytes(string.substring(indexOf+1,string.length()).substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
                             CommonUtils.make(getActivity(), "开锁成功");
                         }
                     }
