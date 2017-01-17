@@ -32,8 +32,8 @@ public class CommunityApplication extends Application {
         locationService = new LocationService(getApplicationContext());
         Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
         //TODO 禁用和启用Log
-        TLog.enableLog();
-//        TLog.disableLog();
+//        TLog.enableLog();
+        TLog.disableLog();
         //百度地图定位
 //        SDKInitializer.initialize(getApplicationContext());
     }
@@ -60,7 +60,7 @@ public class CommunityApplication extends Application {
                      * 当同一个Uri获取不同大小的图片，缓存到内存时，只缓存一个。默认会缓存多个不同的大小的相同图片
                      */
                     .denyCacheImageMultipleSizesInMemory()
-                    .writeDebugLogs() // Remove for release app
+//                    .writeDebugLogs() // Remove for release app
                     .build();
             // Initialize ImageLoader with configuration.
             ImageLoader.getInstance().init(config);
