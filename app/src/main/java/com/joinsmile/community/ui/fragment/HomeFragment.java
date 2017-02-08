@@ -24,6 +24,7 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
+import com.joinsmile.community.bean.OpenDoor;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
@@ -143,56 +144,75 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
-        if (rfBleKey != null) {
-            //Scan dev list
-            ArrayList<String> list = new ArrayList<>();
-            try {
-                ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
+        if (checkLogin()) {
+            if (rfBleKey != null) {
+                //Scan dev list
+                ArrayList<String> list = new ArrayList<>();
+                try {
+                    ArrayList<BleDevContext> lst = rfBleKey.getDiscoveredDevices();
 //                CommonUtils.make(getActivity(), "设备"+lst.toString());
-                if (!lst.isEmpty()) {
-                    for (BleDevContext dev : lst) {
-                        StringBuffer stringBuffer = new StringBuffer();
-                        stringBuffer.append(bytePadLeft(Integer.toHexString(dev.mac[0]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[1]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[2]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[3]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[4]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[5]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[6]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[7]), 2))
-                                .append(bytePadLeft(Integer.toHexString(dev.mac[8]), 2))
-                                .append(" (").append(dev.rssi).append(")");
-    //                adapter.add(stringBuffer.toString().toUpperCase());
-                        list.add("设备号:"+stringBuffer.toString().toUpperCase());
+                    if (!lst.isEmpty()) {
+                        for (BleDevContext dev : lst) {
+                            StringBuffer stringBuffer = new StringBuffer();
+                            stringBuffer.append(bytePadLeft(Integer.toHexString(dev.mac[0]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[1]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[2]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[3]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[4]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[5]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[6]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[7]), 2))
+                                    .append(bytePadLeft(Integer.toHexString(dev.mac[8]), 2))
+                                    .append(" (").append(dev.rssi).append(")");
+                            //                adapter.add(stringBuffer.toString().toUpperCase());
+                            list.add("设备号:" + stringBuffer.toString().toUpperCase());
+                        }
+                    } else {
+                        CommonUtils.make(getActivity(), "没有找到设备");
+                        return;
                     }
-                } else {
-                    CommonUtils.make(getActivity(), "没有找到设备");
-                    return;
+                } catch (Exception e) {
+                    CommonUtils.make(getActivity(), e.getMessage());
                 }
-            } catch (Exception e) {
-                CommonUtils.make(getActivity(), e.getMessage());
-            }
 
 //            CommonUtils.make(getActivity(), "===" + list.toString());
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("请选择操作");
-            final String[] strings = list.toArray(new String[]{});
-            if (strings.length != 0) {
-                builder.setItems(strings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String string = strings[which];
-                        int indexOf = string.indexOf(":");
-                        if (0 == rfBleKey.openDoor(stringToBytes(string.substring(indexOf+1,string.length()).substring(0, 18)), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
-                            CommonUtils.make(getActivity(), "开锁成功");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("请选择操作");
+                final String[] strings = list.toArray(new String[]{});
+                if (strings.length != 0) {
+                    builder.setItems(strings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String string = strings[which];
+                            int indexOf = string.indexOf(":");
+                            final String substring = string.substring(indexOf + 1, string.length()).substring(0, 18);
+                            getApisNew().openDoor(AppPreferences.getString("userId"),substring).enqueue(new Callback<OpenDoor>() {
+                                @Override
+                                public void onResponse(Call<OpenDoor> call, Response<OpenDoor> response) {
+                                    OpenDoor body = response.body();
+                                    if (response.isSuccessful() && body != null && body.isSuccessfully() && body.isCanBeOpenTheDoor()) {
+                                        if (0 == rfBleKey.openDoor(stringToBytes(substring), Integer.decode("5"), "3131313131313131D67D67966DA21300")) {
+                                            CommonUtils.make(getActivity(), "开锁成功");
+                                        } else {
+                                            CommonUtils.make(getActivity(), "开锁失败");
+                                        }
+                                    }else{
+                                        CommonUtils.make(getActivity(), body.getErrorMessage());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<OpenDoor> call, Throwable t) {
+                                    CommonUtils.make(getActivity(), "网络异常");
+                                }
+                            });
                         }
-                    }
-                });
-                builder.create().show();
-            } else {
-                CommonUtils.make(getActivity(), "没有找到设备");
-            }
+                    });
+                    builder.create().show();
+                } else {
+                    CommonUtils.make(getActivity(), "没有找到设备");
+                }
 
 //            ActionSheetDialog actionSheetDialog = new ActionSheetDialog(getActivity())
 //                    .builder()
@@ -212,6 +232,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 //                        });
 //            }
 //            actionSheetDialog.show();
+            }
+        }else{
+            readyGo(LoginActivity.class);
         }
 //        readyGo(OpenDoorActivity.class);
     }

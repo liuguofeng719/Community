@@ -23,6 +23,7 @@ import com.joinsmile.community.bean.InvestigationStatisticsResp;
 import com.joinsmile.community.bean.InvestigationVo;
 import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.bean.OnTopProductListResp;
+import com.joinsmile.community.bean.OpenDoor;
 import com.joinsmile.community.bean.OrderInfoResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
@@ -704,4 +705,14 @@ public interface ApisNew {
     Call<UserApartmentPropertyOrdersResp<List<UserApartmentPropertyOrdersVo>>> getUserApartmentPropertyOrders(
             @Query("userID") String userID
     );
+
+    /**
+     * 获取是否可以开锁
+     * @param userID
+     * @param deviceID
+     * @return
+     */
+    @GET("users/OpenDoor.ashx")
+    Call<OpenDoor> openDoor(@Query("userID") String userID, @Query("deviceID") String deviceID);
+
 }

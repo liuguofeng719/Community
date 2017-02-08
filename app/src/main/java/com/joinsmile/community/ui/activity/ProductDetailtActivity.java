@@ -136,7 +136,7 @@ public class ProductDetailtActivity extends BaseActivity {
 
     public void callPhone() {
         Intent intent = new Intent(Intent.ACTION_CALL);
-        Uri data = Uri.parse("tel:" + "02861039462");
+        Uri data = Uri.parse("tel:" + "0873-7183123");
         intent.setData(data);
         startActivity(intent);
     }

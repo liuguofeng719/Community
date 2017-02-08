@@ -1,6 +1,12 @@
 package com.joinsmile.community.ui.fragment;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -117,11 +123,27 @@ public class MyFragment extends BaseFragment {
     public void tvMyFavorites() {
 
     }
-
+    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     //帮助中心
     @OnClick(R.id.tv_help)
     public void tvHelp() {
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    MY_PERMISSIONS_REQUEST_CALL_PHONE);
+        } else {
+            callPhone();
+        }
+    }
+
+    public void callPhone() {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        Uri data = Uri.parse("tel:" + "0873-7183123");
+        intent.setData(data);
+        startActivity(intent);
     }
 
     //关于我们
