@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.BaseInfoVo;
+import com.joinsmile.community.bean.MessageInviteVo;
 import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.common.Constants;
 import com.joinsmile.community.netstatus.NetUtils;
@@ -41,6 +42,7 @@ public class InviteMemberActivity extends BaseActivity {
     String verifyCode;
     private Bundle extras;
     private Dialog dialog;
+    private String userId;
 
     @OnClick(R.id.btn_back)
     public void back() {
@@ -55,7 +57,7 @@ public class InviteMemberActivity extends BaseActivity {
     //邀请
     @OnClick(R.id.tv_done_text)
     public void tvDoneText() {
-        if (validateUserInfo()){
+        if (validateUserInfo()) {
             return;
         }
         if (TextUtils.isEmpty(ed_verifyCode.getText())) {
@@ -75,7 +77,7 @@ public class InviteMemberActivity extends BaseActivity {
     private void bindHouse() {
         dialog = CommonUtils.createDialog(this);
         Call<BaseInfoVo> infoVoCall = getApisNew().bindingHouse(
-                AppPreferences.getString("userId"),
+                userId,
                 extras.getString("numberID"),
                 3).clone();
         infoVoCall.enqueue(new Callback<BaseInfoVo>() {
@@ -85,6 +87,8 @@ public class InviteMemberActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     CommonUtils.make(InviteMemberActivity.this, getString(R.string.invite_member_msg));
                     readyGoThenKill(MyVillageActivity.class);
+                } else {
+                    CommonUtils.make(InviteMemberActivity.this, response.body().getErrorMessage());
                 }
             }
 
@@ -108,16 +112,22 @@ public class InviteMemberActivity extends BaseActivity {
         if (NetUtils.isNetworkAvailable(this)) {
             if (validateUserInfo()) return;
             countTimer.start();//开启验证码
-            Call<MessageVo> callMsg = getApisNew().sendInvitedCode(edit_phone_number.getText().toString()).clone();
-            callMsg.enqueue(new Callback<MessageVo>() {
+            Call<MessageInviteVo> callMsg = getApisNew().sendInvitedCode(edit_phone_number.getText().toString()).clone();
+            callMsg.enqueue(new Callback<MessageInviteVo>() {
                 @Override
-                public void onResponse(Call<MessageVo> call, Response<MessageVo> response) {
-                    verifyCode = response.body().getVerifyCode();
+                public void onResponse(Call<MessageInviteVo> call, Response<MessageInviteVo> response) {
+                    MessageInviteVo body = response.body();
+                    if (response.isSuccessful() && body != null && body.isSuccessfully()) {
+                        verifyCode = body.getVerifyCode();
+                        userId = body.getUserId();
+                    } else {
+                        CommonUtils.make(InviteMemberActivity.this, body.getErrorMessage());
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<MessageVo> call, Throwable t) {
-
+                public void onFailure(Call<MessageInviteVo> call, Throwable t) {
+                    CommonUtils.make(InviteMemberActivity.this, t.getMessage());
                 }
             });
         } else {

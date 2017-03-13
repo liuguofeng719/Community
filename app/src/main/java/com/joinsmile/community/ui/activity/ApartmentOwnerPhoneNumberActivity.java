@@ -91,7 +91,7 @@ public class ApartmentOwnerPhoneNumberActivity extends BaseActivity {
         if (NetUtils.isNetworkAvailable(this)) {
             if (validateUserInfo()) return;
             countTimer.start();//开启验证码
-            Call<MessageVo> callMsg = getApisNew().sendInvitedCode(phoneNumber).clone();
+            Call<MessageVo> callMsg = getApisNew().getVerifyCode(phoneNumber).clone();
             callMsg.enqueue(new Callback<MessageVo>() {
                 @Override
                 public void onResponse(Call<MessageVo> call, Response<MessageVo> response) {

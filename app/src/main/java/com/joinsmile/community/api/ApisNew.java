@@ -21,6 +21,7 @@ import com.joinsmile.community.bean.InvestigationQuestionListResp;
 import com.joinsmile.community.bean.InvestigationQuestionVo;
 import com.joinsmile.community.bean.InvestigationStatisticsResp;
 import com.joinsmile.community.bean.InvestigationVo;
+import com.joinsmile.community.bean.MessageInviteVo;
 import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.bean.OnTopProductListResp;
 import com.joinsmile.community.bean.OpenDoor;
@@ -221,7 +222,7 @@ public interface ApisNew {
      * @return
      */
     @GET("SMS/SendInvitedCode.ashx")
-    Call<MessageVo> sendInvitedCode(
+    Call<MessageInviteVo> sendInvitedCode(
             @Query("mobileNumber") String mobileNumber
     );
 
