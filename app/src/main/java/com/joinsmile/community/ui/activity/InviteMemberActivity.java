@@ -11,11 +11,9 @@ import android.widget.TextView;
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.BaseInfoVo;
 import com.joinsmile.community.bean.MessageInviteVo;
-import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.common.Constants;
 import com.joinsmile.community.netstatus.NetUtils;
 import com.joinsmile.community.ui.base.BaseActivity;
-import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 
 import butterknife.InjectView;

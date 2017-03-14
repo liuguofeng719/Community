@@ -33,6 +33,8 @@
         <!-- 模糊 -->
     </style>
 
+    <style name="AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert"></style>
+
     <style name="AppThemeSplash">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

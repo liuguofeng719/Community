@@ -1,12 +1,14 @@
 package com.joinsmile.community.ui.fragment;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
 
@@ -135,7 +137,23 @@ public class MyFragment extends BaseFragment {
                     new String[]{Manifest.permission.CALL_PHONE},
                     MY_PERMISSIONS_REQUEST_CALL_PHONE);
         } else {
-            callPhone();
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle("提示信息");
+            alert.setMessage("若需要帮助,请拨打0873-7183123");
+            alert.setCancelable(true);
+            alert.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    callPhone();
+                }
+            });
+            alert.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            alert.show();
         }
     }
 
