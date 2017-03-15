@@ -12,6 +12,7 @@ import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.bean.BaseInfoVo;
 import com.joinsmile.community.bean.BuildingUnitsResp;
 import com.joinsmile.community.bean.BuildingUnitsVo;
+import com.joinsmile.community.bean.CataloguesVo;
 import com.joinsmile.community.bean.CityInfoResp;
 import com.joinsmile.community.bean.CityListResp;
 import com.joinsmile.community.bean.CityVo;
@@ -47,8 +48,12 @@ import com.joinsmile.community.bean.RepairAndComplaintsResp;
 import com.joinsmile.community.bean.RepairAndComplaintsVo;
 import com.joinsmile.community.bean.ResidentialBuildingVo;
 import com.joinsmile.community.bean.ResidentialListResp;
+import com.joinsmile.community.bean.ServiceCompanyDetail;
+import com.joinsmile.community.bean.ServiceCompanyVo;
+import com.joinsmile.community.bean.ServiceOrderVo;
 import com.joinsmile.community.bean.ShoppingCartResp;
 import com.joinsmile.community.bean.ShoppingCartVo;
+import com.joinsmile.community.bean.SubCatalogues;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersResp;
 import com.joinsmile.community.bean.UserApartmentPropertyOrdersVo;
 import com.joinsmile.community.bean.UserInvestigationListResp;
@@ -89,7 +94,7 @@ public interface ApisNew {
     /**
      * 获取轮播图接口
      */
-    @GET("Advertisement/GetAdvertisementPictures.ashx")
+    @GET("Advertisement/GetAdvertisementPictures.ashx?platform=android")
     Call<PicturesVoResp<List<PicturesVo>>> getAdvertisementPictures();
 
     /**
@@ -715,5 +720,76 @@ public interface ApisNew {
      */
     @GET("users/OpenDoor.ashx")
     Call<OpenDoor> openDoor(@Query("userID") String userID, @Query("deviceID") String deviceID);
+
+    /**
+     * 获取一级产品分类
+     * @return
+     */
+    @GET("Catalogs/GetPrimaryCatalogues.ashx")
+    Call<CataloguesVo<List<CataloguesVo.Catalogue>>> getPrimaryCatalogues();
+
+    /**
+     * 通过父分类所有的子分类和品牌
+     * @return
+     */
+    @GET("Catalogs/GetSubCatalogues.ashx")
+    Call<SubCatalogues<SubCatalogues.SubCatalogue>> getSubCatalogues(@Query("catalogueID") String catalogueID);
+
+    /**
+     * 子分类或子品牌下所有商品信息
+     * @param subCatalogueID 子分类ID或品牌ID
+     * @param sortType 排序类型 1:销量 2:价格 3:上架时间
+     * @param isDesc 是否是降序   0:升序 1:降序
+     * @param pageIndex 显示的页数
+     * @return ProductListResp<List<ProductVo>>
+     */
+    @GET("Products/GetProductsBySubCatalogueID.ashx")
+    Call<ProductListResp<List<ProductVo>>> getProductsBySubCatalogueID(
+            @Query("subCatalogueID") int subCatalogueID,
+            @Query("sortType") int sortType,
+            @Query("isDesc") int isDesc,
+            @Query("pageIndex") int pageIndex
+    );
+
+    /**
+     * 获取所有提供服务的公司
+     * @return
+     */
+    @GET("ServiceCompany/GetCompanies.ashx")
+    Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> getCompanies();
+
+    /**
+     * 通过服务编码获取，服务公司具体信息
+     */
+    @GET("ServiceCompany/GetCompanyDetails.ashx")
+    Call<ServiceCompanyDetail> getCompanyDetails(@Query("companyID") String companyID);
+
+    /**
+     * 创建服务订单
+     * @param  userID 用户ID
+     * @param companyID 服务公司ID
+     * @param noteNumber 服务单号
+     * @param totalPrice 订单总金额
+     */
+    @GET("ServiceOrders/CreateServiceOrder.ashx")
+    Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> createServiceOrder(@Query("userID") String userID,
+                                                            @Query("companyID") String companyID,
+                                                            @Query("noteNumber") String noteNumber,
+                                                            @Query("totalPrice") String totalPrice);
+    /**
+     * 获取服务订单支付宝签名
+     * @param orderID
+     * @return
+     */
+    @GET("ServiceOrders/PayServiceOrderByAlipay.ashx")
+    Call<AlipayVo> payServiceOrderByAlipay(@Query("orderID") String orderID);
+
+    /**
+     * 获取服务订单微信支付签名
+     * @param orderID
+     * @return
+     */
+    @GET("ServiceOrders/PayServiceOrderByWeixin.ashx")
+    Call<AlipayVo> payServiceOrderByWeixin(@Query("orderID") String orderID);
 
 }

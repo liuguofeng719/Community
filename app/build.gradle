@@ -9,8 +9,8 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.joinsmile.community"
         minSdkVersion 16
@@ -54,9 +54,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-//    compile 'com.android.support:support-v4:24.2.0'
+    //    compile 'com.android.support:support-v4:24.2.0'
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:recyclerview-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
@@ -81,10 +81,8 @@ dependencies {
     compile files('libs/alipaySdk-20151112.jar')
     compile files('libs/libammsdk.jar')
     compile 'com.githang:clipimageview:0.1'
-
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
-
     // Apache Http
     android {
         useLibrary 'org.apache.http.legacy'
