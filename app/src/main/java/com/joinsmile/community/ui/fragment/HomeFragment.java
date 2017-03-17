@@ -10,16 +10,20 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
@@ -29,6 +33,8 @@ import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
+import com.joinsmile.community.bean.ServiceCompanyVo;
+import com.joinsmile.community.ui.activity.CourierActivity;
 import com.joinsmile.community.ui.activity.InvestigationActivity;
 import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
@@ -37,6 +43,9 @@ import com.joinsmile.community.ui.activity.ProductDetailtActivity;
 import com.joinsmile.community.ui.activity.ProductListActivity;
 import com.joinsmile.community.ui.activity.PropertyMngPaymentActivity;
 import com.joinsmile.community.ui.activity.WebViewActivity;
+import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
+import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
+import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseFragment;
 import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
@@ -77,6 +86,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     private Dialog mDialog;
     private Dialog showDialog;
+    private Dialog serviceDialog;
+
     private Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall;
     private Call<AnnouncementResp> respCall;
 
@@ -141,6 +152,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             mService = null;
         }
     };
+    private ListViewDataAdapter<ServiceCompanyVo.ServiceCompany> lstDataAdapter;
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
@@ -337,6 +349,91 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         });
     }
 
+    //生活服务
+    @OnClick(R.id.tv_service)
+    public void tvService(){
+
+        serviceQuery();
+        serviceDialog.show();
+
+        GridView gridView = (GridView) serviceDialog.findViewById(R.id.grid_service);
+
+        lstDataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator<ServiceCompanyVo.ServiceCompany>() {
+
+            @Override
+            public ViewHolderBase<ServiceCompanyVo.ServiceCompany> createViewHolder(int position) {
+                final DisplayImageOptions.Builder builder = getBuilder();
+                return new ViewHolderBase<ServiceCompanyVo.ServiceCompany>() {
+
+                    ImageView imageView;
+                    TextView textView;
+                    @Override
+                    public View createView(LayoutInflater layoutInflater) {
+                        View inflate = layoutInflater.inflate(R.layout.service_mng_item, null);
+                        imageView= (ImageView) inflate.findViewById(R.id.image);
+                        textView = (TextView) inflate.findViewById(R.id.tv_text);
+                        return inflate;
+                    }
+
+                    @Override
+                    public void showData(int position, ServiceCompanyVo.ServiceCompany itemData) {
+                        ImageLoader.getInstance().displayImage(itemData.getCompanyIcon(), imageView, builder.build());
+                        textView.setText(itemData.getCompanyName());
+                        textView.setTag(itemData.getDompanyId());
+                    }
+                };
+            }
+        });
+
+        gridView.setAdapter(lstDataAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (checkLogin()) {
+                    TextView tv_text = (TextView) view.findViewById(R.id.tv_text);
+                    String tag = tv_text.getTag().toString();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("companyId",tag);
+                    bundle.putString("companyName",tv_text.getText().toString());
+                    readyGo(CourierActivity.class,bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
+            }
+        });
+    }
+
+    private void serviceQuery(){
+        final Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> companies = getApisNew().getCompanies();
+        companies.enqueue(new Callback<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>>() {
+            @Override
+            public void onResponse(Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> call,
+                                   Response<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> response) {
+                if (response.isSuccessful()) {
+                    ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>> body = response.body();
+                    if (body.isSuccessfully()) {
+                        List<ServiceCompanyVo.ServiceCompany> companyList = body.getServiceCompanyList();
+                        if (companyList != null && companyList.size() > 0) {
+                            ArrayList<ServiceCompanyVo.ServiceCompany> dataList = lstDataAdapter.getDataList();
+                            dataList.clear();
+                            dataList.addAll(companyList);
+                            lstDataAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        CommonUtils.make(getActivity(), body.getErrorMessage());
+                    }
+                } else {
+                    CommonUtils.make(getActivity(), response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> call, Throwable t) {
+                CommonUtils.make(getActivity(), t.getMessage());
+            }
+        });
+    }
+
     //调查问卷
     @OnClick(R.id.tv_vote)
     public void tvVote() {
@@ -432,6 +529,12 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         mDialog.setContentView(R.layout.community_mng_dialog);
         mDialog.setCancelable(true);
         mDialog.setCanceledOnTouchOutside(true);
+
+        serviceDialog = CommonUtils.createDialog(getActivity());
+        serviceDialog.setContentView(R.layout.service_mng_dialog);
+        serviceDialog.setCancelable(true);
+        serviceDialog.setCanceledOnTouchOutside(true);
+
         this.mSlideShowView.setOnImageClickedListener(this);
         Intent bindIntent = new Intent(getActivity().getApplicationContext(), BleService.class);
         getActivity().bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -655,6 +758,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         }
         if (showDialog != null) {
             CommonUtils.dismiss(showDialog);
+        }
+        if (serviceDialog != null) {
+            CommonUtils.dismiss(serviceDialog);
         }
     }
 

@@ -10,6 +10,14 @@ public class ServiceOrderVo<T> extends BaseInfoVo {
     @SerializedName("OrderInfo")
     private T orderInfo;
 
+    public T getOrderInfo() {
+        return orderInfo;
+    }
+
+    public void setOrderInfo(T orderInfo) {
+        this.orderInfo = orderInfo;
+    }
+
     public static class ServiceOrderInfo{
         @SerializedName("OrderID")
         private String orderId;// 订单ID （此订单ID可以用来在订单支付时或者支付宝和微信支付的签名信息）

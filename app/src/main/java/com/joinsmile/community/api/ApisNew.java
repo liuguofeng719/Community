@@ -790,6 +790,6 @@ public interface ApisNew {
      * @return
      */
     @GET("ServiceOrders/PayServiceOrderByWeixin.ashx")
-    Call<AlipayVo> payServiceOrderByWeixin(@Query("orderID") String orderID);
+    Call<WXPayVo> payServiceOrderByWeixin(@Query("orderID") String orderID);
 
 }

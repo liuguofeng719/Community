@@ -26,6 +26,9 @@
     <string name="phone_recharge">话费充值</string>
     <string name="house_keeper">小区管家</string>
     <string name="intelligence">智能管理</string>
+    <string name="service">生活服务</string>
+    <string name="service_pass">中通快递</string>
+    <string name="service_clothes">UCC洗衣服务</string>
     <string name="integral">积分商城</string>
     <string name="vote">调查投票</string>
     <string name="phone_advice">电话投诉</string>
