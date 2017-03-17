@@ -66,10 +66,14 @@ public class CourierActivity extends BaseActivity {
             return;
         }
 
-        Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> serviceOrder = getApisNew().createServiceOrder(AppPreferences.getString("userId"), companyId, editNoteNumber.toString(), editAmount.toString());
+        Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> serviceOrder = getApisNew().createServiceOrder(
+                AppPreferences.getString("userId"), companyId, editNoteNumber.toString(), editAmount.toString()
+        );
+
         serviceOrder.enqueue(new Callback<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>>() {
             @Override
-            public void onResponse(Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> call, Response<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> response) {
+            public void onResponse(Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> call,
+                                   Response<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> response) {
                 if (response.isSuccessful()) {
                     ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo> body = response.body();
                     if(body.isSuccessfully()){
