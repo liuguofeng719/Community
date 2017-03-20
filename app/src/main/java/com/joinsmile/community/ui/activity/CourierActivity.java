@@ -2,6 +2,7 @@ package com.joinsmile.community.ui.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
@@ -128,14 +129,7 @@ public class CourierActivity extends BaseActivity {
 
                     if (body.isSuccessfully() && body != null) {
 
-                        final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                        builder.bitmapConfig(Bitmap.Config.RGB_565);
-                        builder.cacheInMemory(true);
-                        builder.cacheOnDisk(true);
-                        builder.considerExifParams(true);
-                        builder.showImageForEmptyUri(R.drawable.no_banner);
-                        builder.showImageOnFail(R.drawable.no_banner);
-                        builder.showImageOnLoading(R.drawable.no_banner);
+                        final DisplayImageOptions.Builder builder = getBuilder();
 
                         ServiceCompanyVo.ServiceCompany serviceCompany = body.getServiceCompany();
                         String description = serviceCompany.getDescription();

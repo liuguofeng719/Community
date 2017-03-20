@@ -157,7 +157,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:text="我已经同意条款[优加社区应用服务条款与隐私规则]"
             android:textColor="@color/text_color"
             android:textSize="14sp" />
     </LinearLayout>

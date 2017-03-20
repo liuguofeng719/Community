@@ -71,7 +71,6 @@
             android:textSize="14sp"
             android:textColor="@color/text_color"
             android:padding="10dp"
-            android:text="我已经同意条款"
         />
     </LinearLayout>
 

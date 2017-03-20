@@ -34,6 +34,7 @@ import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
 import com.joinsmile.community.bean.ServiceCompanyVo;
+import com.joinsmile.community.ui.activity.CatalogueActivity;
 import com.joinsmile.community.ui.activity.CourierActivity;
 import com.joinsmile.community.ui.activity.InvestigationActivity;
 import com.joinsmile.community.ui.activity.LoginActivity;
@@ -306,6 +307,24 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 } else {
                     readyGo(LoginActivity.class);
                 }
+            }
+        });
+
+        //业委会
+        final TextView tvIndustryCouncil = (TextView) mDialog.findViewById(R.id.tv_industry_council);
+        tvIndustryCouncil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        //物业公司
+        final TextView tvPropertyCompany = (TextView) mDialog.findViewById(R.id.tv_property_company);
+        tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -714,7 +733,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 hideLoading();
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     List<RecommendProductVo> productList = response.body().getProductList();
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                     layoutManager.setSmoothScrollbarEnabled(true);
                     recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setAdapter(new HomeAdapter(productList));

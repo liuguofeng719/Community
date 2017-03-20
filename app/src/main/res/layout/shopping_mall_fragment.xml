@@ -10,9 +10,20 @@
     <com.joinsmile.community.widgets.SlideShowView
         android:id="@+id/slideShowView"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="120dp"
         android:padding="0dp" />
 
+    <GridView
+        android:id="@+id/grid_category"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:cacheColorHint="@color/transparent"
+        android:verticalSpacing="2dp"
+        android:horizontalSpacing="2dp"
+        android:scrollbars="none"
+        android:numColumns="3"
+        android:divider="@null"
+    />
     <com.joinsmile.community.widgets.MyRadioGroup
         android:id="@+id/my_rdo_group"
         android:layout_width="match_parent"

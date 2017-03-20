@@ -2,9 +2,13 @@ package com.joinsmile.community.ui.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -46,6 +50,8 @@ public class ApartmentOwnerPhoneNumberActivity extends BaseActivity {
     TextView btn_verify_code;
     @InjectView(R.id.tv_proxy_role)
     TextView tv_proxy_role;
+    @InjectView(R.id.tv_clause)
+    TextView tv_clause;
 
     CountTimer countTimer;
     String verifyCode;
@@ -190,8 +196,17 @@ public class ApartmentOwnerPhoneNumberActivity extends BaseActivity {
         numberId = extras.getString("numberId");
         countTimer = new CountTimer(Constants.reg.millisInFuture, Constants.reg.countDownInterval);
         getVillage(numberId);
+        addForceColorSpan();
     }
 
+    private void addForceColorSpan() {
+        String source = "我已经同意条款<<优加社区应用服务条款与隐私规则>>";
+        int index = source.indexOf("<<");
+        SpannableString spannableString = new SpannableString(source);
+        ForegroundColorSpan span = new ForegroundColorSpan(Color.RED);
+        spannableString.setSpan(span, index, source.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tv_clause.append(spannableString);
+    }
 
     private void getVillage(String numberID) {
         Call<ApartmentOwnerPhoneNumberVo> callVillage = getApisNew().getApartmentOwnerPhoneNumber(numberID).clone();

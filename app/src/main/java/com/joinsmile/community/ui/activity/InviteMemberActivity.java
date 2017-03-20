@@ -1,9 +1,13 @@
 package com.joinsmile.community.ui.activity;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,6 +40,9 @@ public class InviteMemberActivity extends BaseActivity {
     EditText ed_verifyCode;
     @InjectView(R.id.tv_verify_code)
     TextView tv_verify_code;
+    @InjectView(R.id.tv_clause)
+    TextView tv_clause;
+
     CountTimer countTimer;
     String verifyCode;
     private Bundle extras;
@@ -186,5 +193,15 @@ public class InviteMemberActivity extends BaseActivity {
     protected void initViewsAndEvents() {
         tv_header_title.setText(getString(R.string.invite_member));
         countTimer = new CountTimer(Constants.reg.millisInFuture, Constants.reg.countDownInterval);
+        addForceColorSpan();
+    }
+
+    private void addForceColorSpan() {
+        String source = "我已经同意条款<<优加社区应用服务条款与隐私规则>>";
+        int index = source.indexOf("<<");
+        SpannableString spannableString = new SpannableString(source);
+        ForegroundColorSpan span = new ForegroundColorSpan(Color.RED);
+        spannableString.setSpan(span, index, source.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tv_clause.append(spannableString);
     }
 }

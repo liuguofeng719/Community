@@ -58,6 +58,37 @@
         android:layout_marginTop="20dp"
         >
         <TextView
+            android:id="@+id/tv_industry_council"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:drawableTop="@drawable/manage_service"
+            android:drawablePadding="10dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/text_color"
+            android:text="@string/industry_council"
+            android:textSize="14sp"
+            />
+        <TextView
+            android:id="@+id/tv_property_company"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:drawableTop="@drawable/complaint_suggest"
+            android:drawablePadding="10dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:gravity="center"
+            android:text="@string/property_company"
+            android:textSize="14sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
             android:id="@+id/tv_tenement_pay"
             android:layout_weight="1"
             android:layout_width="0dp"

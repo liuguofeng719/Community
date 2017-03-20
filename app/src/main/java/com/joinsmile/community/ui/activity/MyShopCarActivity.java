@@ -161,14 +161,7 @@ public class MyShopCarActivity extends BaseActivity {
             @Override
             public ViewHolderBase<ShoppingCartVo> createViewHolder(int position) {
 
-                final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                builder.bitmapConfig(Bitmap.Config.RGB_565);
-                builder.cacheInMemory(true);
-                builder.cacheOnDisk(true);
-                builder.considerExifParams(true);
-                builder.showImageForEmptyUri(R.drawable.no_banner);
-                builder.showImageOnFail(R.drawable.no_banner);
-                builder.showImageOnLoading(R.drawable.no_banner);
+                final DisplayImageOptions.Builder builder = getBuilder();
 
                 return new ViewHolderBase<ShoppingCartVo>() {
 

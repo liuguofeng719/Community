@@ -311,14 +311,7 @@ public class ProductDetailtActivity extends BaseActivity {
                                    Response<ProductResp<ProductVo>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     productVo = response.body().getProduct();
-                    final DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-                    builder.bitmapConfig(Bitmap.Config.RGB_565);
-                    builder.cacheInMemory(true);
-                    builder.cacheOnDisk(true);
-                    builder.considerExifParams(true);
-                    builder.showImageForEmptyUri(R.drawable.no_banner);
-                    builder.showImageOnFail(R.drawable.no_banner);
-                    builder.showImageOnLoading(R.drawable.no_banner);
+                    final DisplayImageOptions.Builder builder = getBuilder();
                     ImageLoader.getInstance().displayImage(productVo.getDefaultPicture(), ivProductImg, builder.build());
                     tvProductTitle.setTag(productVo.getProductID());
                     tvProductTitle.setText(productVo.getProductName());

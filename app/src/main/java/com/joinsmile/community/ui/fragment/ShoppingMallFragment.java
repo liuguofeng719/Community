@@ -1,7 +1,11 @@
 package com.joinsmile.community.ui.fragment;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +18,17 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.OnTopProductListResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.ProductListResp;
+import com.joinsmile.community.bean.ProductPageCatalogues;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshBase;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshGridView;
+import com.joinsmile.community.ui.activity.CatalogueActivity;
 import com.joinsmile.community.ui.activity.ProductDetailtActivity;
 import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseFragment;
+import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.MyRadioGroup;
 import com.joinsmile.community.widgets.SlideShowView;
@@ -54,6 +61,9 @@ public class ShoppingMallFragment extends BaseFragment {
     @InjectView(R.id.btn_back)
     ImageView btn_back;
 
+    @InjectView(R.id.grid_category)
+    GridView gridViewCategory;
+
     private GridView mGridView;
     private Call<ProductListResp<List<ProductVo>>> allProductByType;
     private ListViewDataAdapter<ProductVo> listViewDataAdapter;
@@ -62,6 +72,7 @@ public class ShoppingMallFragment extends BaseFragment {
     private int currPage = 1;
     private int sortType = 3;
     private int desc = 0;
+    private ListViewDataAdapter<ProductPageCatalogues.ProductPageCatalogue> dataAdapter;
 
     @Override
     protected void onFirstUserVisible() {
@@ -204,6 +215,108 @@ public class ShoppingMallFragment extends BaseFragment {
             }
         });
         btn_back.setVisibility(View.GONE);
+
+        //获取商品分类
+        getFirstCategory();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 30) {
+            String subCatalogueId = data.getStringExtra("subCatalogueId");
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //获取一级分类
+    private void getFirstCategory(){
+
+        dataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator<ProductPageCatalogues.ProductPageCatalogue>() {
+            @Override
+            public ViewHolderBase<ProductPageCatalogues.ProductPageCatalogue> createViewHolder(int position) {
+                return new ViewHolderBase<ProductPageCatalogues.ProductPageCatalogue>() {
+                    final DisplayImageOptions.Builder builder = getBuilder();
+                    ImageView image;
+                    TextView tv_text;
+
+                    @Override
+                    public View createView(LayoutInflater layoutInflater) {
+                        View view = layoutInflater.inflate(R.layout.catalogue_item_activity, null);
+                        image = (ImageView) view.findViewById(R.id.image);
+                        tv_text = (TextView) view.findViewById(R.id.tv_text);
+                        return view;
+                    }
+
+                    @Override
+                    public void showData(int position, ProductPageCatalogues.ProductPageCatalogue itemData) {
+                        if (TextUtils.isEmpty(itemData.getCatalogueID())) {
+                            image.setImageResource(android.R.drawable.ic_menu_more);
+                            tv_text.setText("全部分类");
+                            tv_text.setTag("all");
+                        } else {
+                            ImageLoader.getInstance().displayImage(itemData.getCatalogueIcon(), image, builder.build());
+                            tv_text.setText(itemData.getCatalogueName());
+                            tv_text.setTag(itemData.getCatalogueID());
+                        }
+                    }
+                };
+            }
+        });
+
+        gridViewCategory.setAdapter(dataAdapter);
+
+        gridViewCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String catalogueId = view.findViewById(R.id.tv_text).getTag().toString();
+                if ("all".equalsIgnoreCase(catalogueId)) {
+                    readyGoForResult(CatalogueActivity.class,1);
+                } else {
+
+                }
+            }
+        });
+
+        Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> productPageCatalogues = getApisNew().getProductPageCatalogues();
+
+        productPageCatalogues.enqueue(new Callback<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>>() {
+            @Override
+            public void onResponse(Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> call,
+                                   Response<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> response) {
+
+                if (response.isSuccessful()) {
+
+                    ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>> listProductPageCatalogues = response.body();
+
+                    if (listProductPageCatalogues.isSuccessfully()) {
+
+                        List<ProductPageCatalogues.ProductPageCatalogue> catalogues = listProductPageCatalogues.getProductPageCatalogues();
+                        ProductPageCatalogues.ProductPageCatalogue pageCatalogueLast = new ProductPageCatalogues.ProductPageCatalogue();
+                        pageCatalogueLast.setCatalogueID("");
+                        pageCatalogueLast.setCatalogueName("全部分类");
+                        catalogues.add(pageCatalogueLast);
+
+                        ArrayList<ProductPageCatalogues.ProductPageCatalogue> dataList = dataAdapter.getDataList();
+                        dataList.clear();
+                        dataList.addAll(catalogues);
+                        dataAdapter.notifyDataSetChanged();
+
+                    } else {
+
+                        CommonUtils.make(mContext, listProductPageCatalogues.getErrorMessage());
+                    }
+                } else {
+
+                    CommonUtils.make(mContext, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> call, Throwable t) {
+                CommonUtils.make(mContext, t.getMessage());
+            }
+        });
     }
 
     //获取轮播图

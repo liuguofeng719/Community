@@ -26,6 +26,7 @@ import com.joinsmile.community.bean.MessageInviteVo;
 import com.joinsmile.community.bean.MessageVo;
 import com.joinsmile.community.bean.OnTopProductListResp;
 import com.joinsmile.community.bean.OpenDoor;
+import com.joinsmile.community.bean.OpenInvitedMember;
 import com.joinsmile.community.bean.OrderInfoResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
@@ -33,6 +34,7 @@ import com.joinsmile.community.bean.ProductListResp;
 import com.joinsmile.community.bean.ProductOrderListResp;
 import com.joinsmile.community.bean.ProductOrderVo;
 import com.joinsmile.community.bean.ProductOrderVoResp;
+import com.joinsmile.community.bean.ProductPageCatalogues;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.bean.ProvinceListResp;
@@ -50,6 +52,7 @@ import com.joinsmile.community.bean.ResidentialBuildingVo;
 import com.joinsmile.community.bean.ResidentialListResp;
 import com.joinsmile.community.bean.ServiceCompanyDetail;
 import com.joinsmile.community.bean.ServiceCompanyVo;
+import com.joinsmile.community.bean.ServiceOrderListVo;
 import com.joinsmile.community.bean.ServiceOrderVo;
 import com.joinsmile.community.bean.ShoppingCartResp;
 import com.joinsmile.community.bean.ShoppingCartVo;
@@ -416,7 +419,6 @@ public interface ApisNew {
     @GET("Products/GetOnMainPageProducts.ashx")
     Call<RecommendProductListResp<List<RecommendProductVo>>> getOnMainPageProducts();
 
-
     /**
      * 获取所有商品信息
      *
@@ -431,6 +433,36 @@ public interface ApisNew {
             @Query("isDesc") int isDesc,
             @Query("pageIndex") int pageIndex
     );
+
+    /**
+     * 子分类或子品牌下所有商品信息
+     * @param subCatalogueID
+     * @param sortType
+     * @param isDesc
+     * @param pageIndex
+     * @return
+     */
+    @GET("Products/GetProductsBySubCatalogueID.ashx")
+    Call<ProductListResp<List<ProductVo>>> getProductsBySubCatalogueId(
+            @Query("subCatalogueID") String subCatalogueID,
+            @Query("sortType") int sortType,
+            @Query("isDesc") int isDesc,
+            @Query("pageIndex") int pageIndex);
+
+    /**
+     * 点击产品展示页一级分类后展示商品
+     * @param subCatalogueID
+     * @param sortType
+     * @param isDesc
+     * @param pageIndex
+     * @return
+     */
+    @GET("Products/GetProductsByFirstCatalogueID.ashx")
+    Call<ProductListResp<List<ProductVo>>> getProductsByFirstCatalogueId(
+            @Query("subCatalogueID") String subCatalogueID,
+            @Query("sortType") int sortType,
+            @Query("isDesc") int isDesc,
+            @Query("pageIndex") int pageIndex);
 
     /**
      * 获取单个商品信息
@@ -733,7 +765,7 @@ public interface ApisNew {
      * @return
      */
     @GET("Catalogs/GetSubCatalogues.ashx")
-    Call<SubCatalogues<SubCatalogues.SubCatalogue>> getSubCatalogues(@Query("catalogueID") String catalogueID);
+    Call<SubCatalogues<List<SubCatalogues.SubCatalogue>>> getSubCatalogues(@Query("catalogueID") String catalogueID);
 
     /**
      * 子分类或子品牌下所有商品信息
@@ -791,5 +823,33 @@ public interface ApisNew {
      */
     @GET("ServiceOrders/PayServiceOrderByWeixin.ashx")
     Call<WXPayVo> payServiceOrderByWeixin(@Query("orderID") String orderID);
+
+    /**
+     * 获取服务订单
+     * @param  userID 用户ID
+     */
+    @GET("ServiceOrders/GetUserServiceOrders.ashx")
+    Call<ServiceOrderListVo<List<ServiceOrderListVo.ServiceOrder>>> getUserServiceOrders(@Query("userID") String userID);
+
+    /**
+     * 产品展示页显示的一级分类
+     * @return
+     */
+    @GET("Catalogs/GetProductPageCatalogues.ashx")
+    Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> getProductPageCatalogues();
+
+    /**
+     * 检查是否开通物业缴费功能
+     * @param buildingID
+     * @return
+     */
+    @GET("PlatformSettings/IsOpenInvitedMember.ashx")
+    Call<OpenInvitedMember> isOpenInvitedMember(@Query("buildingID") String buildingID);
+
+    /**
+     * 检查小区是否开通邀请成员功能
+     */
+    @GET("PlatformSettings/IsOpenPropertyCharges.ashx")
+    Call<OpenInvitedMember> isOpenPropertyCharges(@Query("buildingID") String buildingID);
 
 }

@@ -20,6 +20,8 @@
     <string name="main_rdo_my">我的</string>
     <string name="main_rdo_home">首页</string>
 
+    <string name="industry_council">业委会</string>
+    <string name="property_company">物业公司</string>
     <string name="tenement_repairs">物业报修</string>
     <string name="complaint_suggest">投诉建议</string>
     <string name="tenement_pay">物业缴费</string>

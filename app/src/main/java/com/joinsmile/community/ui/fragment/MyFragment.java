@@ -19,6 +19,7 @@ import com.joinsmile.community.ui.activity.LoginActivity;
 import com.joinsmile.community.ui.activity.MyComplaintActivity;
 import com.joinsmile.community.ui.activity.MyOrderActivity;
 import com.joinsmile.community.ui.activity.MyPropertyPaymentActivity;
+import com.joinsmile.community.ui.activity.MyServiceActivity;
 import com.joinsmile.community.ui.activity.MyVillageActivity;
 import com.joinsmile.community.ui.activity.MyVoteActivity;
 import com.joinsmile.community.ui.activity.UserInfoActivity;
@@ -77,6 +78,15 @@ public class MyFragment extends BaseFragment {
     public void tvMyOrder() {
         if (checkLogin()) {
             readyGo(MyOrderActivity.class);
+        } else {
+            readyGo(LoginActivity.class);
+        }
+    }
+    //我的服务
+    @OnClick(R.id.tv_my_service)
+    public void tvMyService() {
+        if (checkLogin()) {
+            readyGo(MyServiceActivity.class);
         } else {
             readyGo(LoginActivity.class);
         }
@@ -141,7 +151,7 @@ public class MyFragment extends BaseFragment {
             alert.setTitle("提示信息");
             alert.setMessage("若需要帮助,请拨打0873-7183123");
             alert.setCancelable(true);
-            alert.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            alert.setPositiveButton("拨打", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     callPhone();
