@@ -29,6 +29,7 @@ import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
 import com.joinsmile.community.bean.OpenDoor;
+import com.joinsmile.community.bean.OpenInvitedMember;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
 import com.joinsmile.community.bean.RecommendProductListResp;
@@ -333,6 +334,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             @Override
             public void onClick(View v) {
                 if (checkLogin()) {
+
                     Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall = getApisNew().getUserApartments(AppPreferences.getString("userId")).clone();
                     numbersRespCall.enqueue(new Callback<ApartmentNumbersResp<List<ApartmentNumbersVo>>>() {
                         @Override
@@ -341,13 +343,48 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             if (numbersRespCall.isSuccessful()) {
                                 ApartmentNumbersResp<List<ApartmentNumbersVo>> body = numbersRespCall.body();
                                 if (body != null) {
+                                    String buildingID="";
                                     List<ApartmentNumbersVo> apartmentNumberList = body.getApartmentNumberList();
-                                    int size = apartmentNumberList.size();
-                                    if (size > 0) {
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
-                                        bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
-                                        readyGo(PropertyMngPaymentActivity.class, bundle);
+                                    int count = apartmentNumberList.size();
+                                    for (int i = 0; i < count; i++) {
+                                        if (apartmentNumberList.get(i).isDefault() == 1) {
+                                            buildingID = apartmentNumberList.get(i).getBuildingID();
+                                            break;
+                                        }
+                                    }
+
+                                    if (count > 0) {
+                                        
+                                        Call<OpenInvitedMember> openInvitedMember = getApisNew().isOpenInvitedMember(buildingID);
+                                        openInvitedMember.enqueue(new Callback<OpenInvitedMember>() {
+
+                                            @Override
+                                            public void onResponse(Call<OpenInvitedMember> call, Response<OpenInvitedMember> response) {
+                                                if (response.isSuccessful()) {
+                                                    OpenInvitedMember invitedMember = response.body();
+                                                    if (invitedMember.isSuccessfully()) {
+                                                        boolean invitedMemberOpen = invitedMember.isOpen();
+                                                        if(invitedMemberOpen){
+                                                            Bundle bundle = new Bundle();
+                                                            bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
+                                                            bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
+                                                            readyGo(PropertyMngPaymentActivity.class, bundle);
+                                                        }else{
+                                                            CommonUtils.make(mContext, "你在的小区没有缴费权限，请联系物业");
+                                                        }
+                                                    } else {
+                                                        CommonUtils.make(mContext, invitedMember.getErrorMessage());
+                                                    }
+                                                } else {
+                                                    CommonUtils.make(mContext, response.message());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<OpenInvitedMember> call, Throwable t) {
+                                                CommonUtils.make(mContext, t.getMessage());
+                                            }
+                                        });
                                     } else {
                                         CommonUtils.make(getActivity(), "请绑定小区");
                                     }

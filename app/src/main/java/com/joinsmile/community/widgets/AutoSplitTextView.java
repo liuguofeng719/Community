@@ -2,6 +2,7 @@ package com.joinsmile.community.widgets;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 /**
  * Created by liuguofeng719 on 2016/7/26.
  */
-public class AutoSplitTextView extends TextView {
+public class AutoSplitTextView extends AppCompatTextView {
     private boolean mEnabled = true;
 
     public AutoSplitTextView(Context context) {

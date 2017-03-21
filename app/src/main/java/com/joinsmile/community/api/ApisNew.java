@@ -421,7 +421,8 @@ public interface ApisNew {
 
     /**
      * 获取所有商品信息
-     *
+     * @param primaryCatalogueID 一级分类ID（可为空）
+     * @param subCatalogueID 二级分类ID（可为空）
      * @param sortType  排序类型 1:销量 2:价格 3:上架时间
      * @param isDesc    是否是降序   0:升序 1:降序
      * @param pageIndex 显示的页数
@@ -429,40 +430,13 @@ public interface ApisNew {
      */
     @GET("Products/GetProducts.ashx")
     Call<ProductListResp<List<ProductVo>>> getAllProductByType(
+            @Query("primaryCatalogueID") String primaryCatalogueID,
+            @Query("subCatalogueID") String subCatalogueID,
             @Query("sortType") int sortType,
             @Query("isDesc") int isDesc,
             @Query("pageIndex") int pageIndex
     );
 
-    /**
-     * 子分类或子品牌下所有商品信息
-     * @param subCatalogueID
-     * @param sortType
-     * @param isDesc
-     * @param pageIndex
-     * @return
-     */
-    @GET("Products/GetProductsBySubCatalogueID.ashx")
-    Call<ProductListResp<List<ProductVo>>> getProductsBySubCatalogueId(
-            @Query("subCatalogueID") String subCatalogueID,
-            @Query("sortType") int sortType,
-            @Query("isDesc") int isDesc,
-            @Query("pageIndex") int pageIndex);
-
-    /**
-     * 点击产品展示页一级分类后展示商品
-     * @param subCatalogueID
-     * @param sortType
-     * @param isDesc
-     * @param pageIndex
-     * @return
-     */
-    @GET("Products/GetProductsByFirstCatalogueID.ashx")
-    Call<ProductListResp<List<ProductVo>>> getProductsByFirstCatalogueId(
-            @Query("subCatalogueID") String subCatalogueID,
-            @Query("sortType") int sortType,
-            @Query("isDesc") int isDesc,
-            @Query("pageIndex") int pageIndex);
 
     /**
      * 获取单个商品信息

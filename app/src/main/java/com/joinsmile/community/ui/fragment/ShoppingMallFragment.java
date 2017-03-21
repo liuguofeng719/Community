@@ -43,6 +43,7 @@ import butterknife.InjectView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Query;
 
 /**
  * Created by liuguofeng719 on 2016/7/18.
@@ -64,6 +65,9 @@ public class ShoppingMallFragment extends BaseFragment {
     @InjectView(R.id.grid_category)
     GridView gridViewCategory;
 
+    private String primaryCatalogueID;//一级分类
+    private String subCatalogueID;//子分类
+
     private GridView mGridView;
     private Call<ProductListResp<List<ProductVo>>> allProductByType;
     private ListViewDataAdapter<ProductVo> listViewDataAdapter;
@@ -78,7 +82,7 @@ public class ShoppingMallFragment extends BaseFragment {
     protected void onFirstUserVisible() {
         TLog.i(TAG_LOG, "onFirstUserVisible");
         getPics();
-        getByTypeProduct(3, 0, 1);
+        getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
     }
 
     @Override
@@ -159,7 +163,7 @@ public class ShoppingMallFragment extends BaseFragment {
                 refreshView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
                 isMore = true;
                 currPage = 1;
-                getByTypeProduct(sortType, desc, currPage);
+                getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, currPage);
             }
 
             @Override
@@ -172,7 +176,7 @@ public class ShoppingMallFragment extends BaseFragment {
                         }
                     }, 100);
                 } else {
-                    getByTypeProduct(sortType, desc, currPage);
+                    getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, currPage);
                 }
             }
         });
@@ -197,17 +201,17 @@ public class ShoppingMallFragment extends BaseFragment {
                     case R.id.tv_sales_amount:
                         sortType = 1;
                         desc = 1;
-                        getByTypeProduct(1, 1, 1);
+                        getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
                         break;
                     case R.id.tv_sales_price:
                         sortType = 2;
                         desc = 0;
-                        getByTypeProduct(2, 0, 1);
+                        getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
                         break;
                     case R.id.tv_sales_new_put_away:
                         sortType = 3;
                         desc = 0;
-                        getByTypeProduct(3, 0, 1);
+                        getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
                         break;
                 }
                 currPage = 1;
@@ -224,6 +228,8 @@ public class ShoppingMallFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 30) {
             String subCatalogueId = data.getStringExtra("subCatalogueId");
+            primaryCatalogueID="";
+            getByTypeProduct(primaryCatalogueID,subCatalogueId,sortType,desc,1);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -269,11 +275,12 @@ public class ShoppingMallFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                String catalogueId = view.findViewById(R.id.tv_text).getTag().toString();
-                if ("all".equalsIgnoreCase(catalogueId)) {
+                primaryCatalogueID = view.findViewById(R.id.tv_text).getTag().toString();
+                if ("all".equalsIgnoreCase(primaryCatalogueID)) {
                     readyGoForResult(CatalogueActivity.class,1);
                 } else {
-
+                    subCatalogueID="";
+                    getByTypeProduct(primaryCatalogueID, subCatalogueID, sortType, desc, 1);
                 }
             }
         });
@@ -347,9 +354,9 @@ public class ShoppingMallFragment extends BaseFragment {
     /**
      * 通过商品类型，获取商品
      */
-    private void getByTypeProduct(int sortType, int isDesc, int pageIndex) {
+    private void getByTypeProduct(String primaryCatalogueID,String subCatalogueID,int sortType, int isDesc, int pageIndex) {
         showLoading(getString(R.string.common_loading_message));
-        allProductByType = getApisNew().getAllProductByType(sortType, isDesc, pageIndex).clone();
+        allProductByType = getApisNew().getAllProductByType(primaryCatalogueID,subCatalogueID,sortType, isDesc, pageIndex).clone();
         allProductByType.enqueue(new Callback<ProductListResp<List<ProductVo>>>() {
             @Override
             public void onResponse(Call<ProductListResp<List<ProductVo>>> call,
@@ -361,9 +368,7 @@ public class ShoppingMallFragment extends BaseFragment {
                     List<ProductVo> productList = productListResp.getProductList();
                     List<ProductVo> dataList = listViewDataAdapter.getDataList();
                     int totalPage = productListResp.getPageCount();
-                    if (currPage == 1) {
-                        dataList.clear();
-                    }
+                    dataList.clear();
                     if (currPage == totalPage) {
                         isMore = false;
                         mPullRefreshGridView.getLoadingLayoutProxy(false, true).setReleaseLabel("没有更多数据了");
@@ -373,6 +378,8 @@ public class ShoppingMallFragment extends BaseFragment {
                     }
                     if (productList.isEmpty()) {
                         isMore = false;
+                        listViewDataAdapter.notifyDataSetChanged();
+                        CommonUtils.make(mContext, "暂无数据");
                     } else {
                         dataList.addAll(productList);
                         listViewDataAdapter.notifyDataSetChanged();

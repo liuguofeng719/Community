@@ -13,11 +13,13 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
 import com.joinsmile.community.bean.BaseInfoVo;
+import com.joinsmile.community.bean.OpenInvitedMember;
 import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.AppPreferences;
+import com.joinsmile.community.utils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,7 @@ public class MyVillageActivity extends BaseActivity {
     private String numberID;
     private Call<ApartmentNumbersResp<List<ApartmentNumbersVo>>> numbersRespCall;
     private Bundle extras;
+    private String buildingID;
 
     @OnClick(R.id.btn_back)
     public void back() {
@@ -62,9 +65,37 @@ public class MyVillageActivity extends BaseActivity {
 
     @OnClick(R.id.tv_invite_member)
     public void tvInviteMember() {
-        Bundle bundle = new Bundle();
-        bundle.putString("numberID", numberID);
-        readyGo(InviteMemberActivity.class, bundle);
+
+        Call<OpenInvitedMember> openInvitedMember = getApisNew().isOpenPropertyCharges(buildingID);
+        openInvitedMember.enqueue(new Callback<OpenInvitedMember>() {
+
+            @Override
+            public void onResponse(Call<OpenInvitedMember> call, Response<OpenInvitedMember> response) {
+                if (response.isSuccessful()) {
+                    OpenInvitedMember invitedMember = response.body();
+                    if (invitedMember.isSuccessfully()) {
+                        boolean invitedMemberOpen = invitedMember.isOpen();
+                        if(invitedMemberOpen){
+                            Bundle bundle = new Bundle();
+                            bundle.putString("numberID", numberID);
+                            readyGo(InviteMemberActivity.class, bundle);
+                        } else {
+                            CommonUtils.make(mContext, "你没有权限邀请成员，请联系物业");
+                        }
+                    } else {
+                        CommonUtils.make(mContext, invitedMember.getErrorMessage());
+                    }
+                } else {
+                    CommonUtils.make(mContext, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OpenInvitedMember> call, Throwable t) {
+                CommonUtils.make(mContext, t.getMessage());
+            }
+        });
+
     }
 
     @Override
@@ -174,6 +205,7 @@ public class MyVillageActivity extends BaseActivity {
                     for (int i = 0; i < apartmentNumberList.size(); i++) {
                         if (apartmentNumberList.get(i).isDefault() == 1) {
                             numberID = apartmentNumberList.get(i).getNumberID();
+                            buildingID = apartmentNumberList.get(i).getBuildingID();
                             break;
                         }
                     }

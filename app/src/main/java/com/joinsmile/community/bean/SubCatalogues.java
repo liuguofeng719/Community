@@ -29,8 +29,8 @@ public class SubCatalogues<T> extends BaseInfoVo {
         private String subCatalogueName;//子品牌或子分类名称
         @SerializedName("SubCataloguePicture")
         private String subCataloguePicture;// 子品牌或子分类图片
-        @SerializedName("IsIsBrand")
-        private String isIsBrand;// 是否为子品牌
+        @SerializedName("IsBrand")
+        private boolean isBrand;// 是否为子品牌
 
         public String getSubCatalogueId() {
             return subCatalogueId;
@@ -64,12 +64,12 @@ public class SubCatalogues<T> extends BaseInfoVo {
             this.subCataloguePicture = subCataloguePicture;
         }
 
-        public String getIsIsBrand() {
-            return isIsBrand;
+        public boolean isBrand() {
+            return isBrand;
         }
 
-        public void setIsIsBrand(String isIsBrand) {
-            this.isIsBrand = isIsBrand;
+        public void setBrand(boolean brand) {
+            isBrand = brand;
         }
 
         @Override
@@ -79,7 +79,7 @@ public class SubCatalogues<T> extends BaseInfoVo {
                     ", primaryCatalogueId='" + primaryCatalogueId + '\'' +
                     ", subCatalogueName='" + subCatalogueName + '\'' +
                     ", subCataloguePicture='" + subCataloguePicture + '\'' +
-                    ", isIsBrand='" + isIsBrand + '\'' +
+                    ", isBrand=" + isBrand +
                     '}';
         }
     }

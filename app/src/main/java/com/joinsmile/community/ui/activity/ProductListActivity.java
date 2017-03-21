@@ -1,6 +1,8 @@
 package com.joinsmile.community.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.OnTopProductListResp;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.ProductListResp;
+import com.joinsmile.community.bean.ProductPageCatalogues;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshBase;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshGridView;
@@ -20,8 +23,10 @@ import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.widgets.MyRadioGroup;
 import com.joinsmile.community.widgets.SlideShowView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -48,6 +53,14 @@ public class ProductListActivity extends BaseActivity {
     PullToRefreshGridView mPullRefreshGridView;
     @InjectView(R.id.slideShowView)
     SlideShowView mSlideShowView;
+    @InjectView(R.id.btn_back)
+    ImageView btn_back;
+
+    @InjectView(R.id.grid_category)
+    GridView gridViewCategory;
+
+    private String primaryCatalogueID;//一级分类
+    private String subCatalogueID;//子分类
 
     private GridView mGridView;
     private Call<ProductListResp<List<ProductVo>>> allProductByType;
@@ -57,7 +70,7 @@ public class ProductListActivity extends BaseActivity {
     private int currPage = 1;
     private int sortType = 3;
     private int desc = 0;
-
+    private ListViewDataAdapter<ProductPageCatalogues.ProductPageCatalogue> dataAdapter;
     @OnClick(R.id.btn_back)
     public void btnBack() {
         finish();
@@ -97,7 +110,7 @@ public class ProductListActivity extends BaseActivity {
 
                     @Override
                     public void showData(int position, ProductVo itemData) {
-                        ImageLoader.getInstance().displayImage(itemData.getDefaultPicture(), iv_product_img);
+                        ImageLoader.getInstance().displayImage(itemData.getDefaultPicture(), iv_product_img,getBuilder().build());
                         tv_product_desc.setText(itemData.getProductName());
                         tv_product_desc.setTag(itemData.getProductID());
                         tv_sales_price.setText("￥" + itemData.getUnitPrice());
@@ -128,7 +141,7 @@ public class ProductListActivity extends BaseActivity {
                 refreshView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
                 isMore = true;
                 currPage = 1;
-                getByTypeProduct(sortType, desc, currPage);
+                getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, currPage);
             }
 
             @Override
@@ -141,7 +154,7 @@ public class ProductListActivity extends BaseActivity {
                         }
                     }, 100);
                 } else {
-                    getByTypeProduct(sortType, desc, currPage);
+                    getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, currPage);
                 }
             }
         });
@@ -157,7 +170,8 @@ public class ProductListActivity extends BaseActivity {
             }
         });
         getPics();
-        getByTypeProduct(sortType, desc, currPage);
+        getFirstCategory();
+        getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, currPage);
 
         //@param sortType 排序类型 1:销量 2:价格 3:上架时间
         //@param isDesc 是否是降序 0:升序 1:降序
@@ -166,25 +180,126 @@ public class ProductListActivity extends BaseActivity {
         my_rdo_group.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(MyRadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.tv_sales_amount:
-                        sortType = 1;
-                        desc = 1;
-                        getByTypeProduct(1, 1, 1);
-                        break;
-                    case R.id.tv_sales_price:
-                        sortType = 2;
-                        desc = 0;
-                        getByTypeProduct(2, 0, 1);
-                        break;
-                    case R.id.tv_sales_new_put_away:
-                        sortType = 3;
-                        desc = 0;
-                        getByTypeProduct(3, 0, 1);
-                        break;
+            switch (checkedId) {
+                case R.id.tv_sales_amount:
+                    sortType = 1;
+                    desc = 1;
+                    getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
+                    break;
+                case R.id.tv_sales_price:
+                    sortType = 2;
+                    desc = 0;
+                    getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
+                    break;
+                case R.id.tv_sales_new_put_away:
+                    sortType = 3;
+                    desc = 0;
+                    getByTypeProduct(primaryCatalogueID,subCatalogueID,sortType, desc, 1);
+                    break;
+            }
+            currPage = 1;
+            listViewDataAdapter.getDataList().clear();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 30) {
+            String subCatalogueId = data.getStringExtra("subCatalogueId");
+            getByTypeProduct("",subCatalogueId,sortType,desc,1);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //获取一级分类
+    private void getFirstCategory(){
+
+        dataAdapter = new ListViewDataAdapter<>(new ViewHolderCreator<ProductPageCatalogues.ProductPageCatalogue>() {
+            @Override
+            public ViewHolderBase<ProductPageCatalogues.ProductPageCatalogue> createViewHolder(int position) {
+                return new ViewHolderBase<ProductPageCatalogues.ProductPageCatalogue>() {
+                    final DisplayImageOptions.Builder builder = getBuilder();
+                    ImageView image;
+                    TextView tv_text;
+
+                    @Override
+                    public View createView(LayoutInflater layoutInflater) {
+                        View view = layoutInflater.inflate(R.layout.catalogue_item_activity, null);
+                        image = (ImageView) view.findViewById(R.id.image);
+                        tv_text = (TextView) view.findViewById(R.id.tv_text);
+                        return view;
+                    }
+
+                    @Override
+                    public void showData(int position, ProductPageCatalogues.ProductPageCatalogue itemData) {
+                        if (TextUtils.isEmpty(itemData.getCatalogueID())) {
+                            image.setImageResource(android.R.drawable.ic_menu_more);
+                            tv_text.setText("全部分类");
+                            tv_text.setTag("all");
+                        } else {
+                            ImageLoader.getInstance().displayImage(itemData.getCatalogueIcon(), image, builder.build());
+                            tv_text.setText(itemData.getCatalogueName());
+                            tv_text.setTag(itemData.getCatalogueID());
+                        }
+                    }
+                };
+            }
+        });
+
+        gridViewCategory.setAdapter(dataAdapter);
+
+        gridViewCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            primaryCatalogueID = view.findViewById(R.id.tv_text).getTag().toString();
+            if ("all".equalsIgnoreCase(primaryCatalogueID)) {
+                readyGoForResult(CatalogueActivity.class,1);
+            } else {
+                subCatalogueID="";
+                getByTypeProduct(primaryCatalogueID, subCatalogueID, sortType, desc, 1);
+            }
+            }
+        });
+
+        Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> productPageCatalogues = getApisNew().getProductPageCatalogues();
+
+        productPageCatalogues.enqueue(new Callback<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>>() {
+            @Override
+            public void onResponse(Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> call,
+                                   Response<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> response) {
+
+                if (response.isSuccessful()) {
+
+                    ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>> listProductPageCatalogues = response.body();
+
+                    if (listProductPageCatalogues.isSuccessfully()) {
+
+                        List<ProductPageCatalogues.ProductPageCatalogue> catalogues = listProductPageCatalogues.getProductPageCatalogues();
+                        ProductPageCatalogues.ProductPageCatalogue pageCatalogueLast = new ProductPageCatalogues.ProductPageCatalogue();
+                        pageCatalogueLast.setCatalogueID("");
+                        pageCatalogueLast.setCatalogueName("全部分类");
+                        catalogues.add(pageCatalogueLast);
+
+                        ArrayList<ProductPageCatalogues.ProductPageCatalogue> dataList = dataAdapter.getDataList();
+                        dataList.clear();
+                        dataList.addAll(catalogues);
+                        dataAdapter.notifyDataSetChanged();
+
+                    } else {
+
+                        CommonUtils.make(mContext, listProductPageCatalogues.getErrorMessage());
+                    }
+                } else {
+
+                    CommonUtils.make(mContext, response.message());
                 }
-                currPage = 1;
-                listViewDataAdapter.getDataList().clear();
+            }
+
+            @Override
+            public void onFailure(Call<ProductPageCatalogues<List<ProductPageCatalogues.ProductPageCatalogue>>> call, Throwable t) {
+                CommonUtils.make(mContext, t.getMessage());
             }
         });
     }
@@ -217,9 +332,9 @@ public class ProductListActivity extends BaseActivity {
     /**
      * 通过商品类型，获取商品
      */
-    private void getByTypeProduct(int sortType, int isDesc, int pageIndex) {
+    private void getByTypeProduct(String primaryCatalogueID,String subCatalogueID,int sortType, int isDesc, int pageIndex) {
         showLoading(getString(R.string.common_loading_message));
-        allProductByType = getApisNew().getAllProductByType(sortType, isDesc, pageIndex).clone();
+        allProductByType = getApisNew().getAllProductByType(primaryCatalogueID,subCatalogueID,sortType, isDesc, pageIndex).clone();
         allProductByType.enqueue(new Callback<ProductListResp<List<ProductVo>>>() {
             @Override
             public void onResponse(Call<ProductListResp<List<ProductVo>>> call,
@@ -231,9 +346,7 @@ public class ProductListActivity extends BaseActivity {
                     List<ProductVo> productList = productListResp.getProductList();
                     List<ProductVo> dataList = listViewDataAdapter.getDataList();
                     int totalPage = productListResp.getPageCount();
-                    if (currPage == 1) {
-                        dataList.clear();
-                    }
+                    dataList.clear();
                     if (currPage == totalPage) {
                         isMore = false;
                         mPullRefreshGridView.getLoadingLayoutProxy(false, true).setReleaseLabel("没有更多数据了");
@@ -243,6 +356,8 @@ public class ProductListActivity extends BaseActivity {
                     }
                     if (productList.isEmpty()) {
                         isMore = false;
+                        listViewDataAdapter.notifyDataSetChanged();
+                        CommonUtils.make(mContext, "暂无数据");
                     } else {
                         dataList.addAll(productList);
                         listViewDataAdapter.notifyDataSetChanged();

@@ -47,10 +47,19 @@ public class CatalogueActivity extends BaseActivity {
     ListView listCategoriesParent;
     @InjectView(R.id.list_categories_children)
     GridView listCategoriesChildren;
+    @InjectView(R.id.list_brand_categories)
+    GridView listBrandCategories;
+
     @InjectView(R.id.ly_content)
     LinearLayout lyContent;
+
+    List<SubCatalogues.SubCatalogue> subCatalogueList = new ArrayList<>();
+
+    List<SubCatalogues.SubCatalogue> brandSubcataloguesList =new ArrayList<>();
+
     private ListViewDataAdapter<CataloguesVo.Catalogue> catalogueParent;
     private ListViewDataAdapter<SubCatalogues.SubCatalogue> catalogueChildren;
+    private ListViewDataAdapter<SubCatalogues.SubCatalogue> brandViewData;
 
     @OnClick(R.id.btn_back)
     public void btnBack() {
@@ -71,6 +80,14 @@ public class CatalogueActivity extends BaseActivity {
     protected void initViewsAndEvents() {
         tvHeaderTitle.setText("商品分类");
         getCategoriesParent();
+
+        initCategory();
+
+        initBrand();
+    }
+
+    //分类
+    private void initCategory() {
         catalogueChildren = new ListViewDataAdapter<>(new ViewHolderCreator<SubCatalogues.SubCatalogue>() {
             @Override
             public ViewHolderBase<SubCatalogues.SubCatalogue> createViewHolder(int position) {
@@ -81,7 +98,7 @@ public class CatalogueActivity extends BaseActivity {
 
                     @Override
                     public View createView(LayoutInflater layoutInflater) {
-                        View view = layoutInflater.inflate(R.layout.service_mng_item, null);
+                        View view = layoutInflater.inflate(R.layout.catalogue_all_item_activity, null);
                         image = (ImageView) view.findViewById(R.id.image);
                         tv_text = (TextView) view.findViewById(R.id.tv_text);
                         return view;
@@ -98,6 +115,47 @@ public class CatalogueActivity extends BaseActivity {
         });
         listCategoriesChildren.setAdapter(catalogueChildren);
         listCategoriesChildren.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String subCatalogueId = view.findViewById(R.id.tv_text).getTag().toString();
+                Intent intentData = new Intent();
+                intentData.putExtra("subCatalogueId",subCatalogueId);
+                setResult(30,intentData);
+                finish();
+            }
+        });
+    }
+
+    //品牌
+    private void initBrand() {
+        brandViewData = new ListViewDataAdapter<>(new ViewHolderCreator<SubCatalogues.SubCatalogue>() {
+            @Override
+            public ViewHolderBase<SubCatalogues.SubCatalogue> createViewHolder(int position) {
+                final DisplayImageOptions.Builder builder = getBuilder();
+                return new ViewHolderBase<SubCatalogues.SubCatalogue>() {
+                    ImageView image;
+                    TextView tv_text;
+
+                    @Override
+                    public View createView(LayoutInflater layoutInflater) {
+                        View view = layoutInflater.inflate(R.layout.catalogue_brand_item_activity, null);
+                        image = (ImageView) view.findViewById(R.id.image);
+                        tv_text = (TextView) view.findViewById(R.id.tv_text);
+                        return view;
+                    }
+
+                    @Override
+                    public void showData(int position, SubCatalogues.SubCatalogue itemData) {
+                        ImageLoader.getInstance().displayImage(itemData.getSubCataloguePicture(), image, builder.build());
+                        tv_text.setText(itemData.getSubCatalogueName());
+                        tv_text.setTag(itemData.getSubCatalogueId());
+                    }
+                };
+            }
+        });
+
+        listBrandCategories.setAdapter(brandViewData);
+        listBrandCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String subCatalogueId = view.findViewById(R.id.tv_text).getTag().toString();
@@ -191,12 +249,30 @@ public class CatalogueActivity extends BaseActivity {
 
                     SubCatalogues<List<SubCatalogues.SubCatalogue>> listSubCatalogues = response.body();
                     if (listSubCatalogues.isSuccessfully()) {
-
+                        brandSubcataloguesList.clear();
+                        subCatalogueList.clear();
                         List<SubCatalogues.SubCatalogue> catalogues = listSubCatalogues.getSubCatalogues();
+
+                        for (SubCatalogues.SubCatalogue subCatalogue : catalogues) {
+                            if (subCatalogue.isBrand()) {
+                                brandSubcataloguesList.add(subCatalogue);
+                            } else {
+                                subCatalogueList.add(subCatalogue);
+                            }
+                        }
+
                         ArrayList<SubCatalogues.SubCatalogue> dataList = catalogueChildren.getDataList();
+
                         dataList.clear();
-                        dataList.addAll(catalogues);
+                        dataList.addAll(subCatalogueList);
                         catalogueChildren.notifyDataSetChanged();
+
+                        ArrayList<SubCatalogues.SubCatalogue> brandViewDataList = brandViewData.getDataList();
+
+                        brandViewDataList.clear();
+                        brandViewDataList.addAll(brandSubcataloguesList);
+                        brandViewData.notifyDataSetChanged();
+
                     } else {
                         CommonUtils.make(mContext, listSubCatalogues.getErrorMessage());
                     }
