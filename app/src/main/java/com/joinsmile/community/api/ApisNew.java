@@ -10,6 +10,7 @@ import com.joinsmile.community.bean.ApartmentOwnerPhoneNumberVo;
 import com.joinsmile.community.bean.ApartmentPropertyCostResp;
 import com.joinsmile.community.bean.AuthticationVo;
 import com.joinsmile.community.bean.BaseInfoVo;
+import com.joinsmile.community.bean.BuildingManagementCommittee;
 import com.joinsmile.community.bean.BuildingUnitsResp;
 import com.joinsmile.community.bean.BuildingUnitsVo;
 import com.joinsmile.community.bean.CataloguesVo;
@@ -37,6 +38,7 @@ import com.joinsmile.community.bean.ProductOrderVoResp;
 import com.joinsmile.community.bean.ProductPageCatalogues;
 import com.joinsmile.community.bean.ProductResp;
 import com.joinsmile.community.bean.ProductVo;
+import com.joinsmile.community.bean.PropertyCompanyInfo;
 import com.joinsmile.community.bean.ProvinceListResp;
 import com.joinsmile.community.bean.ProvinceVo;
 import com.joinsmile.community.bean.ReceiveProductAddressResp;
@@ -825,5 +827,17 @@ public interface ApisNew {
      */
     @GET("PlatformSettings/IsOpenPropertyCharges.ashx")
     Call<OpenInvitedMember> isOpenPropertyCharges(@Query("buildingID") String buildingID);
+
+    /**
+     * 小区物业公司简介
+     */
+    @GET("Basic/GetBuildingManagementCommittee.ashx")
+    Call<BuildingManagementCommittee> getBuildingManagementCommittee(@Query("buildingID") String buildingID);
+
+    /**
+     * 小区业主委员会简介
+     */
+    @GET("Basic/GetPropertyCompany.ashx")
+    Call<PropertyCompanyInfo> getPropertyCompany(@Query("buildingID") String buildingID);
 
 }

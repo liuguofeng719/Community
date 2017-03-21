@@ -28,10 +28,12 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
+import com.joinsmile.community.bean.BuildingManagementCommittee;
 import com.joinsmile.community.bean.OpenDoor;
 import com.joinsmile.community.bean.OpenInvitedMember;
 import com.joinsmile.community.bean.PicturesVo;
 import com.joinsmile.community.bean.PicturesVoResp;
+import com.joinsmile.community.bean.PropertyCompanyInfo;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
 import com.joinsmile.community.bean.ServiceCompanyVo;
@@ -316,7 +318,41 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         tvIndustryCouncil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (checkLogin()) {
+                    if (tvLocationContent.getTag() != null) {
+                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
+                        Call<BuildingManagementCommittee> managementCommittee = getApisNew().getBuildingManagementCommittee(buildId);
+                        managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
+                            @Override
+                            public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
+                                if(response.isSuccessful()){
+                                    BuildingManagementCommittee committee = response.body();
+                                    if(committee.isSuccessfully()){
+                                        BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
+                                        String descriptionUrl = description.getDescriptionUrl();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("title", "业委会");
+                                        bundle.putString("navUrl", descriptionUrl);
+                                        readyGo(WebViewActivity.class, bundle);
+                                    }else{
+                                        CommonUtils.make(mContext, committee.getErrorMessage());
+                                    }
+                                } else {
+                                    CommonUtils.make(mContext, response.message());
+                                }
+                            }
 
+                            @Override
+                            public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
+
+                            }
+                        });
+                    } else {
+                        CommonUtils.make(mContext,"小区不存在");
+                    }
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
 
@@ -325,7 +361,41 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (checkLogin()) {
+                    if (tvLocationContent.getTag() != null) {
+                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
+                        Call<PropertyCompanyInfo> managementCommittee = getApisNew().getPropertyCompany(buildId);
+                        managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
+                            @Override
+                            public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
+                                if(response.isSuccessful()){
+                                    PropertyCompanyInfo committee = response.body();
+                                    if(committee.isSuccessfully()){
+                                        PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
+                                        String descriptionUrl = description.getDescriptionUrl();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("title", "物业公司");
+                                        bundle.putString("navUrl", descriptionUrl);
+                                        readyGo(WebViewActivity.class, bundle);
+                                    }else{
+                                        CommonUtils.make(mContext, committee.getErrorMessage());
+                                    }
+                                } else {
+                                    CommonUtils.make(mContext, response.message());
+                                }
+                            }
 
+                            @Override
+                            public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
+                                CommonUtils.make(mContext, t.getMessage());
+                            }
+                        });
+                    } else {
+                        CommonUtils.make(mContext,"小区不存在");
+                    }
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
 
@@ -354,7 +424,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                                     }
 
                                     if (count > 0) {
-                                        
+
                                         Call<OpenInvitedMember> openInvitedMember = getApisNew().isOpenInvitedMember(buildingID);
                                         openInvitedMember.enqueue(new Callback<OpenInvitedMember>() {
 
@@ -418,26 +488,26 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
             @Override
             public ViewHolderBase<ServiceCompanyVo.ServiceCompany> createViewHolder(int position) {
-                final DisplayImageOptions.Builder builder = getBuilder();
-                return new ViewHolderBase<ServiceCompanyVo.ServiceCompany>() {
+            final DisplayImageOptions.Builder builder = getBuilder();
+            return new ViewHolderBase<ServiceCompanyVo.ServiceCompany>() {
 
-                    ImageView imageView;
-                    TextView textView;
-                    @Override
-                    public View createView(LayoutInflater layoutInflater) {
-                        View inflate = layoutInflater.inflate(R.layout.service_mng_item, null);
-                        imageView= (ImageView) inflate.findViewById(R.id.image);
-                        textView = (TextView) inflate.findViewById(R.id.tv_text);
-                        return inflate;
-                    }
+                ImageView imageView;
+                TextView textView;
+                @Override
+                public View createView(LayoutInflater layoutInflater) {
+                    View inflate = layoutInflater.inflate(R.layout.service_mng_item, null);
+                    imageView= (ImageView) inflate.findViewById(R.id.image);
+                    textView = (TextView) inflate.findViewById(R.id.tv_text);
+                    return inflate;
+                }
 
-                    @Override
-                    public void showData(int position, ServiceCompanyVo.ServiceCompany itemData) {
-                        ImageLoader.getInstance().displayImage(itemData.getCompanyIcon(), imageView, builder.build());
-                        textView.setText(itemData.getCompanyName());
-                        textView.setTag(itemData.getDompanyId());
-                    }
-                };
+                @Override
+                public void showData(int position, ServiceCompanyVo.ServiceCompany itemData) {
+                    ImageLoader.getInstance().displayImage(itemData.getCompanyIcon(), imageView, builder.build());
+                    textView.setText(itemData.getCompanyName());
+                    textView.setTag(itemData.getDompanyId());
+                }
+            };
             }
         });
 
@@ -445,16 +515,16 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (checkLogin()) {
-                    TextView tv_text = (TextView) view.findViewById(R.id.tv_text);
-                    String tag = tv_text.getTag().toString();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("companyId",tag);
-                    bundle.putString("companyName",tv_text.getText().toString());
-                    readyGo(CourierActivity.class,bundle);
-                } else {
-                    readyGo(LoginActivity.class);
-                }
+            if (checkLogin()) {
+                TextView tv_text = (TextView) view.findViewById(R.id.tv_text);
+                String tag = tv_text.getTag().toString();
+                Bundle bundle = new Bundle();
+                bundle.putString("companyId",tag);
+                bundle.putString("companyName",tv_text.getText().toString());
+                readyGo(CourierActivity.class,bundle);
+            } else {
+                readyGo(LoginActivity.class);
+            }
             }
         });
     }
@@ -493,13 +563,17 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     //调查问卷
     @OnClick(R.id.tv_vote)
     public void tvVote() {
-        Bundle bundle = new Bundle();
-        if (tvLocationContent.getTag() != null) {
-            bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[1]);
+        if (checkLogin()) {
+            Bundle bundle = new Bundle();
+            if (tvLocationContent.getTag() != null) {
+                bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[1]);
+            } else {
+                bundle.putString("buildingID", "");
+            }
+            readyGo(InvestigationActivity.class, bundle);
         } else {
-            bundle.putString("buildingID", "");
+            readyGo(LoginActivity.class);
         }
-        readyGo(InvestigationActivity.class, bundle);
     }
 
     //选择小区
@@ -798,6 +872,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     @Override
     public void onImageClicked(int position, SlideShowView.ImageViewTag url) {
         Bundle bundle = new Bundle();
+        bundle.putString("title", "商品推荐");
         bundle.putString("navUrl", url.getNavUrl());
         readyGo(WebViewActivity.class, bundle);
     }

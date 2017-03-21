@@ -45,7 +45,7 @@ public class WebViewActivity extends BaseActivity {
 
     @Override
     protected void initViewsAndEvents() {
-        tv_header_title.setText("商品推荐");
+        tv_header_title.setText(bundle.getString("title"));
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
