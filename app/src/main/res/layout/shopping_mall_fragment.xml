@@ -16,9 +16,10 @@
     <GridView
         android:id="@+id/grid_category"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="140dp"
         android:cacheColorHint="@color/transparent"
-        android:verticalSpacing="2dp"
+        android:listSelector="@color/transparent"
+        android:verticalSpacing="4dp"
         android:horizontalSpacing="2dp"
         android:scrollbars="none"
         android:numColumns="3"

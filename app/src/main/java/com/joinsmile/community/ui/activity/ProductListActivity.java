@@ -234,7 +234,7 @@ public class ProductListActivity extends BaseActivity {
                     @Override
                     public void showData(int position, ProductPageCatalogues.ProductPageCatalogue itemData) {
                         if (TextUtils.isEmpty(itemData.getCatalogueID())) {
-                            image.setImageResource(android.R.drawable.ic_menu_more);
+                            image.setImageResource(R.drawable.all);
                             tv_text.setText("全部分类");
                             tv_text.setTag("all");
                         } else {
