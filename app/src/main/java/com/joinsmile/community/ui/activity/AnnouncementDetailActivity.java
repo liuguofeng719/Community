@@ -9,10 +9,14 @@ import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.AnnouncementVo;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.CommonUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AnnouncementDetailActivity extends BaseActivity {
 
@@ -50,12 +54,31 @@ public class AnnouncementDetailActivity extends BaseActivity {
 
     @Override
     protected void initViewsAndEvents() {
-        AnnouncementResp announcement = (AnnouncementResp) extras.getSerializable("announcement");
-        AnnouncementVo announcementVo = announcement.getAnnouncement();
-        tv_header_title.setText(announcementVo.getBuildingName() + "公告");
-        tvTitle.setText(announcementVo.getTitle());
-        tvPublishDate.setText("发布日期:"+announcementVo.getPublishDate());
-        tvContent.setText(announcementVo.getContent());
+        String announcementId = extras.getString("announcement");
+        Call<AnnouncementResp> announcementContent = getApisNew().getAnnouncementContent(announcementId);
+        announcementContent.enqueue(new Callback<AnnouncementResp>() {
+            @Override
+            public void onResponse(Call<AnnouncementResp> call, Response<AnnouncementResp> response) {
+                if (response.isSuccessful()) {
+                    AnnouncementResp body = response.body();
+                    if (body.isSuccessfully()) {
+                        AnnouncementVo announcementVo = body.getAnnouncement();
+                        tv_header_title.setText(announcementVo.getBuildingName() + "公告");
+                        tvTitle.setText(announcementVo.getTitle());
+                        tvPublishDate.setText("发布日期:" + announcementVo.getPublishDate());
+                        tvContent.setText(announcementVo.getContent());
+                    } else {
+                        CommonUtils.make(mContext, body.getErrorMessage());
+                    }
+                } else {
+                    CommonUtils.make(mContext, response.message());
+                }
+            }
 
+            @Override
+            public void onFailure(Call<AnnouncementResp> call, Throwable t) {
+                CommonUtils.make(mContext, t.getMessage());
+            }
+        });
     }
 }

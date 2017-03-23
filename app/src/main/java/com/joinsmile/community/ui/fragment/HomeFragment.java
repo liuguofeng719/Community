@@ -26,6 +26,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.joinsmile.community.R;
 import com.joinsmile.community.bean.AnnouncementResp;
+import com.joinsmile.community.bean.AnnouncementVo;
+import com.joinsmile.community.bean.AnnouncementsResp;
 import com.joinsmile.community.bean.ApartmentNumbersResp;
 import com.joinsmile.community.bean.ApartmentNumbersVo;
 import com.joinsmile.community.bean.BuildingManagementCommittee;
@@ -96,7 +98,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     private Dialog serviceDialog;
 
     private Call<RecommendProductListResp<List<RecommendProductVo>>> listRespCall;
-    private Call<AnnouncementResp> respCall;
+    private Call<AnnouncementsResp<List<AnnouncementVo>>> respCall;
 
     //开门sdk
     private BleService mService;
@@ -160,6 +162,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         }
     };
     private ListViewDataAdapter<ServiceCompanyVo.ServiceCompany> lstDataAdapter;
+    private List<AnnouncementVo> announcementList;
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
@@ -665,9 +668,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         tvTipsContent.setOnItemClickListener(new VerticalSwitcherTextView.OnItemClickListener() {
             @Override
             public void onItemClick(int position, View view) {
-                AnnouncementResp resp = (AnnouncementResp) view.getTag();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("announcement", resp);
+                bundle.putString("announcement", announcementList.get(position).getAnnouncementID());
                 readyGo(AnnouncementDetailActivity.class,bundle);
             }
         });
@@ -837,30 +839,33 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     //获取公告
     private void getNewAnnouncement(String buildId) {
-        respCall = getApisNew().getNewAnnouncement(buildId).clone();
-        respCall.enqueue(new Callback<AnnouncementResp>() {
+        respCall = getApisNew().getNewAnnouncementList(buildId).clone();
+        respCall.enqueue(new Callback<AnnouncementsResp<List<AnnouncementVo>>>() {
             @Override
-            public void onResponse(Call<AnnouncementResp> call, Response<AnnouncementResp> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
-                    final AnnouncementResp resp = response.body();
-                    final String title = resp.getAnnouncement().getTitle();
+            public void onResponse(Call<AnnouncementsResp<List<AnnouncementVo>>> call, Response<AnnouncementsResp<List<AnnouncementVo>>> response) {
+                final AnnouncementsResp<List<AnnouncementVo>> body = response.body();
+                if (response.isSuccessful() && body != null && body.isSuccessfully()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            List<String> strings = Arrays.asList(title);
-                            tvTipsContent.setTextList(strings);
-                            tvTipsContent.setTag(resp);
+                            announcementList = body.getAnnouncementList();
+                            List<String> titles =new ArrayList<String>();
+                            for (AnnouncementVo announcementVo : announcementList) {
+                                titles.add(announcementVo.getTitle());
+                            }
+                            tvTipsContent.setTextList(titles);
                         }
                     });
                 }
             }
 
             @Override
-            public void onFailure(Call<AnnouncementResp> call, Throwable t) {
+            public void onFailure(Call<AnnouncementsResp<List<AnnouncementVo>>> call, Throwable t) {
 
             }
         });
     }
+
 
     //获取推荐商品
     private void getOnMainPageProducts() {

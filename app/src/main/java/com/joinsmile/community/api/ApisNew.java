@@ -392,7 +392,7 @@ public interface ApisNew {
      * @return
      */
     @GET("Announcements/GetNewAnnouncementList.ashx")
-    Call<AnnouncementsResp<AnnouncementVo>> getNewAnnouncementList(
+    Call<AnnouncementsResp<List<AnnouncementVo>>> getNewAnnouncementList(
             @Query("buildingID") String buildingID
     );
 

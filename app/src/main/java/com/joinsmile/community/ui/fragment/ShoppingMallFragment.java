@@ -197,6 +197,8 @@ public class ShoppingMallFragment extends BaseFragment {
         my_rdo_group.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(MyRadioGroup group, int checkedId) {
+                primaryCatalogueID="";
+                subCatalogueID="";
                 switch (checkedId) {
                     case R.id.tv_sales_amount:
                         sortType = 1;
