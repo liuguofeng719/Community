@@ -75,7 +75,7 @@
                         android:text="公告"
                         android:textColor="@color/white" />
 
-                    <TextView
+                    <com.joinsmile.community.widgets.VerticalSwitcherTextView
                         android:id="@+id/tv_tips_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -15,12 +15,13 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lgfcxx on 2017/3/18.
  */
 
-public class VerticalTextview extends TextSwitcher implements ViewSwitcher.ViewFactory {
+public class VerticalSwitcherTextView extends TextSwitcher implements ViewSwitcher.ViewFactory {
 
     private static final int FLAG_START_AUTO_SCROLL = 0;
     private static final int FLAG_STOP_AUTO_SCROLL = 1;
@@ -46,12 +47,12 @@ public class VerticalTextview extends TextSwitcher implements ViewSwitcher.ViewF
     private ArrayList<String> textList;
     private Handler handler;
 
-    public VerticalTextview(Context context) {
+    public VerticalSwitcherTextView(Context context) {
         this(context, null);
         mContext = context;
     }
 
-    public VerticalTextview(Context context, AttributeSet attrs) {
+    public VerticalSwitcherTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         textList = new ArrayList<String>();
@@ -96,7 +97,7 @@ public class VerticalTextview extends TextSwitcher implements ViewSwitcher.ViewF
      * 设置数据源
      * @param titles
      */
-    public void setTextList(ArrayList<String> titles) {
+    public void setTextList(List<String> titles) {
         textList.clear();
         textList.addAll(titles);
         currentId = -1;
@@ -130,7 +131,7 @@ public class VerticalTextview extends TextSwitcher implements ViewSwitcher.ViewF
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null && textList.size() > 0 && currentId != -1) {
-                    itemClickListener.onItemClick(currentId % textList.size());
+                    itemClickListener.onItemClick(currentId % textList.size(),v);
                 }
             }
         });
@@ -153,7 +154,7 @@ public class VerticalTextview extends TextSwitcher implements ViewSwitcher.ViewF
          * 点击回调
          * @param position 当前点击ID
          */
-        void onItemClick(int position);
+        void onItemClick(int position,View v);
     }
 
 }

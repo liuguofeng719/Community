@@ -2,7 +2,9 @@ package com.joinsmile.community.bean;
 
 import com.google.gson.annotations.SerializedName;
 
-public class BaseInfoVo {
+import java.io.Serializable;
+
+public class BaseInfoVo implements Serializable {
 
     @SerializedName("IsSuccessfully")
     private boolean isSuccessfully;

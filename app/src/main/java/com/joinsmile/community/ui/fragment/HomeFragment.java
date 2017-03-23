@@ -37,6 +37,7 @@ import com.joinsmile.community.bean.PropertyCompanyInfo;
 import com.joinsmile.community.bean.RecommendProductListResp;
 import com.joinsmile.community.bean.RecommendProductVo;
 import com.joinsmile.community.bean.ServiceCompanyVo;
+import com.joinsmile.community.ui.activity.AnnouncementDetailActivity;
 import com.joinsmile.community.ui.activity.CatalogueActivity;
 import com.joinsmile.community.ui.activity.CourierActivity;
 import com.joinsmile.community.ui.activity.InvestigationActivity;
@@ -57,10 +58,12 @@ import com.joinsmile.community.utils.DensityUtils;
 import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.widgets.CircleImageView;
 import com.joinsmile.community.widgets.SlideShowView;
+import com.joinsmile.community.widgets.VerticalSwitcherTextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -82,7 +85,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     @InjectView(R.id.tv_location_content)
     TextView tvLocationContent;
     @InjectView(R.id.tv_tips_content)
-    TextView tvTipsContent;
+    VerticalSwitcherTextView tvTipsContent;
     @InjectView(R.id.tv_integral)
     TextView tvIntegral;
     @InjectView(R.id.recyclerView)
@@ -203,7 +206,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             String string = strings[which];
                             int indexOf = string.indexOf(":");
                             final String substring = string.substring(indexOf + 1, string.length()).substring(0, 18);
-                            getApisNew().openDoor(AppPreferences.getString("userId"),substring).enqueue(new Callback<OpenDoor>() {
+                            getApisNew().openDoor(AppPreferences.getString("userId"), substring).enqueue(new Callback<OpenDoor>() {
                                 @Override
                                 public void onResponse(Call<OpenDoor> call, Response<OpenDoor> response) {
                                     OpenDoor body = response.body();
@@ -213,7 +216,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                                         } else {
                                             CommonUtils.make(getActivity(), "开锁失败");
                                         }
-                                    }else{
+                                    } else {
                                         CommonUtils.make(getActivity(), body.getErrorMessage());
                                     }
                                 }
@@ -249,7 +252,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 //            }
 //            actionSheetDialog.show();
             }
-        }else{
+        } else {
             readyGo(LoginActivity.class);
         }
 //        readyGo(OpenDoorActivity.class);
@@ -325,16 +328,16 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                         managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
                             @Override
                             public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
-                                if(response.isSuccessful()){
+                                if (response.isSuccessful()) {
                                     BuildingManagementCommittee committee = response.body();
-                                    if(committee.isSuccessfully()){
+                                    if (committee.isSuccessfully()) {
                                         BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
                                         String descriptionUrl = description.getDescriptionUrl();
                                         Bundle bundle = new Bundle();
                                         bundle.putString("title", "业委会");
                                         bundle.putString("navUrl", descriptionUrl);
                                         readyGo(WebViewActivity.class, bundle);
-                                    }else{
+                                    } else {
                                         CommonUtils.make(mContext, committee.getErrorMessage());
                                     }
                                 } else {
@@ -348,7 +351,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             }
                         });
                     } else {
-                        CommonUtils.make(mContext,"小区不存在");
+                        CommonUtils.make(mContext, "小区不存在");
                     }
                 } else {
                     readyGo(LoginActivity.class);
@@ -368,16 +371,16 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                         managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
                             @Override
                             public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
-                                if(response.isSuccessful()){
+                                if (response.isSuccessful()) {
                                     PropertyCompanyInfo committee = response.body();
-                                    if(committee.isSuccessfully()){
+                                    if (committee.isSuccessfully()) {
                                         PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
                                         String descriptionUrl = description.getDescriptionUrl();
                                         Bundle bundle = new Bundle();
                                         bundle.putString("title", "物业公司");
                                         bundle.putString("navUrl", descriptionUrl);
                                         readyGo(WebViewActivity.class, bundle);
-                                    }else{
+                                    } else {
                                         CommonUtils.make(mContext, committee.getErrorMessage());
                                     }
                                 } else {
@@ -391,7 +394,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             }
                         });
                     } else {
-                        CommonUtils.make(mContext,"小区不存在");
+                        CommonUtils.make(mContext, "小区不存在");
                     }
                 } else {
                     readyGo(LoginActivity.class);
@@ -413,7 +416,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             if (numbersRespCall.isSuccessful()) {
                                 ApartmentNumbersResp<List<ApartmentNumbersVo>> body = numbersRespCall.body();
                                 if (body != null) {
-                                    String buildingID="";
+                                    String buildingID = "";
                                     List<ApartmentNumbersVo> apartmentNumberList = body.getApartmentNumberList();
                                     int count = apartmentNumberList.size();
                                     for (int i = 0; i < count; i++) {
@@ -434,12 +437,12 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                                                     OpenInvitedMember invitedMember = response.body();
                                                     if (invitedMember.isSuccessfully()) {
                                                         boolean invitedMemberOpen = invitedMember.isOpen();
-                                                        if(invitedMemberOpen){
+                                                        if (invitedMemberOpen) {
                                                             Bundle bundle = new Bundle();
                                                             bundle.putString("apartmentNumberID", tvLocationContent.getTag().toString().split(",")[0]);
                                                             bundle.putString("location", tvLocationContent.getTag().toString().split(",")[2]);
                                                             readyGo(PropertyMngPaymentActivity.class, bundle);
-                                                        }else{
+                                                        } else {
                                                             CommonUtils.make(mContext, "你在的小区没有缴费权限，请联系物业");
                                                         }
                                                     } else {
@@ -477,7 +480,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
     //生活服务
     @OnClick(R.id.tv_service)
-    public void tvService(){
+    public void tvService() {
 
         serviceQuery();
         serviceDialog.show();
@@ -488,26 +491,27 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
 
             @Override
             public ViewHolderBase<ServiceCompanyVo.ServiceCompany> createViewHolder(int position) {
-            final DisplayImageOptions.Builder builder = getBuilder();
-            return new ViewHolderBase<ServiceCompanyVo.ServiceCompany>() {
+                final DisplayImageOptions.Builder builder = getBuilder();
+                return new ViewHolderBase<ServiceCompanyVo.ServiceCompany>() {
 
-                ImageView imageView;
-                TextView textView;
-                @Override
-                public View createView(LayoutInflater layoutInflater) {
-                    View inflate = layoutInflater.inflate(R.layout.service_mng_item, null);
-                    imageView= (ImageView) inflate.findViewById(R.id.image);
-                    textView = (TextView) inflate.findViewById(R.id.tv_text);
-                    return inflate;
-                }
+                    ImageView imageView;
+                    TextView textView;
 
-                @Override
-                public void showData(int position, ServiceCompanyVo.ServiceCompany itemData) {
-                    ImageLoader.getInstance().displayImage(itemData.getCompanyIcon(), imageView, builder.build());
-                    textView.setText(itemData.getCompanyName());
-                    textView.setTag(itemData.getDompanyId());
-                }
-            };
+                    @Override
+                    public View createView(LayoutInflater layoutInflater) {
+                        View inflate = layoutInflater.inflate(R.layout.service_mng_item, null);
+                        imageView = (ImageView) inflate.findViewById(R.id.image);
+                        textView = (TextView) inflate.findViewById(R.id.tv_text);
+                        return inflate;
+                    }
+
+                    @Override
+                    public void showData(int position, ServiceCompanyVo.ServiceCompany itemData) {
+                        ImageLoader.getInstance().displayImage(itemData.getCompanyIcon(), imageView, builder.build());
+                        textView.setText(itemData.getCompanyName());
+                        textView.setTag(itemData.getDompanyId());
+                    }
+                };
             }
         });
 
@@ -515,21 +519,21 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            if (checkLogin()) {
-                TextView tv_text = (TextView) view.findViewById(R.id.tv_text);
-                String tag = tv_text.getTag().toString();
-                Bundle bundle = new Bundle();
-                bundle.putString("companyId",tag);
-                bundle.putString("companyName",tv_text.getText().toString());
-                readyGo(CourierActivity.class,bundle);
-            } else {
-                readyGo(LoginActivity.class);
-            }
+                if (checkLogin()) {
+                    TextView tv_text = (TextView) view.findViewById(R.id.tv_text);
+                    String tag = tv_text.getTag().toString();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("companyId", tag);
+                    bundle.putString("companyName", tv_text.getText().toString());
+                    readyGo(CourierActivity.class, bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
             }
         });
     }
 
-    private void serviceQuery(){
+    private void serviceQuery() {
         final Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> companies = getApisNew().getCompanies();
         companies.enqueue(new Callback<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>>() {
             @Override
@@ -640,6 +644,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     protected void onUserVisible() {
         TLog.i(TAG_LOG, "onUserVisible");
         common();
+
     }
 
     @Override
@@ -655,6 +660,17 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     @Override
     protected void initViewsAndEvents() {
         ShareSDK.initSDK(getActivity());
+        tvTipsContent.setTextStillTime(3000);//设置停留时长间隔
+        tvTipsContent.setAnimTime(300);//设置进入和退出的时间间隔
+        tvTipsContent.setOnItemClickListener(new VerticalSwitcherTextView.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View view) {
+                AnnouncementResp resp = (AnnouncementResp) view.getTag();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("announcement", resp);
+                readyGo(AnnouncementDetailActivity.class,bundle);
+            }
+        });
         mDialog = CommonUtils.createDialog(getActivity());
         mDialog.setContentView(R.layout.community_mng_dialog);
         mDialog.setCancelable(true);
@@ -668,6 +684,18 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         this.mSlideShowView.setOnImageClickedListener(this);
         Intent bindIntent = new Intent(getActivity().getApplicationContext(), BleService.class);
         getActivity().bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tvTipsContent.startAutoScroll();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        tvTipsContent.stopAutoScroll();
     }
 
     class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> {
@@ -819,7 +847,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvTipsContent.setText(title);
+                            List<String> strings = Arrays.asList(title);
+                            tvTipsContent.setTextList(strings);
                             tvTipsContent.setTag(resp);
                         }
                     });
