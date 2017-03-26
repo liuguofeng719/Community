@@ -24,6 +24,7 @@ import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.utils.alipay.PayResult;
@@ -318,6 +319,7 @@ public class PayMentModeActivity extends BaseActivity {
             CommonUtils.dismiss(mDialog);
             switch (msg.what) {
                 case 1:
+                    AppPreferences.putString("okOrder","product");
                     break;
                 case 0:
                     Bundle bundle = new Bundle();

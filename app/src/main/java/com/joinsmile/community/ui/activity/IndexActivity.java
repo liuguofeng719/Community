@@ -51,14 +51,6 @@ public class IndexActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (extras != null) {
-            int current = extras.getInt("current", 0);
-            if (current != 0) {
-                extras.remove("current");
-                viewPager.setCurrentItem(current, false);
-                ((RadioButton) this.radioGroup.getChildAt(current)).setChecked(true);
-            }
-        }
     }
 
     @Override
@@ -86,12 +78,7 @@ public class IndexActivity extends BaseActivity {
         fragmentList.add(new MyFragment());
         ViewPageAdpater viewPageAdpater = new ViewPageAdpater(getSupportFragmentManager(), fragmentList);
         this.viewPager.setAdapter(viewPageAdpater);
-        if (extras != null) {
-            TLog.d(TAG_LOG, extras.getInt("order") + "");
-            this.viewPager.setCurrentItem(extras.getInt("order"));
-        } else {
-            this.viewPager.setCurrentItem(0);
-        }
+        this.viewPager.setCurrentItem(0);
     }
 
     @Override

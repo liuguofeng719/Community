@@ -12,7 +12,7 @@ import com.joinsmile.community.ui.base.BaseActivity;
 
 import butterknife.InjectView;
 
-public class PaySuccessActivity extends BaseActivity {
+public class ServicePaySuccessActivity extends BaseActivity {
 
     @InjectView(R.id.btn_back_home)
     Button btn_back_home;
@@ -53,7 +53,7 @@ public class PaySuccessActivity extends BaseActivity {
         btn_back_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PaySuccessActivity.this, IndexActivity.class);
+                Intent intent = new Intent(ServicePaySuccessActivity.this, IndexActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
@@ -63,7 +63,7 @@ public class PaySuccessActivity extends BaseActivity {
         btn_myorder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PaySuccessActivity.this, MyOrderActivity.class);
+                Intent intent = new Intent(ServicePaySuccessActivity.this, MyServiceActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();

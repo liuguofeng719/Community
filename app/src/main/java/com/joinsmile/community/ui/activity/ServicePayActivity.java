@@ -24,6 +24,7 @@ import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.CommonUtils;
 import com.joinsmile.community.utils.TLog;
 import com.joinsmile.community.utils.alipay.PayResult;
@@ -117,7 +118,7 @@ public class ServicePayActivity extends BaseActivity {
                             bundle.putString("msg", "支付失败");
                         }
                     }
-                    readyGo(PaySuccessActivity.class, bundle);
+                    readyGo(ServicePaySuccessActivity.class, bundle);
                     break;
                 case SDK_CHECK_FLAG:
                     Toast.makeText(ServicePayActivity.this, "检查结果为：" + msg.obj, Toast.LENGTH_SHORT).show();
@@ -318,13 +319,14 @@ public class ServicePayActivity extends BaseActivity {
             CommonUtils.dismiss(mDialog);
             switch (msg.what) {
                 case 1:
+                    AppPreferences.putString("okOrder","service");
                     break;
                 case 0:
                     Bundle bundle = new Bundle();
                     CommonUtils.dismiss(mDialog);
                     bundle.putString("status", "0");
                     bundle.putString("msg", "支付失败");
-                    readyGo(PaySuccessActivity.class, bundle);
+                    readyGo(ServicePaySuccessActivity.class, bundle);
                     break;
             }
             super.handleMessage(msg);

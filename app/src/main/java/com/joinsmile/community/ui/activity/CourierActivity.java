@@ -68,7 +68,7 @@ public class CourierActivity extends BaseActivity {
         }
 
         Call<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>> serviceOrder = getApisNew().createServiceOrder(
-                AppPreferences.getString("userId"), companyId, editNoteNumber.toString(), editAmount.toString()
+                AppPreferences.getString("userId"), companyId, editNoteNumber.getText().toString(), editAmount.getText().toString()
         );
 
         serviceOrder.enqueue(new Callback<ServiceOrderVo<ServiceOrderVo.ServiceOrderInfo>>() {

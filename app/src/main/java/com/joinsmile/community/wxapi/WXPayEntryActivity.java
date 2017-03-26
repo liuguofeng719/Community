@@ -10,7 +10,10 @@ import android.widget.TextView;
 import com.joinsmile.community.R;
 import com.joinsmile.community.common.Constants;
 import com.joinsmile.community.ui.activity.IndexActivity;
+import com.joinsmile.community.ui.activity.MyOrderActivity;
+import com.joinsmile.community.ui.activity.MyServiceActivity;
 import com.joinsmile.community.ui.base.BaseActivity;
+import com.joinsmile.community.utils.AppPreferences;
 import com.joinsmile.community.utils.TLog;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -37,7 +40,6 @@ public class WXPayEntryActivity extends BaseActivity implements IWXAPIEventHandl
 
     @Override
     protected void initViewsAndEvents() {
-        ((ImageView)findViewById(R.id.btn_back)).setVisibility(View.GONE);
         ((Button) findViewById(R.id.btn_back_home)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,11 +52,18 @@ public class WXPayEntryActivity extends BaseActivity implements IWXAPIEventHandl
         ((Button) findViewById(R.id.btn_myorder)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WXPayEntryActivity.this, IndexActivity.class);
-                intent.putExtra("order", 1);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
+                String okOrder = AppPreferences.getString("okOrder");
+                if("product".equalsIgnoreCase(okOrder)){
+                    Intent intent = new Intent(WXPayEntryActivity.this, MyOrderActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    Intent intent = new Intent(WXPayEntryActivity.this, MyServiceActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
         ((TextView) findViewById(R.id.tv_header_title)).setText("微信支付");
