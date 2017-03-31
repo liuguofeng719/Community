@@ -54,6 +54,7 @@ public class WebViewActivity extends BaseActivity {
         });
         iv_preview.loadUrl(bundle.getString("navUrl"));
         iv_preview.getSettings().setJavaScriptEnabled(true);
+        iv_preview.getSettings().setDefaultTextEncodingName("gbk");
         iv_preview.getSettings().setSupportZoom(false);
         iv_preview.setWebChromeClient(new WebChromeClient() {
             @Override
