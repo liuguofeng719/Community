@@ -1,116 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include layout="@layout/header" />
 
-    <com.joinsmile.community.widgets.SlideShowView
-        android:id="@+id/slideShowView"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:padding="0dp" />
-
-    <GridView
-        android:id="@+id/grid_category"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:cacheColorHint="@color/transparent"
-        android:listSelector="@color/transparent"
-        android:verticalSpacing="4dp"
-        android:horizontalSpacing="2dp"
-        android:scrollbars="none"
-        android:numColumns="3"
-        android:divider="@null"
-    />
-    <com.joinsmile.community.widgets.MyRadioGroup
-        android:id="@+id/my_rdo_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <RadioButton
-                android:id="@+id/tv_sales_amount"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:button="@null"
-                android:drawablePadding="5dp"
-                android:drawableRight="@drawable/sort_selector_img"
-                android:gravity="center"
-                android:text="@string/sales_amount_msg"
-                android:textColor="@drawable/sort_selector_color"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <RadioButton
-                android:id="@+id/tv_sales_price"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:button="@null"
-                android:drawablePadding="5dp"
-                android:drawableRight="@drawable/sort_selector_img"
-                android:gravity="center"
-                android:text="@string/sales_price_msg"
-                android:textColor="@drawable/sort_selector_color"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:addStatesFromChildren="true"
-            android:descendantFocusability="blocksDescendants"
-            android:gravity="center">
-
-            <RadioButton
-                android:id="@+id/tv_sales_new_put_away"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:button="@null"
-                android:checked="true"
-                android:drawablePadding="5dp"
-                android:drawableRight="@drawable/sort_selector_img"
-                android:gravity="center"
-                android:text="@string/sales_new_putaway_msg"
-                android:textColor="@drawable/sort_selector_color"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-    </com.joinsmile.community.widgets.MyRadioGroup>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/bg_line_color"
-        />
-
-    <com.joinsmile.community.pulltorefresh.library.PullToRefreshGridView
+    <com.joinsmile.community.pulltorefresh.library.PullToRefreshScrollView
         android:id="@+id/pull_refresh_grid"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:columnWidth="120dp"
-        android:stretchMode="columnWidth"
-        android:gravity="fill"
-        ptr:ptrMode="both"
-        />
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.joinsmile.community.widgets.SlideShowView
+                android:id="@+id/slideShowView"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:padding="0dp" />
+
+            <GridView
+                android:id="@+id/grid_category"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:cacheColorHint="@color/transparent"
+                android:divider="@null"
+                android:horizontalSpacing="2dp"
+                android:listSelector="@color/transparent"
+                android:numColumns="3"
+                android:scrollbars="none"
+                android:verticalSpacing="4dp" />
+
+            <com.joinsmile.community.widgets.MyRadioGroup
+                android:id="@+id/my_rdo_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <RadioButton
+                        android:id="@+id/tv_sales_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:drawablePadding="5dp"
+                        android:drawableRight="@drawable/sort_selector_img"
+                        android:gravity="center"
+                        android:text="@string/sales_amount_msg"
+                        android:textColor="@drawable/sort_selector_color"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <RadioButton
+                        android:id="@+id/tv_sales_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:drawablePadding="5dp"
+                        android:drawableRight="@drawable/sort_selector_img"
+                        android:gravity="center"
+                        android:text="@string/sales_price_msg"
+                        android:textColor="@drawable/sort_selector_color"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:addStatesFromChildren="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:gravity="center">
+
+                    <RadioButton
+                        android:id="@+id/tv_sales_new_put_away"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:checked="true"
+                        android:drawablePadding="5dp"
+                        android:drawableRight="@drawable/sort_selector_img"
+                        android:gravity="center"
+                        android:text="@string/sales_new_putaway_msg"
+                        android:textColor="@drawable/sort_selector_color"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+            </com.joinsmile.community.widgets.MyRadioGroup>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/bg_line_color" />
+
+            <com.joinsmile.community.widgets.GridViewForScrollView
+                android:id="@+id/pull_refresh_grid_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:columnWidth="120dp"
+                android:gravity="fill"
+                android:horizontalSpacing="10dp"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="10dp"
+                ptr:ptrMode="both" />
+        </LinearLayout>
+    </com.joinsmile.community.pulltorefresh.library.PullToRefreshScrollView>
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.joinsmile.community.R;
@@ -19,11 +20,13 @@ import com.joinsmile.community.bean.ProductPageCatalogues;
 import com.joinsmile.community.bean.ProductVo;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshBase;
 import com.joinsmile.community.pulltorefresh.library.PullToRefreshGridView;
+import com.joinsmile.community.pulltorefresh.library.PullToRefreshScrollView;
 import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
 import com.joinsmile.community.ui.base.BaseActivity;
 import com.joinsmile.community.utils.CommonUtils;
+import com.joinsmile.community.widgets.GridViewForScrollView;
 import com.joinsmile.community.widgets.MyRadioGroup;
 import com.joinsmile.community.widgets.SlideShowView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -44,13 +47,17 @@ import retrofit2.Response;
  * 商品首页
  */
 public class ProductListActivity extends BaseActivity {
-
     @InjectView(R.id.tv_header_title)
     TextView tv_header_title;
     @InjectView(R.id.my_rdo_group)
     MyRadioGroup my_rdo_group;
+
     @InjectView(R.id.pull_refresh_grid)
-    PullToRefreshGridView mPullRefreshGridView;
+    PullToRefreshScrollView pullToRefreshScrollView;
+
+    @InjectView(R.id.pull_refresh_grid_view)
+    GridViewForScrollView mPullRefreshGridView;
+
     @InjectView(R.id.slideShowView)
     SlideShowView mSlideShowView;
     @InjectView(R.id.btn_back)
@@ -62,10 +69,8 @@ public class ProductListActivity extends BaseActivity {
     private String primaryCatalogueID;//一级分类
     private String subCatalogueID;//子分类
 
-    private GridView mGridView;
     private Call<ProductListResp<List<ProductVo>>> allProductByType;
     private ListViewDataAdapter<ProductVo> listViewDataAdapter;
-
     boolean isMore = true;
     private int currPage = 1;
     private int sortType = 3;
@@ -119,23 +124,23 @@ public class ProductListActivity extends BaseActivity {
             }
         });
 
-        mGridView = mPullRefreshGridView.getRefreshableView();
+        pullToRefreshScrollView.setMode(PullToRefreshBase.Mode.BOTH);
         //下拉刷新
-        mPullRefreshGridView.getLoadingLayoutProxy(true, false).setPullLabel("");
-        mPullRefreshGridView.getLoadingLayoutProxy(true, false).setRefreshingLabel("正在刷新");
-        mPullRefreshGridView.getLoadingLayoutProxy(true, false).setReleaseLabel("松开以刷新");
+        pullToRefreshScrollView.getLoadingLayoutProxy(true, false).setPullLabel("");
+        pullToRefreshScrollView.getLoadingLayoutProxy(true, false).setRefreshingLabel("正在刷新");
+        pullToRefreshScrollView.getLoadingLayoutProxy(true, false).setReleaseLabel("松开以刷新");
 
         //上拉刷新
-        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setPullLabel("");
-        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setRefreshingLabel("正在加载...");
-        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
-        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setLastUpdatedLabel("上拉加载");
+        pullToRefreshScrollView.getLoadingLayoutProxy(false, true).setPullLabel("");
+        pullToRefreshScrollView.getLoadingLayoutProxy(false, true).setRefreshingLabel("正在加载...");
+        pullToRefreshScrollView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
+        pullToRefreshScrollView.getLoadingLayoutProxy(false, true).setLastUpdatedLabel("上拉加载");
         // Set a listener to be invoked when the list should be refreshed.
-        mPullRefreshGridView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<GridView>() {
+        pullToRefreshScrollView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ScrollView>() {
             @Override
-            public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
+            public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
 //                Toast.makeText(ProductListActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
-                String label = DateUtils.formatDateTime(getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
+                String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME);
                 // Update the LastUpdatedLabel
                 refreshView.getLoadingLayoutProxy(true, false).setLastUpdatedLabel(label);
                 refreshView.getLoadingLayoutProxy(false, true).setReleaseLabel("松开以后加载");
@@ -145,12 +150,12 @@ public class ProductListActivity extends BaseActivity {
             }
 
             @Override
-            public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
+            public void onPullUpToRefresh(final PullToRefreshBase<ScrollView> refreshView) {
                 if (!isMore) {
                     refreshView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mPullRefreshGridView.onRefreshComplete();
+                            refreshView.onRefreshComplete();
                         }
                     }, 100);
                 } else {
@@ -159,8 +164,8 @@ public class ProductListActivity extends BaseActivity {
             }
         });
 
-        mGridView.setAdapter(listViewDataAdapter);
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mPullRefreshGridView.setAdapter(listViewDataAdapter);
+        mPullRefreshGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.tv_product_desc);
@@ -349,7 +354,7 @@ public class ProductListActivity extends BaseActivity {
                     dataList.clear();
                     if (currPage == totalPage) {
                         isMore = false;
-                        mPullRefreshGridView.getLoadingLayoutProxy(false, true).setReleaseLabel("没有更多数据了");
+                        pullToRefreshScrollView.getLoadingLayoutProxy(false, true).setReleaseLabel("没有更多数据了");
                     }
                     if (currPage < totalPage) {
                         currPage++;
@@ -362,7 +367,7 @@ public class ProductListActivity extends BaseActivity {
                         dataList.addAll(productList);
                         listViewDataAdapter.notifyDataSetChanged();
                     }
-                    mPullRefreshGridView.onRefreshComplete();
+                    pullToRefreshScrollView.onRefreshComplete();
                 }
             }
 
