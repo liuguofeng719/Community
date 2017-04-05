@@ -4,11 +4,22 @@ import com.google.gson.annotations.SerializedName;
 
 public class PicturesVo {
 
+    @SerializedName("ProductID")
+    private String productId;
+
     @SerializedName("PictureUrl")
     private String pictureUrl;
 
     @SerializedName("NavigateUrl")
     private String navigateUrl;
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
 
     public String getPictureUrl() {
         return pictureUrl;

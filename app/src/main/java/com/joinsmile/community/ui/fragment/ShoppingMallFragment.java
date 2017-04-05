@@ -52,7 +52,7 @@ import retrofit2.http.Query;
  * Created by liuguofeng719 on 2016/7/18.
  * 商城
  */
-public class ShoppingMallFragment extends BaseFragment {
+public class ShoppingMallFragment extends BaseFragment implements SlideShowView.OnImageClickedListener{
 
     @InjectView(R.id.tv_header_title)
     TextView tv_header_title;
@@ -84,6 +84,7 @@ public class ShoppingMallFragment extends BaseFragment {
     private int sortType = 3;
     private int desc = 0;
     private ListViewDataAdapter<ProductPageCatalogues.ProductPageCatalogue> dataAdapter;
+    private List<PicturesVo> onTopProductList;
 
     @Override
     protected void onFirstUserVisible() {
@@ -115,6 +116,7 @@ public class ShoppingMallFragment extends BaseFragment {
     @Override
     protected void initViewsAndEvents() {
         tv_header_title.setText(getString(R.string.recommend_product_msg));
+
         listViewDataAdapter = new ListViewDataAdapter<ProductVo>(new ViewHolderCreator<ProductVo>() {
             @Override
             public ViewHolderBase<ProductVo> createViewHolder(int position) {
@@ -230,6 +232,8 @@ public class ShoppingMallFragment extends BaseFragment {
 
         //获取商品分类
         getFirstCategory();
+
+        mSlideShowView.setOnImageClickedListener(this);
     }
 
     @Override
@@ -343,9 +347,9 @@ public class ShoppingMallFragment extends BaseFragment {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     if (mSlideShowView != null) {
                         mSlideShowView.clearImages();
-                        List<PicturesVo> pics = response.body().getOnTopProductList();
-                        if (pics.size() > 0) {
-                            mSlideShowView.setImageUrlList(pics);
+                        onTopProductList = response.body().getOnTopProductList();
+                        if (onTopProductList.size() > 0) {
+                            mSlideShowView.setImageUrlList(onTopProductList);
                         }
                     }
                 }
@@ -401,5 +405,14 @@ public class ShoppingMallFragment extends BaseFragment {
                 hideLoading();
             }
         });
+    }
+
+    @Override
+    public void onImageClicked(int position, SlideShowView.ImageViewTag imageViewTag) {
+        PicturesVo picturesVo = onTopProductList.get(position);
+        String productId = picturesVo.getProductId();
+        Bundle bundle = new Bundle();
+        bundle.putString("productId",productId);
+        readyGo(ProductDetailtActivity.class,bundle);
     }
 }

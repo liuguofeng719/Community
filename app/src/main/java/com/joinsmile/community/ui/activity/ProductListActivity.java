@@ -46,7 +46,7 @@ import retrofit2.Response;
  * Created by liuguofeng719 on 2016/7/28.
  * 商品首页
  */
-public class ProductListActivity extends BaseActivity {
+public class ProductListActivity extends BaseActivity implements SlideShowView.OnImageClickedListener {
     @InjectView(R.id.tv_header_title)
     TextView tv_header_title;
     @InjectView(R.id.my_rdo_group)
@@ -76,6 +76,8 @@ public class ProductListActivity extends BaseActivity {
     private int sortType = 3;
     private int desc = 0;
     private ListViewDataAdapter<ProductPageCatalogues.ProductPageCatalogue> dataAdapter;
+    private List<PicturesVo> topProductList;
+
     @OnClick(R.id.btn_back)
     public void btnBack() {
         finish();
@@ -206,6 +208,7 @@ public class ProductListActivity extends BaseActivity {
             listViewDataAdapter.getDataList().clear();
             }
         });
+        mSlideShowView.setOnImageClickedListener(this);
     }
 
     @Override
@@ -318,9 +321,9 @@ public class ProductListActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccessfully()) {
                     if (mSlideShowView != null) {
                         mSlideShowView.clearImages();
-                        List<PicturesVo> pics = response.body().getOnTopProductList();
-                        if (pics.size() > 0) {
-                            mSlideShowView.setImageUrlList(pics);
+                        topProductList = response.body().getOnTopProductList();
+                        if (topProductList.size() > 0) {
+                            mSlideShowView.setImageUrlList(topProductList);
                         }
                     }
                 }
@@ -376,5 +379,14 @@ public class ProductListActivity extends BaseActivity {
                 hideLoading();
             }
         });
+    }
+
+    @Override
+    public void onImageClicked(int position, SlideShowView.ImageViewTag imageViewTag) {
+        PicturesVo picturesVo = topProductList.get(position);
+        String productId = picturesVo.getProductId();
+        Bundle bundle = new Bundle();
+        bundle.putString("productId",productId);
+        readyGo(ProductDetailtActivity.class,bundle);
     }
 }
