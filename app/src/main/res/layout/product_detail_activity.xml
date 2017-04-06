@@ -100,6 +100,7 @@
                         android:layout_height="wrap_content"
                         android:drawablePadding="5dp"
                         android:drawableTop="@drawable/collect"
+                        android:visibility="invisible"
                         android:text="收藏"
                         android:textColor="@color/common_text_color_aaaaaa"
                         android:textSize="14sp" />
