@@ -193,6 +193,7 @@
                     android:padding="6dp"
                     android:text="查看全部"
                     android:textColor="@color/text_color"
+                    android:visibility="gone"
                     android:textSize="14sp" />
             </FrameLayout>
 
