@@ -144,7 +144,7 @@ public class SlideShowView extends FrameLayout implements View.OnClickListener {
     private synchronized void startPlay() {
         if (scheduledExecutorService == null || scheduledExecutorService.isShutdown()) {
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-            scheduledExecutorService.scheduleAtFixedRate(new SlideShowTask(), 4, 4, TimeUnit.SECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(new SlideShowTask(), 5, 5, TimeUnit.SECONDS);
         }
     }
 

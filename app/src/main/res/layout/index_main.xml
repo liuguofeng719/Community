@@ -178,8 +178,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/common_padding"
                     android:padding="6dp"
-                    android:text="推荐商品"
+                    android:text="签约品牌"
                     android:textColor="@color/text_color"
+                    android:textStyle="bold"
                     android:textSize="14sp" />
 
                 <TextView

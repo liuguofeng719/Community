@@ -732,9 +732,10 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 holder.iv_product_img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("productId", v.getTag().toString());
-                        readyGo(ProductDetailtActivity.class, bundle);
+                        //TODO 暂时注释
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("productId", v.getTag().toString());
+//                        readyGo(ProductDetailtActivity.class, bundle);
                     }
                 });
                 holder.tv_product_desc.setTag(recommendProductVo.getProductId());
@@ -742,9 +743,10 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 holder.tv_product_desc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("productId", v.getTag().toString());
-                        readyGo(ProductDetailtActivity.class, bundle);
+                        //TODO 暂时注释
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("productId", v.getTag().toString());
+//                        readyGo(ProductDetailtActivity.class, bundle);
                     }
                 });
                 ArrayList<String> headPicture = recommendProductVo.getHeadPicture();
@@ -906,7 +908,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     @Override
     public void onImageClicked(int position, SlideShowView.ImageViewTag url) {
         Bundle bundle = new Bundle();
-        bundle.putString("title", "商品推荐");
+        bundle.putString("title", "详情介绍");
         bundle.putString("navUrl", url.getNavUrl());
         readyGo(WebViewActivity.class, bundle);
     }
