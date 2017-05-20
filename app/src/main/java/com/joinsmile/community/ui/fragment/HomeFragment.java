@@ -319,52 +319,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             }
         });
 
-        //业委会
+        //物业公司
         final TextView tvIndustryCouncil = (TextView) mDialog.findViewById(R.id.tv_industry_council);
         tvIndustryCouncil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkLogin()) {
-                    if (tvLocationContent.getTag() != null) {
-                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
-                        Call<BuildingManagementCommittee> managementCommittee = getApisNew().getBuildingManagementCommittee(buildId);
-                        managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
-                            @Override
-                            public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
-                                if (response.isSuccessful()) {
-                                    BuildingManagementCommittee committee = response.body();
-                                    if (committee.isSuccessfully()) {
-                                        BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
-                                        String descriptionUrl = description.getDescriptionUrl();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("title", "业委会");
-                                        bundle.putString("navUrl", descriptionUrl);
-                                        readyGo(WebViewActivity.class, bundle);
-                                    } else {
-                                        CommonUtils.make(mContext, committee.getErrorMessage());
-                                    }
-                                } else {
-                                    CommonUtils.make(mContext, response.message());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
-
-                            }
-                        });
-                    } else {
-                        CommonUtils.make(mContext, "小区不存在");
-                    }
-                } else {
-                    readyGo(LoginActivity.class);
-                }
-            }
-        });
-
-        //物业公司
-        final TextView tvPropertyCompany = (TextView) mDialog.findViewById(R.id.tv_property_company);
-        tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkLogin()) {
@@ -394,6 +351,50 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             @Override
                             public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
                                 CommonUtils.make(mContext, t.getMessage());
+                            }
+                        });
+                    } else {
+                        CommonUtils.make(mContext, "小区不存在");
+                    }
+                } else {
+                    readyGo(LoginActivity.class);
+                }
+
+            }
+        });
+
+        //小区业委会
+        final TextView tvPropertyCompany = (TextView) mDialog.findViewById(R.id.tv_property_company);
+        tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkLogin()) {
+                    if (tvLocationContent.getTag() != null) {
+                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
+                        Call<BuildingManagementCommittee> managementCommittee = getApisNew().getBuildingManagementCommittee(buildId);
+                        managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
+                            @Override
+                            public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
+                                if (response.isSuccessful()) {
+                                    BuildingManagementCommittee committee = response.body();
+                                    if (committee.isSuccessfully()) {
+                                        BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
+                                        String descriptionUrl = description.getDescriptionUrl();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("title", "业委会");
+                                        bundle.putString("navUrl", descriptionUrl);
+                                        readyGo(WebViewActivity.class, bundle);
+                                    } else {
+                                        CommonUtils.make(mContext, committee.getErrorMessage());
+                                    }
+                                } else {
+                                    CommonUtils.make(mContext, response.message());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
+
                             }
                         });
                     } else {

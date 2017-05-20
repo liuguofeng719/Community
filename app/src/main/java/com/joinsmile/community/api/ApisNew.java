@@ -829,14 +829,15 @@ public interface ApisNew {
     @GET("PlatformSettings/IsOpenPropertyCharges.ashx")
     Call<OpenInvitedMember> isOpenPropertyCharges(@Query("buildingID") String buildingID);
 
+
     /**
-     * 小区物业公司简介
+     * 小区业主委员会简介
      */
     @GET("Basic/GetBuildingManagementCommittee.ashx")
     Call<BuildingManagementCommittee> getBuildingManagementCommittee(@Query("buildingID") String buildingID);
 
     /**
-     * 小区业主委员会简介
+     * 小区物业公司简介
      */
     @GET("Basic/GetPropertyCompany.ashx")
     Call<PropertyCompanyInfo> getPropertyCompany(@Query("buildingID") String buildingID);

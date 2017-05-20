@@ -15,8 +15,8 @@ android {
         applicationId "com.joinsmile.community"
         minSdkVersion 18
         targetSdkVersion 21
-        versionCode 38
-        versionName "1.9"
+        versionCode 40
+        versionName "2.1"
         signingConfig signingConfigs.community
     }
     compileOptions {
