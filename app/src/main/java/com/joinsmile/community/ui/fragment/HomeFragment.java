@@ -319,53 +319,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             }
         });
 
-        //物业公司
+        //业委会
         final TextView tvIndustryCouncil = (TextView) mDialog.findViewById(R.id.tv_industry_council);
         tvIndustryCouncil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkLogin()) {
-                    if (tvLocationContent.getTag() != null) {
-                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
-                        Call<PropertyCompanyInfo> managementCommittee = getApisNew().getPropertyCompany(buildId);
-                        managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
-                            @Override
-                            public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
-                                if (response.isSuccessful()) {
-                                    PropertyCompanyInfo committee = response.body();
-                                    if (committee.isSuccessfully()) {
-                                        PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
-                                        String descriptionUrl = description.getDescriptionUrl();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("title", "物业公司");
-                                        bundle.putString("navUrl", descriptionUrl);
-                                        readyGo(WebViewActivity.class, bundle);
-                                    } else {
-                                        CommonUtils.make(mContext, committee.getErrorMessage());
-                                    }
-                                } else {
-                                    CommonUtils.make(mContext, response.message());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
-                                CommonUtils.make(mContext, t.getMessage());
-                            }
-                        });
-                    } else {
-                        CommonUtils.make(mContext, "小区不存在");
-                    }
-                } else {
-                    readyGo(LoginActivity.class);
-                }
-
-            }
-        });
-
-        //小区业委会
-        final TextView tvPropertyCompany = (TextView) mDialog.findViewById(R.id.tv_property_company);
-        tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkLogin()) {
@@ -395,6 +351,49 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             @Override
                             public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
 
+                            }
+                        });
+                    } else {
+                        CommonUtils.make(mContext, "小区不存在");
+                    }
+                } else {
+                    readyGo(LoginActivity.class);
+                }
+            }
+        });
+
+        //物业公司
+        final TextView tvPropertyCompany = (TextView) mDialog.findViewById(R.id.tv_property_company);
+        tvPropertyCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkLogin()) {
+                    if (tvLocationContent.getTag() != null) {
+                        String buildId = tvLocationContent.getTag().toString().split(",")[1];
+                        Call<PropertyCompanyInfo> managementCommittee = getApisNew().getPropertyCompany(buildId);
+                        managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
+                            @Override
+                            public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
+                                if (response.isSuccessful()) {
+                                    PropertyCompanyInfo committee = response.body();
+                                    if (committee.isSuccessfully()) {
+                                        PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
+                                        String descriptionUrl = description.getDescriptionUrl();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("title", "物业公司");
+                                        bundle.putString("navUrl", descriptionUrl);
+                                        readyGo(WebViewActivity.class, bundle);
+                                    } else {
+                                        CommonUtils.make(mContext, committee.getErrorMessage());
+                                    }
+                                } else {
+                                    CommonUtils.make(mContext, response.message());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
+                                CommonUtils.make(mContext, t.getMessage());
                             }
                         });
                     } else {
