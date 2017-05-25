@@ -327,14 +327,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 if (checkLogin()) {
                     if (tvLocationContent.getTag() != null) {
                         String buildId = tvLocationContent.getTag().toString().split(",")[1];
-                        Call<BuildingManagementCommittee> managementCommittee = getApisNew().getBuildingManagementCommittee(buildId);
-                        managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
+                        Call<PropertyCompanyInfo> managementCommittee = getApisNew().getPropertyCompany(buildId);
+                        managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
                             @Override
-                            public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
+                            public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
                                 if (response.isSuccessful()) {
-                                    BuildingManagementCommittee committee = response.body();
+                                    PropertyCompanyInfo committee = response.body();
                                     if (committee.isSuccessfully()) {
-                                        BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
+                                        PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
                                         String descriptionUrl = description.getDescriptionUrl();
                                         Bundle bundle = new Bundle();
                                         bundle.putString("title", "业委会");
@@ -349,8 +349,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             }
 
                             @Override
-                            public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
-
+                            public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
+                                CommonUtils.make(mContext, t.getMessage());
                             }
                         });
                     } else {
@@ -359,6 +359,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 } else {
                     readyGo(LoginActivity.class);
                 }
+
             }
         });
 
@@ -370,14 +371,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 if (checkLogin()) {
                     if (tvLocationContent.getTag() != null) {
                         String buildId = tvLocationContent.getTag().toString().split(",")[1];
-                        Call<PropertyCompanyInfo> managementCommittee = getApisNew().getPropertyCompany(buildId);
-                        managementCommittee.enqueue(new Callback<PropertyCompanyInfo>() {
+                        Call<BuildingManagementCommittee> managementCommittee = getApisNew().getBuildingManagementCommittee(buildId);
+                        managementCommittee.enqueue(new Callback<BuildingManagementCommittee>() {
                             @Override
-                            public void onResponse(Call<PropertyCompanyInfo> call, Response<PropertyCompanyInfo> response) {
+                            public void onResponse(Call<BuildingManagementCommittee> call, Response<BuildingManagementCommittee> response) {
                                 if (response.isSuccessful()) {
-                                    PropertyCompanyInfo committee = response.body();
+                                    BuildingManagementCommittee committee = response.body();
                                     if (committee.isSuccessfully()) {
-                                        PropertyCompanyInfo.Description description = committee.getPropertyCompanyInfo();
+                                        BuildingManagementCommittee.Description description = committee.getBuildingManagementCommittee();
                                         String descriptionUrl = description.getDescriptionUrl();
                                         Bundle bundle = new Bundle();
                                         bundle.putString("title", "物业公司");
@@ -392,8 +393,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                             }
 
                             @Override
-                            public void onFailure(Call<PropertyCompanyInfo> call, Throwable t) {
-                                CommonUtils.make(mContext, t.getMessage());
+                            public void onFailure(Call<BuildingManagementCommittee> call, Throwable t) {
+
                             }
                         });
                     } else {
