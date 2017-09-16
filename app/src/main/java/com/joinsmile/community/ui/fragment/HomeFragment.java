@@ -14,9 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -25,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.joinsmile.community.R;
+import com.joinsmile.community.api.ApisNew;
 import com.joinsmile.community.bean.AnnouncementResp;
 import com.joinsmile.community.bean.AnnouncementVo;
 import com.joinsmile.community.bean.AnnouncementsResp;
@@ -92,6 +98,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     TextView tvIntegral;
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @InjectView(R.id.webView)
+    WebView webView;
+    private WebSettings webSettings;
 
     private Dialog mDialog;
     private Dialog showDialog;
@@ -302,7 +311,24 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                 }
             }
         });
-
+        //调查问卷
+        final TextView tv_vote = (TextView) mDialog.findViewById(R.id.tv_vote);
+        tv_vote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkLogin()) {
+                    Bundle bundle = new Bundle();
+                    if (tvLocationContent.getTag() != null) {
+                        bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[1]);
+                    } else {
+                        bundle.putString("buildingID", "");
+                    }
+                    readyGo(InvestigationActivity.class, bundle);
+                } else {
+                    readyGo(LoginActivity.class);
+                }
+            }
+        });
         final TextView complaintSuggest = (TextView) mDialog.findViewById(R.id.tv_complaint_suggest);
         complaintSuggest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -568,17 +594,14 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         });
     }
 
-    //调查问卷
-    @OnClick(R.id.tv_vote)
+    //智慧城管
+    @OnClick(R.id.tv_wisdom)
     public void tvVote() {
         if (checkLogin()) {
             Bundle bundle = new Bundle();
-            if (tvLocationContent.getTag() != null) {
-                bundle.putString("buildingID", tvLocationContent.getTag().toString().split(",")[1]);
-            } else {
-                bundle.putString("buildingID", "");
-            }
-            readyGo(InvestigationActivity.class, bundle);
+            bundle.putString("title", "智慧城管");
+            bundle.putString("navUrl", ApisNew.ZHIHUIURI + "?userID=" + AppPreferences.getString("userId"));
+            readyGo(WebViewActivity.class, bundle);
         } else {
             readyGo(LoginActivity.class);
         }
@@ -617,7 +640,8 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     private void common() {
         getUserApartments();
         getPics();
-        getOnMainPageProducts();
+//        getOnMainPageProducts();
+        initWebView();
     }
 
     //获取轮播图
@@ -671,7 +695,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             public void onItemClick(int position, View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString("announcement", announcementList.get(position).getAnnouncementID());
-                readyGo(AnnouncementDetailActivity.class,bundle);
+                readyGo(AnnouncementDetailActivity.class, bundle);
             }
         });
         mDialog = CommonUtils.createDialog(getActivity());
@@ -797,6 +821,34 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         }
     }
 
+    public void initWebView() {
+        webView.setFocusable(false);
+        webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setBuiltInZoomControls(false);
+        webView.setWebViewClient(new GoodsDetailWebViewClient());
+        webView.loadUrl("http://118.190.144.234/Platform/NewsList.aspx");
+    }
+
+
+    private class GoodsDetailWebViewClient extends WebViewClient {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            Log.d("=====url", url);
+            Bundle bundle = new Bundle();
+            bundle.putString("title", "动态详情");
+            bundle.putString("navUrl", url);
+            readyGo(WebViewActivity.class, bundle);
+            return true;
+        }
+    }
+
     /**
      * 我的小区
      */
@@ -852,7 +904,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
                         @Override
                         public void run() {
                             announcementList = body.getAnnouncementList();
-                            List<String> titles =new ArrayList<String>();
+                            List<String> titles = new ArrayList<String>();
                             for (AnnouncementVo announcementVo : announcementList) {
                                 titles.add(announcementVo.getTitle());
                             }

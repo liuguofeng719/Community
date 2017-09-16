@@ -11,7 +11,7 @@
         >
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:orientation="vertical">
@@ -135,16 +135,16 @@
                         android:textColor="@color/text_color"
                         android:textSize="14sp" />
                     <TextView
-                        android:id="@+id/tv_vote"
+                        android:id="@+id/tv_wisdom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawablePadding="5dp"
-                        android:drawableTop="@drawable/vote"
+                        android:drawableTop="@drawable/wisdom"
                         android:gravity="center"
                         android:scaleX="0.9"
                         android:scaleY="0.9"
-                        android:text="@string/vote"
+                        android:text="@string/wisdom"
                         android:textColor="@color/text_color"
                         android:textSize="14sp" />
                     <TextView
@@ -178,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/common_padding"
                     android:padding="6dp"
-                    android:text="签约品牌"
+                    android:text="开远新闻"
                     android:textColor="@color/text_color"
                     android:textStyle="bold"
                     android:textSize="14sp" />
@@ -196,12 +196,18 @@
                     android:visibility="gone"
                     android:textSize="14sp" />
             </FrameLayout>
-
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                >
+            </WebView>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@color/transparent"
+                android:visibility="gone"
             />
         </LinearLayout>
     </ScrollView>

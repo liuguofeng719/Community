@@ -89,6 +89,8 @@ public interface ApisNew {
     //社区系统BaseUri
     String BASE_URI = "http://www.troycd.com:9017/";
 
+    String ZHIHUIURI= "http://118.190.144.234/LawEnforcement/index.aspx";
+
     /**
      * 获取版本信息
      *

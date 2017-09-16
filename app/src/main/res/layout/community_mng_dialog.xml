@@ -110,19 +110,32 @@
                     android:text="@string/tenement_pay"
                     android:textSize="14sp"
                     />
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_phone_recharge"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:drawableTop="@drawable/phone_recharge"-->
+                    <!--android:drawablePadding="10dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/text_color"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/phone_recharge"-->
+                    <!--android:textSize="14sp"-->
+                    <!--android:visibility="invisible"-->
+                    <!--/>-->
                 <TextView
-                    android:id="@+id/tv_phone_recharge"
-                    android:layout_weight="1"
+                    android:id="@+id/tv_vote"
                     android:layout_width="0dp"
-                    android:drawableTop="@drawable/phone_recharge"
-                    android:drawablePadding="10dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_color"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/vote"
                     android:gravity="center"
-                    android:text="@string/phone_recharge"
-                    android:textSize="14sp"
-                    android:visibility="invisible"
-                    />
+                    android:scaleX="0.9"
+                    android:scaleY="0.9"
+                    android:text="@string/vote"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
