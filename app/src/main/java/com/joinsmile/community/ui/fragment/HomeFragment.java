@@ -56,6 +56,7 @@ import com.joinsmile.community.ui.activity.ProductDetailtActivity;
 import com.joinsmile.community.ui.activity.ProductListActivity;
 import com.joinsmile.community.ui.activity.PropertyMngPaymentActivity;
 import com.joinsmile.community.ui.activity.WebViewActivity;
+import com.joinsmile.community.ui.activity.WebViewFileUploadActivity;
 import com.joinsmile.community.ui.adpater.base.ListViewDataAdapter;
 import com.joinsmile.community.ui.adpater.base.ViewHolderBase;
 import com.joinsmile.community.ui.adpater.base.ViewHolderCreator;
@@ -601,7 +602,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
             Bundle bundle = new Bundle();
             bundle.putString("title", "智慧城管");
             bundle.putString("navUrl", ApisNew.ZHIHUIURI + "?userID=" + AppPreferences.getString("userId"));
-            readyGo(WebViewActivity.class, bundle);
+            readyGo(WebViewFileUploadActivity.class, bundle);
         } else {
             readyGo(LoginActivity.class);
         }
