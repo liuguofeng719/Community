@@ -135,6 +135,19 @@
                         android:textColor="@color/text_color"
                         android:textSize="14sp" />
                     <TextView
+                        android:id="@+id/tv_open_service"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="5dp"
+                        android:drawableTop="@drawable/open_service"
+                        android:gravity="center"
+                        android:scaleX="0.9"
+                        android:scaleY="0.9"
+                        android:text="@string/open_service"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+                    <TextView
                         android:id="@+id/tv_wisdom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

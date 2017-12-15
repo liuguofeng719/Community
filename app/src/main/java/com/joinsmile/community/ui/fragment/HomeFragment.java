@@ -173,6 +173,7 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
     };
     private ListViewDataAdapter<ServiceCompanyVo.ServiceCompany> lstDataAdapter;
     private List<AnnouncementVo> announcementList;
+    private Dialog openServiceDialog;
 
     @OnClick(R.id.tv_intelligence)
     public void tvIntelligence() {
@@ -564,6 +565,61 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         });
     }
 
+    @OnClick(R.id.tv_open_service)
+    public void openService(){
+        openServiceDialog.show();
+        TextView tv_budget =(TextView) openServiceDialog.findViewById(R.id.tv_budget);
+        tv_budget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", "财政预算");
+                bundle.putString("navUrl", "http://www.ky.hh.gov.cn/xxgk/yjsgkzl/");
+                readyGo(WebViewActivity.class, bundle);
+            }
+        });
+        TextView tv_notice =(TextView) openServiceDialog.findViewById(R.id.tv_notice);
+        tv_notice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", "公示公告");
+                bundle.putString("navUrl", "http://www.ky.hh.gov.cn/xxgk/xxgkml/gsgg/");
+                readyGo(WebViewActivity.class, bundle);
+            }
+        });
+        TextView tv_project =(TextView) openServiceDialog.findViewById(R.id.tv_project);
+        tv_project.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", "重大建设项目");
+                bundle.putString("navUrl", "http://www.ky.hh.gov.cn/xxgk/gzzt/zdjsxm/");
+                readyGo(WebViewActivity.class, bundle);
+            }
+        });
+        TextView tv_food =(TextView) openServiceDialog.findViewById(R.id.tv_food);
+        tv_food.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", "食品药品监管");
+                bundle.putString("navUrl", "http://www.ky.hh.gov.cn/xxgk/gzzt/spypanxxgk/");
+                readyGo(WebViewActivity.class, bundle);
+            }
+        });
+        TextView tv_www =(TextView) openServiceDialog.findViewById(R.id.tv_www);
+        tv_www.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString("title", "开远市政府微网站");
+                bundle.putString("navUrl", "http://www.ky.hh.gov.cn/");
+                readyGo(WebViewActivity.class, bundle);
+            }
+        });
+    }
+
     private void serviceQuery() {
         final Call<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>> companies = getApisNew().getCompanies();
         companies.enqueue(new Callback<ServiceCompanyVo<List<ServiceCompanyVo.ServiceCompany>>>() {
@@ -708,6 +764,11 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         serviceDialog.setContentView(R.layout.service_mng_dialog);
         serviceDialog.setCancelable(true);
         serviceDialog.setCanceledOnTouchOutside(true);
+
+        openServiceDialog = CommonUtils.createDialog(getActivity());
+        openServiceDialog.setContentView(R.layout.community_open_mng_dialog);
+        openServiceDialog.setCancelable(true);
+        openServiceDialog.setCanceledOnTouchOutside(true);
 
         this.mSlideShowView.setOnImageClickedListener(this);
         Intent bindIntent = new Intent(getActivity().getApplicationContext(), BleService.class);
@@ -982,6 +1043,9 @@ public class HomeFragment extends BaseFragment implements SlideShowView.OnImageC
         }
         if (serviceDialog != null) {
             CommonUtils.dismiss(serviceDialog);
+        }
+        if (openServiceDialog != null) {
+            CommonUtils.dismiss(openServiceDialog);
         }
     }
 
